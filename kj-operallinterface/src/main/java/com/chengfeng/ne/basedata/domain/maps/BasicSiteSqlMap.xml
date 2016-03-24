@@ -1,0 +1,1362 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicSiteVO">
+	<typeAlias alias="BasicSite" type="com.chengfeng.ne.basedata.domain.BasicSiteVO" />		
+	<!-- 返回结果集 -->
+	<resultMap id="SiteResult" class="com.chengfeng.ne.basedata.domain.BasicSiteVO">
+		<result property="siteId" column="SITE_ID" />
+		<result property="siteCode" column="SITE_CODE" />
+		<result property="siteName" column="SITE_NAME" />
+		<result property="sitePinyin" column="SITE_PINYIN" />
+		<result property="siteOrder" column="SITE_ORDER" />	
+		<result property="parentSiteId" column="PARENT_SITE_ID" />
+		<result property="scanCenterSiteId" column="SCAN_CENTER_SITE_ID" />
+		<result property="billCenterSiteId" column="BILL_CENTER_SITE_ID" />
+		<result property="siteTypeId" column="SITE_TYPE_ID" />
+		<result property="blFinance" column="BL_FINANCE" />
+		<result property="podLimitAmount" column="POD_LIMIT_AMOUNT" />
+		<result property="codLimitAmount" column="COD_LIMIT_AMOUNT" />
+		<result property="airplaneLimitAmount" column="AIRPLANE_LIMIT_AMOUNT" />
+		<result property="siteState" column="SITE_STATUS" />
+		<result property="moneyTypeId" column="MONEY_TYPE_ID" />
+		<result property="starLevel" column="STAR_LEVEL" />
+		<result property="sameSiteSite" column="SAME_SITE_ID" />
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />		
+		<result property="firstCenterSiteId" column="FIRST_CENTER_SITE_ID" />		
+		<result property="basicSiteDetail" column="SITE_ID" select="BasicSiteDetailVO.querySiteDetailById"/> 
+	 <!--	<result property="siteRange" column="SITE_ID" select="getRange" />-->
+	 	<result property="parentSiteBankId" column="PARENT_SITE_BANK_ID" />
+	 	<result property="dispSiteId" column="DISP_SITE_ID" />
+	 	<result property="mtlSiteId" column="MTL_SITE_ID" />
+	</resultMap>
+	
+	<resultMap extends="SiteResult" class="BasicSite" id="SitePageResult">
+		<result property="countryId" column="COUNTRY_ID" />
+		<result property="provinceId" column="PROVINCE_ID" />
+		<result property="cityId" column="CITY_ID" />
+		<result property="countyId" column="COUNTY_ID" />
+		<result property="interfaceSiteId" column="INTERFACE_SITE_ID" />
+		<result property="siteServicesType" column="SITE_SERVICES_TYPE" />
+		<result property="selfPermissions" column="selfPermissions" />
+		<result property="productPermissions" column="productPermissions" />
+		<result property="siteService" column="SITE_ID" select="BasicSiteServicesVO.querySiteServicesBySiteId"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="BasicSitesql">
+	    <![CDATA[
+        	SITE_ID ,
+        	SITE_CODE ,
+        	SITE_NAME ,
+        	SITE_PINYIN ,
+        	SITE_ORDER ,
+        	PARENT_SITE_ID ,
+        	SCAN_CENTER_SITE_ID ,
+        	BILL_CENTER_SITE_ID ,
+        	SITE_TYPE_ID ,
+        	BL_FINANCE ,
+        	POD_LIMIT_AMOUNT ,
+        	COD_LIMIT_AMOUNT ,
+        	AIRPLANE_LIMIT_AMOUNT ,
+        	SITE_STATUS ,
+        	MONEY_TYPE_ID ,
+        	STAR_LEVEL ,
+        	SAME_SITE_ID ,
+        	REMARK ,
+        	CREATED_BY ,
+        	CREATED_TIME ,
+        	MODIFIED_BY ,
+        	MODIFIED_TIME ,
+        	RD_STATUS ,
+        	FIRST_CENTER_SITE_ID ,
+        	PARENT_SITE_BANK_ID ,
+        	DISP_SITE_ID,
+        	MTL_SITE_ID
+	    ]]>
+	</sql>
+	
+	 <!-- 新增网点 -->
+	<insert id="doCreateSite" parameterClass="BasicSite">
+		<selectKey resultClass="long" keyProperty="siteId">
+			SELECT SEQ_BASIC_SITE.NEXTVAL AS siteId FROM DUAL
+		</selectKey>		
+		INSERT INTO
+		HS_BASIC_SITE(SITE_ID,SITE_CODE,SITE_NAME,SITE_PINYIN,SITE_ORDER,PARENT_SITE_ID,SCAN_CENTER_SITE_ID,
+		BILL_CENTER_SITE_ID,SITE_TYPE_ID,BL_FINANCE,POD_LIMIT_AMOUNT,COD_LIMIT_AMOUNT,AIRPLANE_LIMIT_AMOUNT,
+		SITE_STATUS,MONEY_TYPE_ID,STAR_LEVEL,SAME_SITE_ID,
+		REMARK,CREATED_BY,CREATED_TIME,
+		MODIFIED_BY,MODIFIED_TIME,RD_STATUS,FIRST_CENTER_SITE_ID,PARENT_SITE_BANK_ID,DISP_SITE_ID,MTL_SITE_ID)
+		VALUES
+		(#siteId#,#siteCode#,#siteName#,#sitePinyin#,#siteOrder#,#parentSiteId#,#scanCenterSiteId#,
+		#billCenterSiteId#,#siteTypeId#,#blFinance#,#podLimitAmount#,#codLimitAmount#,#airplaneLimitAmount#,
+		#siteState#,#moneyTypeId#,#starLevel#,#sameSiteSite#,
+		#remark#,#createdBy#, #createdTime# ,#modifiedBy#,#modifiedTime#,1,#firstCenterSiteId#,
+		#parentSiteBankId# ,#dispSiteId#,#mtlSiteId#)
+	</insert>		
+	 <!-- 修改网点 -->
+	<update id="doModifySite"  parameterClass="BasicSite" >
+		UPDATE HS_BASIC_SITE SET	
+		SITE_CODE = #siteCode#,
+		SITE_NAME = #siteName#,
+		SITE_PINYIN =#sitePinyin#,
+		SITE_ORDER=#siteOrder#,
+		PARENT_SITE_ID =#parentSiteId#,
+		SCAN_CENTER_SITE_ID =#scanCenterSiteId#,
+		BILL_CENTER_SITE_ID = #billCenterSiteId#,
+		SITE_TYPE_ID =#siteTypeId#,
+		BL_FINANCE =#blFinance#,
+		POD_LIMIT_AMOUNT =#podLimitAmount#,
+		COD_LIMIT_AMOUNT =#codLimitAmount#,
+		AIRPLANE_LIMIT_AMOUNT = #airplaneLimitAmount#,
+		SITE_STATUS = #siteState#,
+		MONEY_TYPE_ID = #moneyTypeId#,
+		STAR_LEVEL = #starLevel#,		
+		SAME_SITE_ID = #sameSiteSite#,			
+		REMARK = #remark#,		
+		MODIFIED_BY = #modifiedBy#,
+		MODIFIED_TIME = #modifiedTime# , 	
+		FIRST_CENTER_SITE_ID = #firstCenterSiteId#,
+		PARENT_SITE_BANK_ID = #parentSiteBankId#,			
+		DISP_SITE_ID = #dispSiteId#,
+		MTL_SITE_ID = #mtlSiteId#
+		WHERE SITE_ID = #siteId# 	
+	</update>
+	
+	<!-- 删除网点修改网点状态 -->
+	<update id="doDeleteSite" parameterClass="BasicSite">
+		UPDATE HS_BASIC_SITE SET	
+		RD_STATUS = 0 ,
+		SITE_CODE = #siteCode#,
+		SITE_NAME = #siteName# ,
+		MODIFIED_BY = #modifiedBy#,	
+		MODIFIED_TIME = #modifiedTime#  	
+		WHERE
+		SITE_ID = #siteId#
+	</update>
+	
+	<!-- 查询条件动态语句 -->
+	<sql id="whereByTotal">
+		<dynamic >
+			<isNotNull prepend="AND" property="siteCode"> SITE_CODE=#siteCode# </isNotNull>
+			<isNotNull prepend="AND" property="siteName"> SITE_NAME=#siteName# </isNotNull>
+			<isNotNull prepend="AND" property="billCenterName"> 
+				SITE_NAME=#billCenterName# and site_type_id in (select dict_id from hs_basic_dict d where d.type_code='site_type' and d.dict_name like '%财务中心')
+			</isNotNull>
+			<isNotNull prepend="AND" property="loginSiteId"> 
+				site_id=#loginSiteId# and site_type_id in (select dict_id from hs_basic_dict d where d.type_code='site_type' and d.dict_name like '%财务中心')
+			</isNotNull>
+			<isNotNull prepend="AND" property="parentSiteId"> PARENT_SITE_ID=#parentSiteId#</isNotNull>
+			<isNotNull prepend="OR" property="parentSiteId"> SITE_ID=#parentSiteId#</isNotNull>
+			<isNotEmpty prepend="AND" property="billSite" >
+				site_id=(select si.site_id from hs_basic_site  si where si.site_id=(
+				select s1.BILL_CENTER_SITE_ID from hs_basic_site s1 where s1.site_id=#billSite#))
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="allBillSite" >
+				site_type_id in(137,138)
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<!-- 按条件查询 -->
+	<select id="querySiteByTotal" parameterClass="java.util.HashMap"
+			resultMap="SiteResult">
+			SELECT <include refid="BasicSitesql"/> 
+			FROM HS_BASIC_SITE 
+			WHERE RD_STATUS = 1
+			<include refid="whereByTotal" />
+	</select>
+	
+	<!-- 获取最大自定义顺序 -->
+	<select id="getMaxSiteOrder" resultClass="java.lang.Long">
+		SELECT MAX(SITE_ORDER) FROM
+		HS_BASIC_SITE 
+	</select>
+	
+	<!-- 根据ID查询网点 -->
+	<select id="querySiteById" parameterClass="java.lang.Long" resultMap="SiteResult" >
+		SELECT <include refid="BasicSitesql"/>  
+		FROM
+		HS_BASIC_SITE WHERE SITE_ID =#siteId#  
+	</select>
+	
+	<!-- 根据ID查询网点 -->
+	<select id="selectByPrimaryKey" parameterClass="BasicSite" resultMap="SiteResult" >
+		SELECT <include refid="BasicSitesql"/>  
+		FROM
+		HS_BASIC_SITE WHERE SITE_ID =#siteId#  
+	</select>
+	
+	<!-- 根据名称查询网点 -->
+	<select id="querySiteByName" parameterClass="java.lang.String" resultMap="SiteResult" >
+		SELECT <include refid="BasicSitesql"/>  
+		FROM
+		HS_BASIC_SITE WHERE SITE_Name =#siteName#
+	</select>
+	
+	<!-- 根据编号查询网点 -->
+	<select id="getSiteByCode" parameterClass="java.lang.String" resultMap="SiteResult" >
+		SELECT <include refid="BasicSitesql"/>  
+		FROM
+		HS_BASIC_SITE WHERE SITE_CODE =#siteCode#
+	</select>
+	
+	<!-- 查询分拨中心和二级财务中心 -->
+	<select id="querySiteAndCenter" parameterClass="java.util.Map" resultClass="BasicSite">
+	SELECT * FROM	( SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName 
+	 ,SITE_PINYIN AS sitePinyin  ,bill_center_site_id as billCenterSiteId   
+		FROM
+		 HS_BASIC_SITE where  site_type_id in (138, 143, 144) and 
+		( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%' ) 
+		AND RD_STATUS = 1 
+		ORDER BY LENGTH(SITENAME),SITE_ORDER ) WHERE ROWNUM &lt;= #rownum#  
+	</select>
+	
+	<!-- 根据拼音模糊查询网点 -->
+	<select id="querySiteByPinyin" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT * FROM	( SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin   
+		FROM
+		 HS_BASIC_SITE where   
+		( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%' ) 
+		AND RD_STATUS = 1 and 
+		(PARENT_SITE_ID =#siteId# 
+			<isNotEmpty prepend="or" property="accountType">
+				SITE_ID =#siteId# 
+			</isNotEmpty>
+		)
+		ORDER BY LENGTH(SITENAME),SITE_ORDER )
+		WHERE ROWNUM &lt;= #rownum#
+	</select>
+
+	<!-- 根据名称模糊查询网点 -->
+	<select id="querySiteByLikeName" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin  
+		FROM
+		<![CDATA[HS_BASIC_SITE WHERE SITE_NAME LIKE '%'||#siteName#||'%'  AND RD_STATUS = 1 AND ROWNUM <= #rownum# ]]>
+		ORDER BY SITE_ORDER
+	</select>
+	
+	<!-- 根据编号模糊查询网点 -->
+	<select id="querySiteByLikeCode" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin   
+		FROM
+		<![CDATA[ HS_BASIC_SITE WHERE SITE_CODE LIKE '%'||#siteCode#||'%'  AND RD_STATUS = 1 AND  ROWNUM <= #rownum# ]]>
+		ORDER BY SITE_ORDER
+	</select>
+	
+	<!-- 根据编号 拼音 名称 模糊查询财务中心 -->
+	<select id="queryFinanceCenterByLike" parameterClass="java.util.Map" resultClass="BasicSite" >
+	<![CDATA[ SELECT * FROM	( SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin   
+		FROM
+		 HS_BASIC_SITE where   
+		( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%' ) 
+		AND RD_STATUS = 1 AND SITE_TYPE_ID IN ( 
+		SELECT DICT_ID FROM HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' 
+		AND DICT_NAME LIKE '%财务中心%')
+		ORDER BY LENGTH(SITENAME),SITE_ORDER ) WHERE ROWNUM <= #rownum# ]]>
+	</select>
+	
+	<!-- 根据编号 拼音 名称 模糊查询财务中心 -->
+	<select id="queryFinanceCenterByLikeAndSite" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT 
+			* 
+		FROM 
+			(SELECT 
+				SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,
+				SITE_PINYIN AS sitePinyin   
+			FROM
+		 		HS_BASIC_SITE 
+		 	WHERE   
+				(SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE 
+				'%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%') 
+				AND RD_STATUS = 1 AND SITE_TYPE_ID IN ( SELECT DICT_ID FROM 
+				HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' AND DICT_NAME 
+				LIKE '%财务中心%') AND SITE_ID IN (SELECT s.SITE_ID FROM 
+				HS_BASIC_SITE s START WITH s.SITE_ID =#loginSiteId# 
+				CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID )
+		ORDER BY LENGTH(SITENAME),SITE_ORDER ) 
+		WHERE 
+		<![CDATA[ 
+			ROWNUM <= #rownum# 
+		]]>
+	</select>
+	
+	<!-- 根据编号 拼音 名称 模糊查询网点 -->
+	<select id="querySiteByLike" parameterClass="java.util.Map" resultClass="BasicSite" >
+	 SELECT * FROM	( SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName 
+	 ,SITE_PINYIN AS sitePinyin  ,bill_center_site_id as billCenterSiteId   
+		FROM
+		 HS_BASIC_SITE where   
+		( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%' ) 
+		AND RD_STATUS = 1 
+		<isNotEmpty prepend="AND" property="siteStatus" >
+			site_status=#siteStatus#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="aneSiteLimit" >
+			SITE_ID not in(1625,1617) 
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="billCenterSiteId"> 
+				BILL_CENTER_SITE_ID = #billCenterSiteId#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="dtbtCenterSiteId"> 
+				SITE_TYPE_ID in (SELECT DICT_ID FROM HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' 
+		AND DICT_NAME LIKE '%分拨中心%')
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="centerSiteId"> 
+				SITE_TYPE_ID in (SELECT DICT_ID FROM HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' 
+		AND DICT_NAME LIKE '%中心%')
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="secondSiteId"> 
+				SITE_TYPE_ID in (SELECT DICT_ID FROM HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' 
+		AND DICT_NAME LIKE '%二级加盟网点%')
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="centerSiteIdAndRoot"> 
+				SITE_TYPE_ID in (SELECT DICT_ID FROM HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' 
+		AND DICT_NAME LIKE '%中心%' or DICT_NAME like '%总部%')
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="siteIdAndRoot"> 
+				SITE_TYPE_ID in (SELECT DICT_ID FROM HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' 
+		AND DICT_NAME not LIKE '%中心%' or DICT_NAME like '%总部%')
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="loginSite"> 
+			SITE_ID IN ( SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID =#loginSite#
+			CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID ) 
+		</isNotEmpty>
+		
+		ORDER BY LENGTH(SITENAME),SITE_ORDER ) WHERE ROWNUM &lt;= #rownum# 
+	</select>
+	
+	<!-- 根据名称、拼音、编号模糊查询财务中心为当前网点的网点数据 -->
+	<select id="querySiteByLikeAndBillSite" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin   
+		FROM
+		<![CDATA[ HS_BASIC_SITE where   
+		( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#pinyin#||'%' )
+		AND SITE_ID in (SELECT s.SITE_ID FROM HS_BASIC_SITE s START WITH s.SITE_ID =#loginSiteid# 
+		CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID ) 
+		AND RD_STATUS = 1 AND  ROWNUM <= #rownum# AND BILL_CENTER_SITE_ID=#loginSiteid# ]]>
+		ORDER BY SITE_ORDER
+	</select>
+	
+	<!-- 查询所有网点 modfiy by Jeff 2015.07.17 -->
+	<select id="querySiteAll" resultClass="BasicSite" >
+		SELECT 
+			s.SITE_ID AS siteId, 
+      		s.SITE_CODE AS siteCode, 
+      		s.SITE_NAME AS siteName, 
+      		s.SITE_PINYIN AS sitePinyin, 
+			s.SITE_ORDER AS siteOrder,
+			s.PARENT_SITE_ID AS parentSiteId,
+        	s.SCAN_CENTER_SITE_ID AS scanCenterSiteId,
+        	s.BILL_CENTER_SITE_ID AS billCenterSiteId,
+        	s.SITE_TYPE_ID AS siteTypeId,
+        	s.BL_FINANCE AS blFinance,
+        	s.POD_LIMIT_AMOUNT AS podLimitAmount,
+        	s.COD_LIMIT_AMOUNT AS codLimitAmount,
+        	s.AIRPLANE_LIMIT_AMOUNT AS airplaneLimitAmount,
+        	s.SITE_STATUS AS siteState,
+        	s.MONEY_TYPE_ID AS moneyTypeId,
+        	s.STAR_LEVEL AS starLevel,
+        	s.SAME_SITE_ID AS sameSiteSite,
+        	s.REMARK AS remark,
+        	s.CREATED_BY AS createdBy,
+        	s.CREATED_TIME AS createdTime,
+        	s.MODIFIED_BY AS modifiedBy,
+        	s.MODIFIED_TIME AS modifiedTime,
+        	s.RD_STATUS AS rdStatus,
+        	s.FIRST_CENTER_SITE_ID AS firstCenterSiteId,
+        	s.PARENT_SITE_BANK_ID AS parentSiteBankId,
+      		d.DICT_NAME AS siteType, 
+      		p.SITE_CODE as parentSiteCode ,
+      		s.DISP_SITE_ID as dispSiteId,
+      		s.MTL_SITE_ID as mtlSiteId
+    	FROM
+      		HS_BASIC_SITE s 
+      	LEFT JOIN HS_BASIC_SITE p ON p.SITE_ID = s.PARENT_SITE_ID 
+    	INNER JOIN HS_BASIC_DICT d ON d.DICT_ID = s.SITE_TYPE_ID
+    	WHERE 
+    		s.RD_STATUS = 1
+	</select>
+	
+	<!-- 根据时间获取所有网点信息 -->
+	<select id="querySiteListByTime" parameterClass="java.util.Date" resultClass="BasicSite">
+		SELECT 
+			s.SITE_ID AS siteId, 
+      		s.SITE_CODE AS siteCode, 
+      		s.SITE_NAME AS siteName, 
+      		s.SITE_PINYIN AS sitePinyin, 
+      		d.DICT_NAME AS siteType, 
+      		p.SITE_CODE AS parentSiteCode, 
+      		s.RD_STATUS AS rdStatus 
+    	FROM
+      		HS_BASIC_SITE s 
+      	LEFT JOIN HS_BASIC_SITE p ON p.SITE_ID = s.PARENT_SITE_ID 
+    	LEFT JOIN HS_BASIC_DICT d ON d.DICT_ID = s.SITE_TYPE_ID 
+    	<dynamic prepend="WHERE">
+    		<isNotEmpty property = "date" prepend = " AND ">
+				(s.CREATED_TIME >= #date# OR s.MODIFIED_TIME >= #date#)
+			</isNotEmpty>
+    	</dynamic>
+	</select>
+	
+	<!-- 根据网点名称集合查询网点  -->
+	<select id="querySiteListByName" resultClass="BasicSite"  parameterClass="map">
+		SELECT distinct SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin   
+		FROM
+		HS_BASIC_SITE s  where s.RD_STATUS = 1  
+		<isNotEmpty prepend="and" property="siteNameList">
+			s.SITE_NAME in
+			<iterate open="(" close=")" conjunction="," property="siteNameList">
+				#siteNameList[]#
+			</iterate>
+		</isNotEmpty> 
+		<isNotEmpty prepend="and" property="siteId">
+		SITE_ID IN ( SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID =#siteId#
+		CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID ) 
+		</isNotEmpty>
+	</select>
+	
+	<!-- 根据登录网点ID查询其子网点 -->
+	<select id="querySiteByParentId" parameterClass="java.lang.Long" resultMap="SiteResult" >
+		SELECT <include refid="BasicSitesql"/>  
+		FROM
+		HS_BASIC_SITE WHERE PARENT_SITE_ID =#parentSiteId#  AND RD_STATUS = 1  
+	</select>
+	
+	<!-- 根据登录网点ID查询其子网点 排除自己属于自己的子网点 -->
+	<select id="querySiteByPrid" parameterClass="java.lang.Long" resultMap="SiteResult" >
+		SELECT <include refid="BasicSitesql"/>  
+		FROM
+		HS_BASIC_SITE S WHERE S.PARENT_SITE_ID =#parentSiteId# AND S.SITE_ID != S.PARENT_SITE_ID  AND RD_STATUS = 1  
+	</select>
+	
+	<!-- 根据登录网点ID查询其所有子网点 -->
+	<select id="querySiteByPId" parameterClass="java.lang.Long" resultClass="BasicSite" >				
+		SELECT SITE_ID AS siteId ,
+		SITE_NAME AS siteName ,
+		SITE_CODE AS siteCode 
+		FROM HS_BASIC_SITE START WITH SITE_ID =#siteId#
+		CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID  AND  RD_STATUS = 1 
+	</select>
+	<!-- 根据城市ID查询其所有子网点 -->
+	<select id="querySiteByCityId" parameterClass="java.lang.Long" resultClass="BasicSite" >				
+		SELECT S.SITE_ID AS siteId ,
+			   S.SITE_NAME AS siteName ,
+		       S.SITE_CODE AS siteCode 
+		FROM HS_BASIC_SITE S INNER JOIN HS_BASIC_SITE_DETAIL D 
+		ON S.SITE_ID = D.SITE_ID 
+		WHERE D.CITY_ID=#cityId# AND S.RD_STATUS = 1  
+	</select>
+	<!-- 根据登录网点按名称模糊查询其所有子网点 -->
+	<select id="querySiteBySiteIdLikeName" parameterClass="java.util.Map" resultClass="BasicSite" >				
+	SELECT siteId,siteName,siteCode,sitePinyin FROM(
+	SELECT
+		SITE_ID AS siteId ,
+		SITE_NAME AS siteName ,
+		SITE_CODE AS siteCode ,
+		SITE_PINYIN AS sitePinyin
+		FROM HS_BASIC_SITE START WITH SITE_ID =#siteId#
+		CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID  AND  RD_STATUS = 1 
+    ) WHERE 
+    siteName LIKE '%'||#siteName#||'%' OR siteCode LIKE '%'||#siteName#||'%' OR sitePinyin LIKE '%'||#siteName#||'%'
+	</select>
+	<!-- 根据拼音 名称 编号 -->
+	<select id="querySiteByPCN" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT * FROM (SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin 
+		FROM HS_BASIC_SITE 
+		WHERE ( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%' ) 
+		AND SITE_ID IN ( SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID =#siteId#
+		CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID ) AND RD_STATUS = 1 
+		<isNotEmpty prepend="AND" property="siteStatus" >
+			site_status=#siteStatus#
+		</isNotEmpty> 
+		ORDER BY LENGTH(SITENAME),SITE_ORDER ) WHERE ROWNUM &lt;= #rownum#
+	</select>
+	
+	<!-- 根据拼音 名称 编号 查询交易查询的开户行-->
+	<select id="queryCenterByPCN" parameterClass="java.util.Map" resultClass="BasicSite" >
+		
+		SELECT distinct siteId ,siteCode ,siteName ,sitePinyin 
+		FROM (
+		SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin 
+		FROM HS_BASIC_SITE S inner join HS_FIN_ACCOUNT A ON S.SITE_ID=A.DATA_ID
+		WHERE ( ( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%' ) 
+		AND S.RD_STATUS = 1
+		<isEmpty property="accountStatus">
+		AND A.ACCOUNT_STATUS=1 
+		</isEmpty>
+		<isNotEmpty property="accountStatus">
+		AND A.ACCOUNT_STATUS in($accountStatus$) 
+		</isNotEmpty>
+		AND (A.CENTER_ID=#centerId#  or A.DATA_ID=#centerId# )
+	    AND A.ACCOUNT_TYPE_ID IN (10,11,12) ) 
+	    ORDER BY LENGTH(SITENAME),SITE_ORDER )WHERE 
+		ROWNUM &lt;= #rownum# 
+	</select>
+	
+	<!-- 根据拼音 名称 编号 查询交易查询的开户行（查询已经销户用）-->
+	<select id="queryXHCenterByPCN" parameterClass="java.util.Map" resultClass="BasicSite" >
+	<![CDATA[	
+		SELECT distinct siteId ,siteCode ,siteName ,sitePinyin ,createdTime,modifiedTime,createdBy
+		FROM (
+		SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin ,
+           a.created_time as createdTime,a.close_time as modifiedTime,a.account_id as createdBy
+    FROM HS_BASIC_SITE S inner join HS_FIN_ACCOUNT A ON S.SITE_ID=A.DATA_ID
+      WHERE ( ( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%' ) 
+      AND A.ACCOUNT_STATUS=-1 
+      AND (A.CENTER_ID=#centerId#  or A.DATA_ID=#centerId# )
+        AND A.ACCOUNT_TYPE_ID IN (10,11,12) ) 
+        ORDER BY LENGTH(SITENAME),SITE_ORDER )WHERE 
+      ROWNUM <= #rownum# ]]>
+	</select>
+	
+	<!-- 根据拼音 名称 编号 查询开户行-->
+	<select id="queryOpenCenterByPCN" parameterClass="java.util.Map" resultClass="BasicSite" >
+	<![CDATA[
+		SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin 
+    	FROM HS_BASIC_SITE S 
+    	WHERE  SITE_ID=#loginSiteId# AND
+    	( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%' ) 
+		UNION 
+		SELECT siteId ,siteCode ,siteName ,sitePinyin 
+		FROM (	
+		SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,SITE_PINYIN AS sitePinyin 
+		FROM HS_BASIC_SITE S inner join HS_FIN_ACCOUNT A ON S.SITE_ID=A.CENTER_ID
+		WHERE ( ( SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%' ) 
+		AND S.RD_STATUS = 1
+		AND A.ACCOUNT_STATUS=1 
+		AND A.DATA_ID=#loginSiteId#  
+	    AND A.ACCOUNT_TYPE_ID IN (10) ) 
+	    ORDER BY LENGTH(SITENAME),SITE_ORDER )WHERE 
+		ROWNUM <= #rownum# ]]>
+	</select>
+	
+	<!-- 模糊查询省份下的网点 -->
+	<select id="querySiteByLikeAndProId" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT 
+			s.SITE_ID AS siteId, s.SITE_CODE AS siteCode, s.SITE_NAME AS siteName, 
+			s.SITE_PINYIN AS sitePinyin 
+		FROM
+			(SELECT * FROM HS_BASIC_SITE ORDER BY LENGTH(SITE_NAME)) s
+		INNER JOIN HS_BASIC_SITE_DETAIL d ON d.SITE_ID = s.SITE_ID and d.PROVINCE_ID = #provinceId#
+		WHERE
+			<![CDATA[ 
+				(s.SITE_NAME LIKE '%'||#pcnString#||'%' OR s.SITE_CODE LIKE 
+				'%'||#pcnString#||'%' OR s.SITE_PINYIN LIKE '%'||#pinyin#||'%')
+				AND s.RD_STATUS = 1 AND ROWNUM <= #rownum# 
+			]]>
+	</select>
+	
+	<!-- 判断省份下的网点是否存在 -->
+	<select id="isExistOnProId" parameterClass="java.util.Map" resultClass="long" >
+		SELECT 
+			s.SITE_ID 
+		FROM
+			HS_BASIC_SITE s 
+		INNER JOIN HS_BASIC_SITE_DETAIL d ON d.SITE_ID = s.SITE_ID and d.PROVINCE_ID = #provinceId#
+		WHERE
+			SITE_NAME = #siteName# AND RD_STATUS = 1
+	</select>
+	
+	<!-- 根据财务中心查询下属分拨中心 -->
+	<select id="queryAllotSiteByBillSite" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT 
+			SITE_ID AS siteId, SITE_CODE AS siteCode, SITE_NAME AS siteName, 
+			SITE_PINYIN AS sitePinyin   
+		FROM
+			HS_BASIC_SITE s
+		INNER JOIN HS_BASIC_DICT d ON s.SITE_TYPE_ID = d.DICT_ID AND d.DICT_NAME LIKE '%分拨%'
+		WHERE  
+			( SITE_NAME LIKE '%'||#pcnString#||'%' OR SITE_CODE LIKE 
+			'%'||#pcnString#||'%' OR SITE_PINYIN LIKE '%'||#pinyin#||'%' )
+			<isNotEmpty prepend=" AND " property="billSiteId" >
+				SITE_ID in (SELECT s.SITE_ID FROM HS_BASIC_SITE s WHERE 
+				BILL_CENTER_SITE_ID = #billSiteId# ) 
+			</isNotEmpty>
+			AND s.RD_STATUS = 1 AND 
+			<![CDATA[ 
+				ROWNUM <= #rownum#
+			]]>
+		ORDER BY SITE_ORDER
+	</select>
+	
+	<!-- 查询所有分拨中心 -->
+	<select id="queryAllotSite"  resultClass="BasicSite" >
+		SELECT 
+			SITE_ID AS siteId, SITE_CODE AS siteCode, SITE_NAME AS siteName, 
+			SITE_PINYIN AS sitePinyin   
+		FROM
+			HS_BASIC_SITE s
+		INNER JOIN HS_BASIC_DICT d ON s.SITE_TYPE_ID = d.DICT_ID AND d.DICT_NAME LIKE '%分拨%'
+		WHERE s.RD_STATUS = 1 
+		ORDER BY SITE_ORDER
+	</select>
+	
+	<!-- 根据财务中心查询下属所有分拨中心(包含二级分拨中心) -->
+	<select id="queryAllFBSiteByBillSiteId" parameterClass="java.lang.Long" resultClass="BasicSite" >
+		SELECT 
+				SITE_ID AS siteId, SITE_CODE AS siteCode, 
+				SITE_NAME AS siteName, SITE_PINYIN AS sitePinyin   
+			FROM
+		 		HS_BASIC_SITE s 
+		 	WHERE    RD_STATUS = 1 and S.SITE_TYPE_ID  in(143,144)  AND BILL_CENTER_SITE_ID 
+				in(select distinct s1.bill_center_site_id
+		          from hs_basic_site s1
+		         START WITH s1.bill_center_site_id = #billSiteId#
+             CONNECT BY NOCYCLE PRIOR s1.SITE_ID = s1.bill_center_site_id
+             )
+        ORDER BY SITE_ORDER
+	</select>
+	
+	<!-- 根据财务中心查询下属分拨中心 -->
+	<select id="queryAllotSiteByBillSiteId" parameterClass="java.lang.Long" resultClass="BasicSite" >
+		SELECT 
+			SITE_ID AS siteId, SITE_CODE AS siteCode, 
+			SITE_NAME AS siteName, SITE_PINYIN AS sitePinyin   
+		FROM
+			HS_BASIC_SITE s
+		WHERE 
+			BILL_CENTER_SITE_ID = #billSiteId# AND RD_STATUS = 1 
+			AND SITE_TYPE_ID in (143,144,145) 
+	</select>
+	
+	<!-- 获取删除用序列 -->
+	<select id="getBasicDelete" resultClass="java.lang.Long" >
+		SELECT SEQ_BASIC_DELETE.NEXTVAL FROM DUAL
+	</select>	
+	
+	   <sql id="dynamicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty property = "siteTitle" prepend = " and ">
+				( SITE_PINYIN LIKE '%'||#pinyin#||'%' OR SITE_NAME LIKE '%'||#siteTitle#||'%'
+				OR SITE_CODE LIKE '%'||#siteTitle#||'%' )
+			</isNotEmpty>
+			<isNotEmpty property = "likeSite" prepend = " and ">
+				( SITE_PINYIN LIKE '%'||#likeSite#||'%' OR SITE_NAME LIKE '%'||#likeSite#||'%'
+				OR SITE_CODE LIKE '%'||#likeSite#||'%' ) AND 
+				s.SITE_ID IN ( SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID =#siteId#
+				CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID )  
+			</isNotEmpty>	
+			<isNotEmpty prepend="AND" property="siteCode"> 
+				SITE_CODE=#siteCode# 
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="siteName">
+				 SITE_NAME=#siteName# 
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="provinceId"> 
+				d.PROVINCE_ID=#provinceId#
+			</isNotEmpty>			
+			<isNotEmpty prepend="AND" property="cityId"> 
+				CITY_ID=#cityId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="countyId"> 
+				COUNTY_ID=#countyId#
+			</isNotEmpty>			
+			<isNotEmpty prepend="AND" property="address"> 
+				ADDRESS like '%'||#address#||'%'
+			</isNotEmpty>				
+			<isNotEmpty prepend="AND" property="rangeClob">
+				exists (SELECT 1
+				FROM hs_global_clob c
+				where (c.clob_id = d.range_clob_id or
+				c.clob_id = d.out_range_clob_id or
+				c.clob_id = d.special_range_clob_id)
+				and c.clob_value like '%'||#rangeClob#||'%'
+				)
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="parentSiteId"> 
+				PARENT_SITE_ID=#parentSiteId#
+			</isNotEmpty>			
+			<isNotEmpty prepend="AND" property="scanCenterSiteId"> 
+				SCAN_CENTER_SITE_ID =#scanCenterSiteId#
+			</isNotEmpty>			
+			<isNotEmpty prepend="AND" property="billCenterSiteId"> 
+				BILL_CENTER_SITE_ID = #billCenterSiteId#
+			</isNotEmpty>			
+			<isNotEmpty prepend="AND" property="firstCenterSiteId"> 
+				s.SITE_ID IN (SELECT SITE_ID FROM HS_BASIC_SITE START WITH 
+				FIRST_CENTER_SITE_ID = #firstCenterSiteId# CONNECT BY 
+				NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID)
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="centerSiteId"> 
+				FIRST_CENTER_SITE_ID = #centerSiteId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="siteState"> 
+				SITE_STATUS = #siteState#
+			</isNotEmpty>			
+			<isNotEmpty prepend="AND" property="allParentSiteId"> 
+				PARENT_SITE_ID IN ( SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID =#allParentSiteId#
+				CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID )
+			</isNotEmpty>			
+			<isNotEmpty prepend="AND" property="loginSiteId"> 
+				s.SITE_ID IN ( SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID =#loginSiteId#
+				CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID )
+			</isNotEmpty>			
+			<isEmpty prepend="and" property="rdStatus" >
+				s.RD_STATUS = 1
+			</isEmpty>
+			<isNotEmpty property = "date" prepend = " and ">
+				(　CREATED_TIME > #date# or MODIFIED_TIME > #date#　)
+			</isNotEmpty>	
+			<isNotEmpty prepend="and" property="limitScanCenter">
+				s.SITE_TYPE_ID in (143,144,145) 
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="siteTypeArray">
+				s.SITE_TYPE_ID in ($siteTypeArray$) 
+			</isNotEmpty>
+				<isEqual  prepend="AND" property="siteType" compareValue="1">
+		        	<!-- t.DICT_NAME LIKE '%财务中心%' -->
+		        	s.SITE_TYPE_ID in (137,138)
+		    	</isEqual>
+		    	<isEqual  prepend="AND" property="siteType" compareValue="2">
+		        	<!-- t.DICT_NAME LIKE '%分拨中心%' -->
+		        	s.SITE_TYPE_ID in (143,144)
+		    	</isEqual>
+		    	<isEqual  prepend="AND" property="siteType" compareValue="3">
+		        	<!-- t.DICT_NAME LIKE '%网点%' -->
+		        	s.SITE_TYPE_ID in (139,140,146)
+		    	</isEqual>
+		    	<isEqual  prepend="AND" property="siteType" compareValue="4">
+		            s.SITE_TYPE_ID in (143,144,138) 
+		    	</isEqual>
+		    	<isEqual  prepend="AND" property="siteType" compareValue="5">
+		            s.SITE_TYPE_ID in (154)
+		    	</isEqual>
+		    	<isNotEmpty  prepend="AND" property="special" >
+                    t.DICT_NAME NOT LIKE '%直营财务中心%' AND s.SITE_NAME != '安能物流'
+                </isNotEmpty>
+            <isNotEmpty prepend="and" property="siteNameList">
+			s.SITE_NAME in
+			<iterate open="(" close=")" conjunction="," property="siteNameList">
+				#siteNameList[]#
+			</iterate>
+		</isNotEmpty>
+		</dynamic>
+	</sql>
+	<select id="querySiteIdByName" parameterClass="java.util.Map" resultClass="BasicSite">
+		SELECT SITE_ID AS siteId ,SITE_NAME AS siteName 
+		FROM HS_BASIC_SITE s
+		<include refid="dynamicWhere" /> 
+	</select>
+	<!-- 根据分页条件查询机型 -->
+	<select id="queryPagedList" parameterClass="java.util.Map" resultMap="SitePageResult">
+		SELECT 
+			s.SITE_ID , SITE_CODE , SITE_NAME , SITE_PINYIN , SITE_ORDER, 
+			PARENT_SITE_ID ,SCAN_CENTER_SITE_ID ,BILL_CENTER_SITE_ID ,
+          	SITE_TYPE_ID ,BL_FINANCE ,POD_LIMIT_AMOUNT ,COD_LIMIT_AMOUNT ,
+          	AIRPLANE_LIMIT_AMOUNT ,SITE_STATUS ,MONEY_TYPE_ID ,STAR_LEVEL ,
+          	SAME_SITE_ID ,s.REMARK ,CREATED_BY ,CREATED_TIME ,MODIFIED_BY ,
+          	MODIFIED_TIME ,RD_STATUS,FIRST_CENTER_SITE_ID, d.COUNTRY_ID, 
+          	d.PROVINCE_ID, d.CITY_ID ,d.COUNTY_ID ,d.INTERFACE_SITE_ID, 
+          	d.SITE_SERVICES_TYPE, 
+          	CASE WHEN p1.SITE_ID IS NULL THEN 0 ELSE 1 END AS selfPermissions, 
+          	CASE WHEN p2.SITE_ID IS NULL THEN 0 ELSE 1 END AS productPermissions ,
+          	s.PARENT_SITE_BANK_ID,
+          	s.DISP_SITE_ID,
+          	s.MTL_SITE_ID
+		FROM 
+			HS_BASIC_SITE s
+		INNER JOIN HS_BASIC_SITE_DETAIL d ON d.SITE_ID = s.SITE_ID 
+		LEFT JOIN HS_BASIC_SITE_PROP p1 ON p1.SITE_ID = s.SITE_ID AND p1.TYPE_CODE = 'pick_goods_mode' AND p1.DATA_ID = 112
+		LEFT JOIN HS_BASIC_SITE_PROP p2 ON p2.SITE_ID = s.SITE_ID AND p2.TYPE_CODE = 'services_type' AND p2.DATA_ID = 23 
+		<include refid="dynamicWhere" /> 
+		ORDER BY SITE_ORDER,s.rowid 
+	</select>
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT COUNT(1) FROM HS_BASIC_SITE s
+		INNER JOIN HS_BASIC_SITE_DETAIL d ON d.SITE_ID = s.SITE_ID
+		<include refid="dynamicWhere" />
+	</select>
+	<!-- 根据派送范围分页条件查询机型 -->
+	<select id="queryPagedListByRange" parameterClass="java.util.Map" resultMap="SiteResult">
+		SELECT 
+			a.SITE_ID ,
+        	a.SITE_CODE ,
+        	a.SITE_NAME ,
+        	a.SITE_PINYIN ,
+        	a.SITE_ORDER ,
+        	a.PARENT_SITE_ID ,
+        	a.SCAN_CENTER_SITE_ID ,
+        	a.BILL_CENTER_SITE_ID ,
+        	a.SITE_TYPE_ID ,
+        	a.BL_FINANCE ,
+        	a.POD_LIMIT_AMOUNT ,
+        	a.COD_LIMIT_AMOUNT ,
+        	a.AIRPLANE_LIMIT_AMOUNT ,
+        	a.SITE_STATUS ,
+        	a.MONEY_TYPE_ID ,
+        	a.STAR_LEVEL ,
+        	a.SAME_SITE_ID ,
+        	a.REMARK ,
+        	a.CREATED_BY ,
+        	a.CREATED_TIME ,
+        	a.MODIFIED_BY ,
+        	a.MODIFIED_TIME ,
+        	a.RD_STATUS ,
+        	a.FIRST_CENTER_SITE_ID  ,
+        	a.PARENT_SITE_BANK_ID ,
+        	a.DISP_SITE_ID,
+        	a.MTL_SITE_ID
+		FROM HS_BASIC_SITE a 
+		LEFT JOIN  HS_BASIC_SITE_DETAIL t
+		ON a.SITE_ID=T.SITE_ID
+		where a.RD_STATUS = 1
+		<isNotEmpty property="rangeName">
+		and exists (select 1 from hs_global_clob r  where r.clob_id=t.range_clob_id and r.clob_value like '%' || #rangeName# || '%')
+		</isNotEmpty>
+		<isNotEmpty property="siteTypeId">
+		 and a.SITE_TYPE_ID = #siteTypeId#   
+		</isNotEmpty>
+		<isNotEmpty property="parentSiteId"> 
+			and	PARENT_SITE_ID=#parentSiteId#
+		</isNotEmpty>			
+		<isNotEmpty property="scanCenterSiteId"> 
+			and SCAN_CENTER_SITE_ID =#scanCenterSiteId#
+		</isNotEmpty>			
+		<isNotEmpty property="billCenterSiteId"> 
+			and BILL_CENTER_SITE_ID = #billCenterSiteId#
+		</isNotEmpty>			
+		<isNotEmpty property="siteState"> 
+			and SITE_STATUS = #siteState#
+		</isNotEmpty>			
+		ORDER BY SITE_ORDER
+	</select>
+	<!-- 查询派送范围分页总记录数 -->
+	<select id="recordCountByRange" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT COUNT(1) 
+		FROM HS_BASIC_SITE a 
+		LEFT JOIN  HS_BASIC_SITE_DETAIL t
+		ON a.SITE_ID=T.SITE_ID
+		where a.RD_STATUS = 1 
+		<isNotEmpty property="rangeName">
+		and exists (select 1 from hs_global_clob r  where r.clob_id=t.range_clob_id and r.clob_value like '%' || #rangeName# || '%')
+		</isNotEmpty>
+		<isNotEmpty property="siteTypeId">
+		 and a.SITE_TYPE_ID = #siteTypeId#   
+		</isNotEmpty>
+		<isNotEmpty property="parentSiteId"> 
+			and	PARENT_SITE_ID=#parentSiteId#
+		</isNotEmpty>			
+		<isNotEmpty property="scanCenterSiteId"> 
+			and SCAN_CENTER_SITE_ID =#scanCenterSiteId#
+		</isNotEmpty>			
+		<isNotEmpty property="billCenterSiteId"> 
+			and BILL_CENTER_SITE_ID = #billCenterSiteId#
+		</isNotEmpty>			
+		<isNotEmpty property="siteState"> 
+			and SITE_STATUS = #siteState#
+		</isNotEmpty>	
+	</select>
+	
+	<!-- 定位 -->
+	<select id="querySiteOrder" parameterClass="long" resultClass="java.lang.Integer">
+		select r from (select rownum as r,t.* from 
+		(SELECT s.* FROM HS_BASIC_SITE S where s.rd_status=1 order by s.site_order,s.rowid  ) t 
+		 inner join HS_BASIC_SITE_DETAIL d ON d.SITE_ID = t.SITE_ID) a where a.site_id = #siteId# 
+	</select>
+	<!-- 校验是否是总公司下面网点 -->
+	<select id="queryRootSite" parameterClass="map" resultClass="int">
+		select count(1) from (SELECT s.SITE_ID FROM HS_BASIC_SITE s START WITH s.SITE_ID =#rootSite# 
+		CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID) t where t.site_id=#parentSiteId# 
+		and #parentSiteId# not in (select s.site_id from hs_basic_site s start with s.site_id=#siteId# 
+		connect by nocycle prior s.site_id = s.parent_site_id)
+	</select>
+	
+	<!-- 根据名称、拼音、编号模糊查询网点类型为同行的网点数据 -->
+	<select id="querySiteByLikeAndSiteType" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT 
+			* 
+		FROM 
+			(SELECT 
+				SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,
+				SITE_PINYIN AS sitePinyin   
+			FROM
+		 		HS_BASIC_SITE 
+		 	WHERE   
+				(SITE_NAME LIKE '%'||#pNameCode#||'%' OR SITE_CODE LIKE 
+				'%'||#pNameCode#||'%' OR SITE_PINYIN LIKE '%'||#pinyin#||'%') 
+				AND RD_STATUS = 1 AND SITE_TYPE_ID IN ( SELECT DICT_ID FROM 
+				HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' AND DICT_NAME = '同行')
+			ORDER BY LENGTH(SITE_NAME),SITE_ORDER ) 
+		WHERE 
+		<![CDATA[ 
+			ROWNUM <= #rownum# 
+		]]>
+	</select>
+	
+	<!-- 判断网点是否是财务中心 -->
+	<select id="isBillCenter" parameterClass="long" resultClass="long">
+		SELECT 
+			SITE_ID 
+		FROM
+		 	HS_BASIC_SITE s
+		INNER JOIN HS_BASIC_DICT d ON s.SITE_TYPE_ID = d.DICT_ID AND d.RD_STATUS=1
+		WHERE 
+			SITE_ID = #siteId# AND s.RD_STATUS =1 
+			AND d.TYPE_CODE = 'site_type' AND d.DICT_NAME LIKE '%财务中心%'
+	</select>
+	
+	<!-- 判断网点是否是分拨中心 -->
+	<select id="isDtbtCenter" parameterClass="long" resultClass="long">
+		SELECT 
+			SITE_ID 
+		FROM
+		 	HS_BASIC_SITE s
+		INNER JOIN HS_BASIC_DICT d ON s.SITE_TYPE_ID = d.DICT_ID AND d.RD_STATUS=1
+		WHERE 
+			SITE_ID = #siteId# AND s.RD_STATUS =1 
+			AND d.TYPE_CODE = 'site_type' AND d.DICT_NAME LIKE '%分拨中心%'
+	</select>
+	
+	<!-- 模糊查询财务中心为寄件财务中心的网点 -->
+	<select id="queryListByLikeAndBillCenter" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT 
+			SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,
+			SITE_PINYIN AS sitePinyin   
+		FROM 
+			(SELECT 
+				SITE_ID, SITE_CODE, SITE_NAME, 
+				SITE_PINYIN   
+			FROM
+		 		HS_BASIC_SITE 
+		 	WHERE   
+				(SITE_NAME LIKE '%'||#condition#||'%' OR SITE_CODE LIKE 
+				'%'||#condition#||'%' OR SITE_PINYIN LIKE '%'||#pinyin#||'%') 
+				AND RD_STATUS = 1 AND BILL_CENTER_SITE_ID = #sendBillCenterSite#)
+		WHERE 
+		<![CDATA[ 
+			ROWNUM <= #rownum# 
+		]]>
+	</select>
+	
+	<select id="queryBillCenterSiteOnBillSite" parameterClass="long" resultClass="long">
+		SELECT 
+			SITE_ID 
+		FROM 
+			HS_BASIC_SITE 
+		WHERE 
+			PARENT_SITE_ID = #billCenterSiteId# AND SITE_TYPE_ID IN (137,138)
+	</select>	
+	<!-- 查询财务中心及下属财务中心 -->
+	<select id="queryAllSonBillCenter" parameterClass="long" resultClass="BasicSite">
+		SELECT SITE_ID AS siteId ,SITE_CODE AS siteCode ,SITE_NAME AS siteName ,
+			SITE_PINYIN AS sitePinyin   FROM 
+				HS_BASIC_SITE s where s.site_type_id in (137,138)  
+				and s.rd_status=1 START WITH s.SITE_ID =#billCenterSiteId#
+				CONNECT BY NOCYCLE PRIOR SITE_ID=s.bill_center_site_id  
+	</select>
+	
+	<!-- 根据网点名称获取网点下属网点数据 -->
+	<select id="getSiteByNameAndParentId" parameterClass="java.util.Map" resultMap="SiteResult"> 
+		SELECT 
+			<include refid="BasicSitesql"/>  
+		FROM 
+			HS_BASIC_SITE
+		WHERE 
+			SITE_NAME = #siteName# AND SITE_ID IN (SELECT s.SITE_ID FROM 
+			HS_BASIC_SITE s START WITH s.SITE_ID =#parentSiteId# 
+			CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID )
+	</select>
+	
+	<!-- 根据网点名称及网点类型获取网点下属网点数据 -->
+	<select id="getSiteByNameAndType" parameterClass="java.util.Map" resultMap="SiteResult">
+		SELECT 
+			<include refid="BasicSitesql"/> 
+		FROM 
+			HS_BASIC_SITE s
+		WHERE 
+			s.SITE_NAME = #siteName# 
+			<isNotEmpty  prepend="AND" property="parentSiteId" >
+	                  SITE_ID IN (SELECT s.SITE_ID FROM 
+				HS_BASIC_SITE s START WITH s.SITE_ID =#parentSiteId# 
+				CONNECT BY NOCYCLE PRIOR s.SITE_ID=s.PARENT_SITE_ID )
+            </isNotEmpty>
+            <isNotEmpty  prepend="AND" property="siteTypeName" >
+	            EXISTS (SELECT 1 FROM HS_BASIC_DICT d where d.DICT_ID = s.SITE_TYPE_ID 
+	            AND d.TYPE_CODE = 'site_type'
+            	AND d.DICT_NAME = #siteTypeName#)
+            </isNotEmpty>
+	</select>
+	
+	<!-- 根据名称、拼音、编号模糊查询特定类型网点 -->
+	<select id="querySiteBySiteTypeAndLike" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT 
+			* 
+		FROM 
+			(SELECT 
+				SITE_ID AS siteId, SITE_CODE AS siteCode, 
+				SITE_NAME AS siteName, SITE_PINYIN AS sitePinyin   
+			FROM
+		 		HS_BASIC_SITE s
+		 	INNER JOIN HS_BASIC_DICT d ON d.DICT_ID = s.SITE_TYPE_ID AND TYPE_CODE = 'site_type'
+		 	WHERE   
+				(SITE_NAME LIKE '%'||#conditions#||'%' OR SITE_CODE LIKE 
+				'%'||#conditions#||'%' OR SITE_PINYIN LIKE '%'||#pinyin#||'%') 
+				AND s.RD_STATUS = 1
+				<isNotEmpty  prepend="AND" property="siteId" >
+                    s.SITE_ID IN (select s.site_id from hs_basic_site s 
+                    start with s.site_id=#siteId# connect by nocycle 
+                    prior s.site_id = s.parent_site_id)
+                </isNotEmpty>
+				<isEqual  prepend="AND" property="siteType" compareValue="1">
+		        	d.DICT_NAME LIKE '%财务中心%'
+		    	</isEqual>
+		    	<isEqual  prepend="AND" property="siteType" compareValue="2">
+		        	d.DICT_NAME LIKE '%分拨中心%'
+		    	</isEqual>
+		    	<isEqual  prepend="AND" property="siteType" compareValue="3">
+		        	d.DICT_NAME LIKE '%网点%'
+		    	</isEqual>
+		    	<isNotEmpty  prepend="AND" property="siteStatus" >
+                   s.SITE_STATUS = #siteStatus# 
+                </isNotEmpty>
+		    	<isNotEmpty  prepend="AND" property="special" >
+                    d.DICT_NAME NOT LIKE '%直营财务中心%' AND s.SITE_NAME != '安能物流'
+                </isNotEmpty>
+			ORDER BY LENGTH(SITE_NAME),SITE_ORDER ) 
+		WHERE 
+		<![CDATA[ 
+			ROWNUM <= #rownum# 
+		]]>
+	</select>
+	
+	<!-- 根据条件查询网点 -->
+	<select id="querySiteByConditions" parameterClass="java.util.Map" resultClass="BasicSite" >
+			SELECT 
+				s.SITE_ID AS siteId, s.SITE_CODE AS siteCode, 
+				s.SITE_NAME AS siteName, s.SITE_PINYIN AS sitePinyin   
+			FROM
+		 		HS_BASIC_SITE s 
+		 	<include refid="dynamicWhere" />
+	</select>
+	
+	<!-- 根据条件查询网点 -->
+	<select id="queryCenterPagedList" parameterClass="java.util.Map" resultClass="BasicSite" >
+			SELECT 
+				s.SITE_ID AS siteId, s.SITE_CODE AS siteCode, 
+				s.SITE_NAME AS siteName, s.SITE_PINYIN AS sitePinyin 
+			FROM
+		 		HS_BASIC_SITE s
+		 	INNER JOIN HS_BASIC_SITE_DETAIL d ON d.SITE_ID = s.SITE_ID
+		 	<include refid="dynamicWhere" />
+	</select>
+	<!-- 根据条件查询网点 -->
+	<select id="queryCenterPagedListCount" parameterClass="java.util.Map" resultClass="java.lang.Integer" >
+			SELECT 
+				count(1)
+			FROM
+		 		HS_BASIC_SITE s
+		 	INNER JOIN HS_BASIC_SITE_DETAIL d ON d.SITE_ID = s.SITE_ID
+		 	<include refid="dynamicWhere" />
+	</select>
+	
+	<!-- 根据名称、拼音、编号模糊查询特定类型网点 -->
+	<select id="querySiteByBillSiteAndLike" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT 
+			* 
+		FROM 
+			(SELECT 
+				SITE_ID AS siteId, SITE_CODE AS siteCode, 
+				SITE_NAME AS siteName, SITE_PINYIN AS sitePinyin   
+			FROM
+		 		HS_BASIC_SITE s
+		 	WHERE   
+				(SITE_NAME LIKE '%'||#conditions#||'%' OR SITE_CODE LIKE 
+				'%'||#conditions#||'%' OR SITE_PINYIN LIKE '%'||#pinyin#||'%') 
+				AND RD_STATUS = 1 AND BILL_CENTER_SITE_ID = #billSiteId#
+			ORDER BY LENGTH(SITE_NAME),SITE_ORDER ) 
+		WHERE 
+		<![CDATA[ 
+			ROWNUM <= #rownum# 
+		]]>
+	</select>
+	<!-- 财务中心下面的所有分拨中心的模糊查询  -->
+	<select id="queryBillSiteByPnc" parameterClass="java.util.Map" resultClass="BasicSite" >
+		SELECT 
+			* 
+		FROM 
+			(SELECT 
+				SITE_ID AS siteId, SITE_CODE AS siteCode, 
+				SITE_NAME AS siteName, SITE_PINYIN AS sitePinyin   
+			FROM
+		 		HS_BASIC_SITE s 
+		 	WHERE   
+				(SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE 
+				'%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#sitePinyin#||'%') 
+				AND RD_STATUS = 1 and S.SITE_TYPE_ID  in(143,144)  AND BILL_CENTER_SITE_ID 
+				in(select distinct s1.bill_center_site_id
+		          from hs_basic_site s1
+		         START WITH s1.bill_center_site_id = #billCenterSiteId#
+		        CONNECT BY NOCYCLE PRIOR s1.SITE_ID = s1.bill_center_site_id) )
+		WHERE 
+			ROWNUM &lt;= #rownum# 
+	</select>
+	
+	<!-- 根据用户ID获取网点数据 -->
+	<select id="getSiteByUserId" parameterClass="long" resultMap="SiteResult">
+		SELECT 
+			s.SITE_ID,
+       		s.SITE_CODE,
+       		s.SITE_NAME,
+       		s.SITE_PINYIN,
+       		s.SITE_ORDER,
+       		s.PARENT_SITE_ID,
+       		s.SCAN_CENTER_SITE_ID,
+       		s.BILL_CENTER_SITE_ID,
+       		s.SITE_TYPE_ID,
+       		s.BL_FINANCE,
+       		s.POD_LIMIT_AMOUNT,
+       		s.COD_LIMIT_AMOUNT,
+       		s.AIRPLANE_LIMIT_AMOUNT,
+       		s.SITE_STATUS,
+       		s.MONEY_TYPE_ID,
+       		s.STAR_LEVEL,
+       		s.SAME_SITE_ID,
+       		s.REMARK,
+       		s.CREATED_BY,
+       		s.CREATED_TIME,
+       		s.MODIFIED_BY,
+       		s.MODIFIED_TIME,
+       		s.RD_STATUS,
+       		s.FIRST_CENTER_SITE_ID,
+       		s.PARENT_SITE_BANK_ID,
+       		s.DISP_SITE_ID,
+       		s.MTL_SITE_ID
+    	FROM 
+      		HS_BASIC_SITE s
+    	INNER JOIN HS_BASIC_EMPLOYEE e ON e.SITE_ID = s.SITE_ID
+    	INNER JOIN HS_AUTH_USER u ON u.EMPLOYEE_ID = e.EMPLOYEE_ID 
+    	WHERE 
+    		u.USER_ID = #userId#
+	</select>
+	
+	<!-- 运营管理网点限制模糊查询 -->
+	<select id="queryLimitSitePnc" parameterClass="map" resultClass="BasicSite">
+		SELECT *
+		  FROM (SELECT SITE_ID     AS siteId,
+		               SITE_CODE   AS siteCode,
+		               SITE_NAME   AS siteName,
+		               SITE_PINYIN AS sitePinyin
+		          FROM HS_BASIC_SITE s
+		         WHERE (SITE_NAME LIKE '%' || #siteName# || '%' OR
+		               SITE_CODE LIKE '%' || #siteName# || '%' OR
+		               SITE_PINYIN LIKE '%' || #sitePinyin# || '%')
+		           <isNotEmpty property="siteType" >
+		           and site_type_id in
+		               (select d.dict_id
+		                  from hs_basic_dict d
+		                 where d.dict_name like 
+		                 <isEqual property="siteType" compareValue="1">
+		                 	'%财务中心%' or d.dict_name like '%分拨中心%' 
+		                 </isEqual>
+		                 <isEqual property="siteType" compareValue="2">
+		                 	'%分拨中心%' 
+		                 </isEqual>
+		                 <isEqual property="siteType" compareValue="3">
+		                 	'%财务中心%' 
+		                 </isEqual>
+		                   and d.type_code = 'site_type')
+		           </isNotEmpty>
+		           AND SITE_ID IN
+		               (SELECT SITE_ID
+		                  FROM HS_BASIC_SITE
+		                 START WITH SITE_ID = #siteId#
+		                CONNECT BY NOCYCLE PRIOR SITE_ID = PARENT_SITE_ID)
+		           AND RD_STATUS = 1
+		         ORDER BY LENGTH(SITENAME), SITE_ORDER)
+		 WHERE ROWNUM &lt;= #rownum#
+	</select>
+	
+	<!-- 根据网点id和"类型"查询网点信息 -->
+	<select id="getSiteByTypeAndSiteId" parameterClass="java.util.Map" resultMap="SiteResult">
+		SELECT
+			SITE_ID, SITE_CODE, SITE_NAME, SITE_PINYIN, SITE_ORDER, 
+			PARENT_SITE_ID, SCAN_CENTER_SITE_ID, BILL_CENTER_SITE_ID, 
+			SITE_TYPE_ID, BL_FINANCE, POD_LIMIT_AMOUNT, COD_LIMIT_AMOUNT, 
+			AIRPLANE_LIMIT_AMOUNT, SITE_STATUS, MONEY_TYPE_ID, STAR_LEVEL, 
+			SAME_SITE_ID, s.REMARK, s.CREATED_BY, s.CREATED_TIME, s.MODIFIED_BY, 
+			s.MODIFIED_TIME, s.RD_STATUS, s.FIRST_CENTER_SITE_ID, s.PARENT_SITE_BANK_ID,s.DISP_SITE_ID,s.MTL_SITE_ID
+		FROM 
+			HS_BASIC_SITE s
+		INNER JOIN HS_BASIC_DICT d ON d.DICT_ID = s.SITE_TYPE_ID
+		WHERE 
+			s.RD_STATUS =1 AND d.TYPE_CODE = 'site_type' AND 
+			d.DICT_NAME LIKE '%'||#siteType#||'%' AND s.SITE_ID = #siteId#
+	</select>
+	
+	<!-- 获取父网点为当前网点的网点数据 -->
+	<select id="querySiteIdByParentSiteId" parameterClass="long" resultClass="long" >
+		SELECT 
+			SITE_ID 
+		FROM 
+			HS_BASIC_SITE 
+		WHERE 
+			PARENT_SITE_ID = #parentSiteId#
+	</select>
+	<!-- 模糊查询上级财务 -->
+	<select id="queryUpperSiteByLike" parameterClass="java.util.Map" resultMap="SiteResult" >
+		SELECT  <include refid="BasicSitesql"/>
+		FROM HS_BASIC_SITE 
+		where	( 
+			SITE_NAME LIKE '%'||#siteName#||'%' OR SITE_CODE LIKE '%'||#siteName#||'%' OR SITE_PINYIN LIKE '%'||#siteName#||'%' ) 
+			AND RD_STATUS = 1
+			<!-- AND SITE_TYPE_ID IN ( 
+				SELECT DICT_ID FROM HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' 
+				AND DICT_NAME LIKE '%财务中心%' )
+			AND	(
+				SITE_ID IN 
+				(SELECT s.SITE_ID FROM HS_BASIC_SITE s START WITH
+				s.SITE_ID =
+				#siteId# CONNECT BY NOCYCLE PRIOR s.PARENT_SITE_ID = SITE_ID)
+				) -->
+			AND SITE_ID IN (
+				SELECT s.BILL_CENTER_SITE_ID FROM HS_BASIC_SITE s 
+				WHERE s.SITE_ID = #siteId#
+			)
+		ORDER BY LENGTH(SITE_NAME),SITE_ORDER
+	</select>
+	
+	<!-- 根据网点ID获取所属一级网点 -->
+	<select id="getLevel1SiteBySiteId" parameterClass="long" resultClass="long">
+		SELECT 
+			SITE_ID
+		FROM 
+			HS_BASIC_SITE s 
+		INNER JOIN HS_BASIC_DICT d ON d.DICT_ID = s.SITE_TYPE_ID 
+		WHERE 
+			SITE_ID IN (SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID 
+			= #siteId# CONNECT BY NOCYCLE PRIOR PARENT_SITE_ID = SITE_ID) AND 
+			d.DICT_NAME LIKE '%一级%网点%'
+	</select>
+	
+	<!-- 获取满足条件的目的网点 -->
+	<select id="queryDisSiteByConditions" parameterClass="map" resultClass="BasicSite">
+		SELECT 
+			* 
+		FROM 
+			(SELECT 
+				s.SITE_ID AS siteId, s.SITE_CODE AS siteCode, 
+				s.SITE_NAME AS siteName, s.SITE_PINYIN AS sitePinyin 
+			FROM
+				HS_BASIC_SITE s
+			INNER JOIN HS_BASIC_SITE_DETAIL d ON s.SITE_ID = d.SITE_ID 
+			WHERE  
+				(s.SITE_NAME LIKE '%'||#conditions#||'%' OR s.SITE_CODE LIKE 
+				'%'||#conditions#||'%' OR s.SITE_PINYIN LIKE '%'||#pinyin#||'%') 
+				AND s.RD_STATUS = 1 AND s.SITE_STATUS = 1 
+				AND s.SITE_TYPE_ID IN (138, 139, 146) 
+				AND d.SITE_SERVICES_TYPE != 1 
+			ORDER BY LENGTH(s.SITE_NAME))
+		WHERE 
+			<![CDATA[ 
+				ROWNUM <= #rownum#
+			]]>
+	</select>
+	
+	<!-- 获取区县下所有一级网点 -->
+	<select id="querySiteByCountyId" parameterClass="java.lang.Long" resultClass="BasicSite">
+		SELECT 
+			s.SITE_ID AS siteId, s.SITE_CODE AS siteCode, 
+			s.SITE_NAME AS siteName, s.SITE_PINYIN AS sitePinyin 
+		FROM
+			HS_BASIC_SITE s
+		INNER JOIN HS_BASIC_SITE_DETAIL d ON s.SITE_ID = d.SITE_ID 
+		WHERE  
+			s.SITE_STATUS = 1 AND s.SITE_TYPE_ID IN (139, 146) 
+			AND s.RD_STATUS = 1 AND d.COUNTY_ID = #countyId#
+	</select>
+	
+	<!-- 获取网点的银行账号信息 -->
+	<select id="querySiteBankBySiteId" parameterClass="long" resultClass="java.util.HashMap">
+		SELECT 
+			BANK_ID, BANK_ACCOUNT_NO, FLOOR_AMOUNT  
+		FROM 
+			HS_BASIC_SITE_BANK 
+		WHERE 
+			SITE_ID = #siteId# AND BANK_ACCOUNT_STATUS = 1 
+			AND RD_STATUS = 1 
+	</select>
+	
+	<!-- 根据ID查询网点 -->
+	<select id="queryScanCenterByEwbNo" resultClass="BasicSite">
+		select  distinct s.siteId,s.siteName from (
+			select s.site_id as siteId, s.site_name as siteName
+			  from hs_opt_receive a
+			  left join hs_basic_site s on a.site_id = s.site_id
+			 where a.rd_status = 1
+			   and a.ewb_no = #ewbNo#
+			union all
+			select s.site_id as siteId, s.site_name as siteName
+			  from hs_opt_send b
+			  left join hs_basic_site s on b.site_id = s.site_id
+			 where b.rd_status = 1
+			   and b.ewb_no = #ewbNo#
+			union all
+			select s.site_id as siteId, s.site_name as siteName
+			  from hs_opt_arrive c
+			  left join hs_basic_site s on c.site_id = s.site_id
+			 where c.rd_status = 1
+			   and c.ewb_no = #ewbNo#
+			union all
+			select s.site_id as siteId, s.site_name as siteName
+			  from hs_opt_stay d
+			 inner join hs_basic_site s on d.site_id = s.site_id
+			 where d.rd_status = 1
+			   and d.ewb_no = #ewbNo#
+			union all
+			select s.site_id as siteId, s.site_name as siteName
+			  from hs_opt_problem m
+			 inner join hs_basic_site s on m.site_id = s.site_id
+			 where m.rd_status = 1
+			   and m.ewb_no = #ewbNo#
+			union all
+			select s.site_id as siteId, s.site_name as siteName
+			  from hs_opt_trans e
+			 inner join hs_basic_site s on e.site_id = s.site_id
+			 where e.rd_status = 1
+			   and e.ewb_no = #ewbNo#
+			union all
+			select s.site_id as siteId, s.site_name as siteName
+			  from hs_opt_dispatch f
+			 inner join hs_basic_site s on f.site_id = s.site_id
+			 where f.rd_status = 1
+			   and f.ewb_no = #ewbNo#
+			union all
+			select s.site_id as siteId, s.site_name as siteName
+			  from hs_opt_self g
+			 inner join hs_basic_site s on g.site_id = s.site_id
+			 where g.rd_status = 1
+			   and g.ewb_no = #ewbNo#
+			union all
+			select s.site_id as siteId, s.site_name as siteName
+			  from hs_opt_sign h
+			  left join hs_basic_site s on h.site_id = s.site_id
+			 where h.rd_status = 1
+			   and h.ewb_no = #ewbNo#) s
+	</select>
+	<select id="queryAllSiteByCountyId" parameterClass="java.util.HashMap" resultClass="BasicSite">
+		SELECT 
+			s.SITE_ID AS siteId, s.SITE_CODE AS siteCode, 
+			s.SITE_NAME AS siteName, s.SITE_PINYIN AS sitePinyin 
+		FROM
+			HS_BASIC_SITE s
+		INNER JOIN HS_BASIC_SITE_DETAIL d ON s.SITE_ID = d.SITE_ID 
+		WHERE  
+			s.SITE_STATUS = 1 
+			AND s.RD_STATUS = 1 AND d.COUNTY_ID = #countyId#
+			<isNotEmpty prepend="AND" property="siteId">
+			   s.SITE_ID in (SELECT s1.SITE_ID FROM 
+				HS_BASIC_SITE s1 START WITH s1.SITE_ID =#siteId# 
+				CONNECT BY NOCYCLE PRIOR s1.SITE_ID=s1.PARENT_SITE_ID  )
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="first">
+				s.SITE_TYPE_ID in(146,137,139,143,155)
+			</isNotEmpty>
+	</select>
+</sqlMap>

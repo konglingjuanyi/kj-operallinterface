@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicDictVO">
+	<typeAlias alias="BasicDict"
+		type="com.chengfeng.ne.basedata.domain.BasicDictVO" />
+	<!-- 返回结果集 -->
+	<resultMap id="DictResult" class="com.chengfeng.ne.basedata.domain.BasicDictVO">
+		<result property="dictId" column="DICT_ID" />
+		<result property="dictCode" column="DICT_CODE" />
+		<result property="dictName" column="DICT_NAME" />
+		<result property="dictPinyin" column="DICT_PINYIN" />
+		<result property="dictOrder" column="DICT_ORDER" />
+		<result property="typeCode" column="TYPE_CODE" />
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />
+	</resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="BasicDictsql">
+	    <![CDATA[
+        	DICT_ID ,
+        	DICT_CODE ,
+        	DICT_NAME ,
+        	DICT_PINYIN ,
+        	DICT_ORDER ,
+        	TYPE_CODE ,
+        	REMARK ,
+        	CREATED_BY ,
+        	CREATED_TIME ,
+        	MODIFIED_BY ,
+        	MODIFIED_TIME ,
+        	RD_STATUS 
+	    ]]>
+	</sql>
+
+	<!-- 新增字典 -->
+	<insert id="doCreateDict" parameterClass="BasicDict">
+		<selectKey resultClass="long" keyProperty="dictId">
+			select min(a.dict_id)
+			  from (SELECT ROWNUM as dict_id FROM DUAL CONNECT BY ROWNUM &lt;= 999) a
+			  left join hs_basic_dict b
+			    on a.dict_id = b.dict_id
+			 where b.dict_id is null 
+		</selectKey>
+		INSERT INTO
+		HS_BASIC_DICT(DICT_ID,DICT_CODE,DICT_NAME,DICT_PINYIN,DICT_ORDER,TYPE_CODE,REMARK,CREATED_BY,CREATED_TIME,MODIFIED_BY,MODIFIED_TIME,RD_STATUS)
+		VALUES
+		(#dictId#,#dictCode#,#dictName#,#dictPinyin#,#dictOrder#,#typeCode#,#remark#,#createdBy#,
+		#createdTime# ,#modifiedBy#,#modifiedTime#,1)
+	</insert>
+
+	<!-- 修改字典 -->
+	<update id="doModifyDict" parameterClass="BasicDict">
+		UPDATE
+		HS_BASIC_DICT SET
+		DICT_CODE = #dictCode#,
+		DICT_NAME = #dictName#,
+		DICT_PINYIN = #dictPinyin#,
+		DICT_ORDER = #dictOrder#,
+		TYPE_CODE = #typeCode#,
+		REMARK = #remark#,
+		MODIFIED_BY = #modifiedBy#,
+		MODIFIED_TIME = #modifiedTime#
+		WHERE DICT_ID = #dictId#
+	</update>
+
+	<!-- 删除字典 -->
+	<update id="doDeleteDict" parameterClass="BasicDict">
+		UPDATE HS_BASIC_DICT
+		SET
+		DICT_CODE = #dictCode#,
+		DICT_NAME = #dictName#,
+		MODIFIED_BY =
+		#modifiedBy#,
+		MODIFIED_TIME = #modifiedTime# ,
+		RD_STATUS = 0
+		WHERE
+		DICT_ID = #dictId#
+	</update>
+
+	<!-- 根据字典Id查询 -->
+	<select id="queryDictById" parameterClass="java.lang.Long"
+		resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />
+		FROM
+		HS_BASIC_DICT WHERE DICT_ID = #dictId#
+	</select>
+
+	<!-- 获取最大自定义顺序 -->
+	<select id="getMaxDictOrder" resultClass="java.lang.Long">
+		SELECT MAX(DICT_ORDER)
+		FROM
+		HS_BASIC_DICT
+	</select>
+
+	<!-- 根据字典类型查询 -->
+	<select id="queryDictByType" parameterClass="java.lang.String"
+		resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />
+		FROM
+		HS_BASIC_DICT WHERE TYPE_CODE = #typeCode# AND RD_STATUS = 1 ORDER
+		BY DICT_ORDER 
+	</select>
+
+	<!-- 根据字典类型和时间查询 -->
+	<select id="queryDictByTypeAndDate" parameterClass="java.util.Map" resultMap="DictResult">
+		SELECT
+			<include refid="BasicDictsql" />
+		FROM
+			HS_BASIC_DICT 
+		WHERE 
+			TYPE_CODE = #typeCode# 
+			<isNotEmpty property="date" prepend=" AND ">
+				(CREATED_TIME > #date# OR MODIFIED_TIME > #date#) 
+			</isNotEmpty>
+	</select>
+
+	<select id="queryDicts" resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />
+		FROM
+		HS_BASIC_DICT WHERE RD_STATUS = 1
+	</select>
+	<!-- 根据字典编号查询 <select id="getDictByCode" parameterClass="java.lang.String" 
+		resultMap="DictResult"> select * from HS_BASIC_DICT where DICT_CODE = #dictCode# 
+		</select> -->
+
+	<!-- 根据同一字典类型下 字典编号 名称查询 -->
+	<select id="queryDictByIdAndName" parameterClass="BasicDict"
+		resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />
+		FROM
+		HS_BASIC_DICT WHERE ( DICT_CODE = #dictCode# OR DICT_NAME =
+		#dictName# )
+		AND TYPE_CODE = #typeCode#
+	</select>
+
+	<!-- 根据同一字典类型下 字典编号 查询 -->
+	<select id="getDictByCode" parameterClass="BasicDict" resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />
+		FROM
+		HS_BASIC_DICT WHERE DICT_CODE = #dictCode#
+		AND TYPE_CODE = #typeCode#
+	</select>
+
+	<!-- 根据同一字典类型下 字典 名称查询 -->
+	<select id="getDictByName" parameterClass="BasicDict" resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />
+		FROM
+		HS_BASIC_DICT WHERE DICT_NAME = #dictName#
+		AND TYPE_CODE = #typeCode#
+	</select>
+
+	<!-- 根据字典编号模糊查询 -->
+	<select id="queryDictByCode" parameterClass="java.lang.String"
+		resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />
+		FROM
+		HS_BASIC_DICT WHERE DICT_CODE LIKE '%'||#dictCode#||'%'
+		AND RD_STATUS = 1 ORDER BY DICT_ORDER
+	</select>
+
+	<!-- 根据字典名称查询 -->
+	<select id="queryDictByName" parameterClass="java.lang.String"
+		resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />
+		FROM
+		HS_BASIC_DICT WHERE DICT_NAME LIKE '%'||#dictName#||'%'
+		AND RD_STATUS = 1 ORDER BY DICT_ORDER
+	</select>
+
+	<!-- 根据字典名称、类型查询 -->
+	<select id="queryDictByNameAndTypeCode" parameterClass="java.util.Map"
+		resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />
+		FROM
+		HS_BASIC_DICT WHERE DICT_NAME = #dictName# AND TYPE_CODE =
+		#typeCode#
+		AND RD_STATUS = 1 ORDER BY DICT_ORDER
+	</select>
+
+	<!-- 根据名称 编号 拼音 查询 -->
+	<select id="queryDictByPNC" parameterClass="java.util.Map"
+		resultMap="DictResult">
+		SELECT
+		<include refid="BasicDictsql" />  
+		<![CDATA[ FROM
+		HS_BASIC_DICT WHERE ( DICT_NAME LIKE '%'||#dictName#||'%' OR
+		DICT_CODE LIKE '%'||#dictName#||'%' OR DICT_PINYIN LIKE '%'||#dictPinyin#||'%')
+		AND TYPE_CODE = #typeCode#	AND RD_STATUS = 1
+		AND ROWNUM <= #rownum# ORDER BY LENGTH(DICT_NAME),DICT_ORDER   
+		]]>
+	</select>
+
+	<select id="queryDictIdsByLike" parameterClass="java.util.Map"
+		resultClass="java.lang.Long">
+		SELECT DICT_ID
+		FROM
+		HS_BASIC_DICT
+		WHERE DICT_NAME LIKE '%'||#dictName#||'%'
+		AND TYPE_CODE = #typeCode#
+		AND RD_STATUS = 1
+	</select>
+
+	
+</sqlMap>

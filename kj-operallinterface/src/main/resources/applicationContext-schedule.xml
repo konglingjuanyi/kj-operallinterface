@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd"
+	default-autowire="byName">
+	
+     <!--  快捷订单信息定时任务 -->
+	<bean id ="orderMsgjob" class= "com.chengfeng.interfaces.orders.clients.OrderMsgClient" />
+	<!-- 定时扫描任务主表 -->
+     <bean id ="orderMsgjobTask"
+           class= "org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" >
+            <property name ="targetObject" ref= "orderMsgjob" /><!-- 关联的bean -->
+            <property name ="targetMethod" value= "orderMsgdoBiz"  /><!-- 关联的bean的方法 -->
+           <!--  false表示等上一个任务执行完后再开启新的任务 -->
+            <property name ="concurrent" value="true" /><!-- 配置为false不允许任务并发执行 -->
+     </bean >
+     <bean id ="orderMsgjobTrigger" class= "org.springframework.scheduling.quartz.CronTriggerBean" >
+            <property name ="jobDetail" ref="orderMsgjobTask" />
+            <property name ="cronExpression" value= "0/10 * * * * ?" />
+     </bean >
+     
+     
+     <bean id ="orderMsgjobTaskAgain"
+           class= "org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" >
+            <property name ="targetObject" ref= "orderMsgjob" /><!-- 关联的bean -->
+            <property name ="targetMethod" value= "getOrderInfoByInterFace"  /><!-- 关联的bean的方法 -->
+            <property name ="concurrent" value="false" /><!-- 配置为false不允许任务并发执行 -->
+     </bean >
+     <bean id ="orderMsgjobTriggerAgain" class= "org.springframework.scheduling.quartz.CronTriggerBean" >
+            <property name ="jobDetail" ref="orderMsgjobTaskAgain" />
+            <property name ="cronExpression" value= "0/20 * * * * ?" />
+     </bean >
+     <!-- <bean id="orderMsgjobTrigger"
+		class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+		scope="prototype">
+		<property name="jobDetail" ref="orderMsgjobTask" />
+		<property name="startDelay" value="0" />
+		<property name="repeatInterval" value="500" />
+	</bean> -->
+	<!-- 快捷订单状态表数据导入定时任务 -->
+	<bean id="OrderStatusTask" class="com.chengfeng.interfaces.orders.clients.OrderStatusTask"></bean>
+
+	<bean id="OrderStatusTaskAgain" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="OrderStatusTask"></property>
+		<property name="targetMethod" value="mergeIntoTask"></property>
+		<property name="concurrent" value="false"></property>
+	</bean>
+	
+	<bean id="OrderStatusTriggerAgain" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="OrderStatusTaskAgain"></property>
+  		<property name="cronExpression" value="0 30 12,20,4 * * ?"></property>
+<!-- 	<property name="cronExpression" value="0/10 * * * * ?"></property> -->
+	</bean>
+	
+     <!-- 定时器bean--> 
+     <bean id ="scheduler"
+           class= "org.springframework.scheduling.quartz.SchedulerFactoryBean" >
+            <property name ="triggers">
+                 <list >
+<!--                  	<ref bean="orderMsgjobTriggerAgain"/> -->
+<!--                  	<ref bean="orderMsgjobTrigger"/>  -->
+						<ref bean="OrderStatusTriggerAgain"></ref>
+                 </list>
+            </property>
+     </bean >
+     
+</beans>

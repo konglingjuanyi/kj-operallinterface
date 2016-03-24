@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Opt_OrdStatusVO" >
+  <resultMap id="BaseResultMap" class="com.chengfeng.ne.opt.orders.domain.OrdStatusVO" >
+    <result column="ORDER_ID" property="orderId" />
+    <result column="ORDER_STATUS" property="orderStatus" />
+    <result column="SITE_ID" property="siteId" />
+    <result column="ORDER_CANCEL_ID" property="orderCancelId"  />
+    <result column="CREATED_BY" property="createdBy" />
+    <result column="CREATED_TIME" property="createdTime" />
+  </resultMap>
+  <sql id="BaseColumnList" >
+    ORDER_ID, ORDER_STATUS, SITE_ID, ORDER_CANCEL_ID, CREATED_BY, CREATED_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdStatusVOKey" >
+    select 
+    <include refid="BaseColumnList" />
+    from HS_ORD_STATUS
+    where ORDER_ID = #orderId:DECIMAL#
+      and ORDER_STATUS = #orderStatus:DECIMAL#
+  </select>
+  
+  <select id="queryStatusVoBylist" parameterClass="java.util.Map" resultMap="BaseResultMap">
+		SELECT
+			<include refid="BaseColumnList" />
+		FROM 
+			HS_ORD_STATUS status
+		<!-- <isNotEmpty property="orderId" prepend=" where ">
+				status.ORDER_ID IN 
+				<iterate close=")" open="("  conjunction="," property="orderId">  
+            		#orderId[]#
+       			</iterate> 
+		</isNotEmpty> -->
+		<!-- <isNotEmpty property="orderStatus" prepend=" and ">
+				status.ORDER_STATUS IN 
+				<iterate close=")" open="("  conjunction="," property="orderStatus">  
+            		#orderStatus[]#
+       			</iterate> 
+		</isNotEmpty> -->
+	</select>
+  
+  <delete id="deleteByPrimaryKey" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdStatusVOKey" >
+    delete from HS_ORD_STATUS
+    where ORDER_ID = #orderId:DECIMAL#
+      and ORDER_STATUS = #orderStatus:DECIMAL#
+  </delete>
+  <insert id="insert" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdStatusVO" >
+    insert into HS_ORD_STATUS (ORDER_ID, ORDER_STATUS, SITE_ID, ORDER_CANCEL_ID, 
+      CREATED_BY, CREATED_TIME)
+    values (#orderId:DECIMAL#, #orderStatus:DECIMAL#, #siteId:DECIMAL#, #orderCancelId:DECIMAL#, 
+      #createdBy:DECIMAL#, sysdate)
+  </insert>
+  <insert id="insertSelective" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdStatusVO" >
+    insert into HS_ORD_STATUS
+    <dynamic prepend="(" >
+      <isNotNull prepend="," property="orderId" >
+        ORDER_ID
+      </isNotNull>
+      <isNotNull prepend="," property="orderStatus" >
+        ORDER_STATUS
+      </isNotNull>
+      <isNotNull prepend="," property="siteId" >
+        SITE_ID
+      </isNotNull>
+      <isNotNull prepend="," property="orderCancelId" >
+        ORDER_CANCEL_ID
+      </isNotNull>
+      <isNotNull prepend="," property="createdBy" >
+        CREATED_BY
+      </isNotNull>
+      <isNotNull prepend="," property="createdTime" >
+        CREATED_TIME
+      </isNotNull>
+      )
+    </dynamic>
+    values
+    <dynamic prepend="(" >
+      <isNotNull prepend="," property="orderId" >
+        #orderId:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="orderStatus" >
+        #orderStatus:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="siteId" >
+        #siteId:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="orderCancelId" >
+        #orderCancelId:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="createdBy" >
+        #createdBy:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="createdTime" >
+        #createdTime#
+      </isNotNull>
+      )
+    </dynamic>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdStatusVO" >
+    update HS_ORD_STATUS
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="orderStatus" >
+        ORDER_STATUS = #orderStatus:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="siteId" >
+        SITE_ID = #siteId:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="orderCancelId" >
+        ORDER_CANCEL_ID = #orderCancelId:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="createdBy" >
+        CREATED_BY = #createdBy:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="createdTime" >
+        CREATED_TIME = sysdate
+      </isNotNull>
+    </dynamic>
+    where ORDER_ID = #orderId:DECIMAL#
+      and ORDER_STATUS = #oldOrderStatus:DECIMAL#
+  </update>
+  <update id="updateByPrimaryKey" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdStatusVO" >
+    update HS_ORD_STATUS
+    set SITE_ID = #siteId:DECIMAL#,
+      ORDER_CANCEL_ID = #orderCancelId:DECIMAL#,
+      CREATED_BY = #createdBy:DECIMAL#,
+      CREATED_TIME = #createdTime:DATE#
+    where ORDER_ID = #orderId:DECIMAL#
+      and ORDER_STATUS = #orderStatus:DECIMAL#
+  </update>
+  <update id="updateByOrderId" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdStatusVO" >
+    update HS_ORD_STATUS
+    set ORDER_CANCEL_ID = #orderCancelId:DECIMAL#,
+	ORDER_STATUS = #orderStatus:DECIMAL#
+    where ORDER_ID = #orderId:DECIMAL#
+  </update>
+  
+  <select id="selectOrdStatusByOrderId" parameterClass="java.lang.Long" resultMap="BaseResultMap">
+  		SELECT 
+  			ORDER_ID, ORDER_STATUS, SITE_ID, ORDER_CANCEL_ID, CREATED_BY, CREATED_TIME 
+  		FROM 
+  			HS_ORD_STATUS
+  		WHERE
+  			ORDER_ID = #orderId#
+  </select>
+</sqlMap>

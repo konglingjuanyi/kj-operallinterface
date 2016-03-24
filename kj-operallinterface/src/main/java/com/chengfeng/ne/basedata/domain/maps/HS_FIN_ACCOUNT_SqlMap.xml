@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Fin_AccountVO">
+  <typeAlias alias="Fin_Account" type="com.chengfeng.ne.basedata.domain.AccountVO"/>
+  <resultMap class="com.chengfeng.ne.basedata.domain.AccountVO" id="BaseResultMap">
+    <result column="ACCOUNT_ID"  property="accountId" />
+    <result column="CENTER_ID"  property="centerId" />
+    <result column="DATA_ID"  property="dataId" />
+    <result column="ACCOUNT_TYPE_ID"  property="accountTypeId" />
+    <result column="BALANCE"  property="balance" />
+    <result column="ALARM_BALANCE"  property="alarmBalance" />
+    <result column="LOCK_BALANCE"  property="lockBalance" />
+    <result column="DELAY_LOCK_TIME"  property="delayLockTime" />
+    <result column="ACCOUNT_STATUS"  property="accountStatus" />
+    <result column="CLOSE_TIME"  property="closeTime" />
+    <result column="REMARK"  property="remark" />
+    <result column="CREATED_BY"  property="createdBy" />
+    <result column="CREATED_TIME"  property="createdTime" />
+    <result column="MODIFIED_BY"  property="modifiedBy" />
+    <result column="MODIFIED_TIME"  property="modifiedTime" />
+  </resultMap>
+ 
+  <resultMap extends="BaseResultMap" class="Fin_Account" id="addBaseResultMap">
+  	<result property="ceilingBalance" column="CLOSE_BALANCE"/>
+  	<result property="finNo" column="NO"/>
+  </resultMap>
+  
+  <!-- 截止余额 -->
+	<parameterMap id="procAccParam" class="map">
+		<parameter property="par_created_time" jdbcType="Date" javaType="java.util.Date" mode="IN" />
+		<parameter property="par_no" jdbcType="Float" javaType="java.lang.Long" mode="IN" />
+		<parameter property="par_end_time" jdbcType="Date" javaType="java.util.Date" mode="IN" />
+		<parameter property="par_max_days" jdbcType="Float" javaType="java.lang.Integer" mode="IN" />
+		<parameter property="par_interval_minutes" jdbcType="Float" javaType="java.lang.Integer" mode="IN" />
+	</parameterMap>
+	<procedure id="procClosingBalance" parameterMap="procAccParam">
+   		<![CDATA[
+    		{ call pkg_fin.p_balance_end(?, ?, ?, ?,? ) }
+   		]]>
+	</procedure>
+  
+  <sql id="AccountSql">
+    ACCOUNT_ID, CENTER_ID, DATA_ID, ACCOUNT_TYPE_ID, BALANCE, ALARM_BALANCE, LOCK_BALANCE, 
+    DELAY_LOCK_TIME, ACCOUNT_STATUS, CLOSE_TIME, REMARK, CREATED_BY, CREATED_TIME, MODIFIED_BY, 
+    MODIFIED_TIME
+  </sql>
+  <select id="selectByPrimaryKey" parameterClass="Fin_Account" resultMap="BaseResultMap">
+    SELECT 
+    <include refid="AccountSql" />
+    FROM hs_fin_account
+    WHERE ACCOUNT_ID = #accountId#
+    	<dynamic >
+    		<isNotEmpty prepend="AND" property="accountStatus">
+    			ACCOUNT_STATUS = #accountStatus#
+    		</isNotEmpty>
+    	</dynamic>
+  </select>
+  
+  <select id="queryAccountById" parameterClass="long" resultMap="BaseResultMap">
+    SELECT 
+    <include refid="AccountSql" />
+    FROM hs_fin_account
+    WHERE ACCOUNT_ID = #accountId# 
+  </select>
+  <delete id="deleteByPrimaryKey" parameterClass="Fin_Account">
+    DELETE FROM hs_fin_account
+    WHERE ACCOUNT_ID = #accountId#
+  </delete>
+  
+  <!-- 插入截止余额临时表 -->
+  <insert id="insertClosingBalance" parameterClass="map" >
+  	insert into HS_BALANCE_END
+	  (created_time, no, account_id)
+	  select #createdTime#, #finNo#, a.account_id
+	    from hs_fin_account a
+	   where a.account_status in(1,0)
+	   <isNotEmpty prepend="and" property="centerId">
+        CENTER_ID =#centerId#
+      </isNotEmpty>
+      <isNotEmpty prepend="and" property="dataId">
+        DATA_ID = #dataId#
+      </isNotEmpty>
+      <isNotEmpty prepend="and" property="accountTypeId">
+        ACCOUNT_TYPE_ID =#accountTypeId# 
+      </isNotEmpty>
+  </insert>
+  
+  <insert id="insert" parameterClass="Fin_Account">
+    INSERT INTO hs_fin_account (ACCOUNT_ID, CENTER_ID, DATA_ID, ACCOUNT_TYPE_ID, 
+      BALANCE, ALARM_BALANCE, LOCK_BALANCE, DELAY_LOCK_TIME, 
+      ACCOUNT_STATUS, CLOSE_TIME, REMARK, CREATED_BY, 
+      CREATED_TIME, MODIFIED_BY, MODIFIED_TIME)
+    VALUES (#accountId#, #centerId#, #dataId#, #accountTypeId#, 
+      0, #alarmBalance#, #lockBalance#, #delayLockTime#, 
+      #accountStatus#, #closeTime#, #remark#, #createdBy#, 
+      #createdTime#, #modifiedBy#, #modifiedTime#)
+  </insert>
+  <insert id="insertSelective" parameterClass="Fin_Account">
+    INSERT INTO hs_fin_account
+    <dynamic prepend="(">
+      <isNotNull prepend="," property="accountId">
+        ACCOUNT_ID
+      </isNotNull>
+      <isNotNull prepend="," property="centerId">
+        CENTER_ID
+      </isNotNull>
+      <isNotNull prepend="," property="dataId">
+        DATA_ID
+      </isNotNull>
+      <isNotNull prepend="," property="accountTypeId">
+        ACCOUNT_TYPE_ID
+      </isNotNull>
+      <isNotNull prepend="," property="balance">
+        0
+      </isNotNull>
+      <isNotNull prepend="," property="alarmBalance">
+        ALARM_BALANCE
+      </isNotNull>
+      <isNotNull prepend="," property="lockBalance">
+        LOCK_BALANCE
+      </isNotNull>
+      <isNotNull prepend="," property="delayLockTime">
+        DELAY_LOCK_TIME
+      </isNotNull>
+      <isNotNull prepend="," property="accountStatus">
+        ACCOUNT_STATUS
+      </isNotNull>
+      <isNotNull prepend="," property="closeTime">
+        CLOSE_TIME
+      </isNotNull>
+      <isNotNull prepend="," property="remark">
+        REMARK
+      </isNotNull>
+      <isNotNull prepend="," property="createdBy">
+        CREATED_BY
+      </isNotNull>
+      <isNotNull prepend="," property="createdTime">
+        CREATED_TIME
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedBy">
+        MODIFIED_BY
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedTime">
+        MODIFIED_TIME
+      </isNotNull>
+      )
+    </dynamic>
+    VALUES
+    <dynamic prepend="(">
+      <isNotNull prepend="," property="accountId">
+        #accountId#
+      </isNotNull>
+      <isNotNull prepend="," property="centerId">
+        #centerId#
+      </isNotNull>
+      <isNotNull prepend="," property="dataId">
+        #dataId#
+      </isNotNull>
+      <isNotNull prepend="," property="accountTypeId">
+        #accountTypeId#
+      </isNotNull>
+      <isNotNull prepend="," property="balance">
+        0 
+      </isNotNull>
+      <isNotNull prepend="," property="alarmBalance">
+        #alarmBalance#
+      </isNotNull>
+      <isNotNull prepend="," property="lockBalance">
+        #lockBalance#
+      </isNotNull>
+      <isNotNull prepend="," property="delayLockTime">
+        #delayLockTime#
+      </isNotNull>
+      <isNotNull prepend="," property="accountStatus">
+        #accountStatus#
+      </isNotNull>
+      <isNotNull prepend="," property="closeTime">
+        #closeTime#
+      </isNotNull>
+      <isNotNull prepend="," property="remark">
+        #remark#
+      </isNotNull>
+      <isNotNull prepend="," property="createdBy">
+        #createdBy#
+      </isNotNull>
+      <isNotNull prepend="," property="createdTime">
+        #createdTime#
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedBy">
+        #modifiedBy#
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedTime">
+        #modifiedTime#
+      </isNotNull>
+      )
+    </dynamic>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterClass="Fin_Account">
+    UPDATE hs_fin_account
+    <dynamic prepend="set">
+      <isNotNull prepend="," property="centerId">
+        CENTER_ID = #centerId#
+      </isNotNull>
+      <isNotNull prepend="," property="dataId">
+        DATA_ID = #dataId#
+      </isNotNull>
+      <isNotNull prepend="," property="accountTypeId">
+        ACCOUNT_TYPE_ID = #accountTypeId#
+      </isNotNull>
+      <isNotNull prepend="," property="alarmBalance">
+        ALARM_BALANCE = #alarmBalance#
+      </isNotNull>
+      <isNotNull prepend="," property="lockBalance">
+        LOCK_BALANCE = #lockBalance#
+      </isNotNull>
+      <isNotNull prepend="," property="delayLockTime">
+        DELAY_LOCK_TIME = #delayLockTime#
+      </isNotNull>
+      <isNotNull prepend="," property="accountStatus">
+        ACCOUNT_STATUS = #accountStatus#
+      </isNotNull>
+      <isNotNull prepend="," property="closeTime">
+        CLOSE_TIME = #closeTime#
+      </isNotNull>
+      <isNotNull prepend="," property="remark">
+        REMARK = #remark#
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedBy">
+        MODIFIED_BY = #modifiedBy#
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedTime">
+        MODIFIED_TIME = #modifiedTime#
+      </isNotNull>
+    </dynamic>
+    WHERE ACCOUNT_ID = #accountId#
+  </update>
+  <update id="updateByPrimaryKey" parameterClass="Fin_Account">
+    UPDATE hs_fin_account
+    SET 
+      ACCOUNT_STATUS = #accountStatus#,
+      CLOSE_TIME = #closeTime#,     
+      MODIFIED_BY = #modifiedBy#,
+      MODIFIED_TIME = #modifiedTime#
+    WHERE ACCOUNT_ID = #accountId#
+  </update> 
+   
+   <sql id="AccountAll">
+	    <dynamic prepend="WHERE">
+		       <isNotEmpty prepend="AND" property="accountId">
+		             ACCOUNT_ID = #accountId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="centerId">
+		             CENTER_ID = #centerId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="dataId">
+		             DATA_ID = #dataId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="accountTypeId">
+		             ACCOUNT_TYPE_ID = #accountTypeId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="accountSiteType">
+		             ACCOUNT_TYPE_ID in (10,11,12)
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="ceilingBalance">
+		          <![CDATA[  BALANCE < #ceilingBalance#  ]]>
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="alarmType">
+		          <![CDATA[   BALANCE < ALARM_BALANCE   ]]>
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="ceilingAlarm">
+		          <![CDATA[   ALARM_BALANCE < #ceilingAlarm#  ]]>
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="ceilingLock">
+		          <![CDATA[   LOCK_BALANCE < #ceilingLock#  ]]>
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="floorBalance">
+		             BALANCE > #floorBalance#
+		       </isNotEmpty>      		   
+		       <isNotEmpty prepend="AND" property="floorAlarm">
+		             ALARM_BALANCE > #floorAlarm#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="floorLock">
+		             LOCK_BALANCE > #floorLock#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="balance">
+		             BALANCE = #balance#
+		       </isNotEmpty>      		   
+		       <isNotEmpty prepend="AND" property="alarmBalance">
+		             ALARM_BALANCE = #alarmBalance#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="lockBalance">
+		             LOCK_BALANCE = #lockBalance#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="accountStatus">
+		             ACCOUNT_STATUS = #accountStatus#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="accountStatusString">
+		             ACCOUNT_STATUS in ($accountStatusString$) 
+		       </isNotEmpty>
+		   	   <isNotEmpty prepend="AND" property="siteId" >
+		   	   		(CENTER_ID = #siteId# or DATA_ID = #siteId# )
+		   	   </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	
+	<sql id="likeWhere">
+	<dynamic prepend="WHERE" >
+			<isNotEmpty prepend="AND" property="siteId">
+				DATA_ID = #siteId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="accountId">
+				(ACCOUNT_ID LIKE '%'||#accountId#||'%' OR DATA_ID IN (
+				 SELECT S.SITE_ID FROM HS_BASIC_SITE S WHERE	
+				 SITE_PINYIN LIKE '%'||#accountPinyin#||'%' 
+				 OR SITE_NAME LIKE '%'||#accountId#||'%'
+				 OR SITE_CODE LIKE '%'||#accountId#||'%'
+				 ) )
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="customer">
+				(ACCOUNT_ID LIKE '%'||#customer#||'%' OR DATA_ID IN (
+				 SELECT S.CUSTOMER_ID FROM HS_BASIC_CUSTOMER S WHERE	
+				 CUSTOMER_PINYIN LIKE '%'||#accountPinyin#||'%' 
+				 OR CUSTOMER_NAME LIKE '%'||#customer#||'%'
+				 OR CUSTOMER_CODE LIKE '%'||#customer#||'%'
+				 ) )
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="employee">
+				(ACCOUNT_ID LIKE '%'||#employee#||'%' OR DATA_ID IN (
+				 SELECT S.EMPLOYEE_ID FROM HS_BASIC_EMPLOYEE S WHERE	
+				 EMPLOYEE_PINYIN LIKE '%'||#accountPinyin#||'%' 
+				 OR EMPLOYEE_NAME LIKE '%'||#employee#||'%'
+				 OR EMPLOYEE_CODE LIKE '%'||#employee#||'%'
+				 ) )
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="part">
+				(ACCOUNT_ID LIKE '%'||#part#||'%' OR DATA_ID IN (
+				 SELECT S.PART_ID FROM HS_BASIC_PART S WHERE	
+				 PART_PINYIN LIKE '%'||#accountPinyin#||'%' 
+				 OR PART_NAME LIKE '%'||#part#||'%'
+				 OR PART_CODE LIKE '%'||#part#||'%'
+				 ) )
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="dataName">
+				 DATA_ID IN (
+				 SELECT S.SITE_ID FROM HS_BASIC_SITE S WHERE	
+				  SITE_NAME = #dataName# )
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="customerName">
+				DATA_ID IN (
+				 SELECT S.CUSTOMER_ID FROM HS_BASIC_CUSTOMER S WHERE	
+				 CUSTOMER_NAME = #customerName# )
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="employeeName">
+				 DATA_ID IN (
+				 SELECT S.EMPLOYEE_ID FROM HS_BASIC_EMPLOYEE S WHERE	
+				 EMPLOYEE_NAME = #employeeName# )
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="partName">
+				 DATA_ID IN (
+				 SELECT S.PART_ID FROM HS_BASIC_PART S WHERE	
+				 PART_NAME = #partName# )
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="accountTypeId">
+				ACCOUNT_TYPE_ID = #accountTypeId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="accountStatus" >
+				ACCOUNT_STATUS = #accountStatus#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="centerId">
+		             CENTER_ID = #centerId#
+		    </isNotEmpty>
+			<isNotEmpty prepend="AND" property="centerIdString">
+		             CENTER_ID in 
+		             <iterate open="(" close=")" conjunction="," property="centerIdString">
+		             	#centerIdString[]#
+		             </iterate>
+		    </isNotEmpty>
+			<isNotEmpty prepend="AND" property="center">
+		        (ACCOUNT_ID LIKE '%'||#center#||'%' OR CENTER_ID IN (
+				 SELECT S.SITE_ID FROM HS_BASIC_SITE S WHERE	
+				 SITE_PINYIN LIKE '%'||#center#||'%' OR SITE_NAME LIKE '%'||#center#||'%') )
+		    </isNotEmpty>
+		    <isNotEmpty prepend="AND" property="accountsId">
+		             ACCOUNT_ID = #accountsId#
+		       </isNotEmpty>
+			<isNotEmpty prepend="AND" property="rownum">
+				ROWNUM &lt;= #rownum#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="compareBalance">
+				balance &lt; alarm_balance
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT COUNT(1) FROM hs_fin_account
+		<include refid="AccountAll" />
+	</select>
+	<!-- 截止余额分页条件查询机型  老的截止余额查询方法 先注释不用
+	<select id="queryBalancePagedList" parameterClass="java.util.Map" resultMap="addBaseResultMap">
+		SELECT   
+		a.ACCOUNT_ID, a.CENTER_ID, a.DATA_ID, a.ACCOUNT_TYPE_ID, a.BALANCE,
+		a.ALARM_BALANCE, a.LOCK_BALANCE, 
+    	a.DELAY_LOCK_TIME, a.ACCOUNT_STATUS, a.CLOSE_TIME, a.REMARK,
+    	a.CREATED_BY, a.CREATED_TIME, a.MODIFIED_BY, 
+    	a.MODIFIED_TIME
+		,b.balance as CLOSE_BALANCE 
+		FROM hs_fin_account	a 
+		left join (select d.account_id,
+                    d.created_time,
+                    d.balance,
+                    ROW_NUMBER() OVER(PARTITION BY d.account_id 
+                    ORDER BY d.created_time desc,d.account_detail_id desc) N
+               from HS_FIN_DETAIL d where
+               		d.created_time >= #createdTimeBegin#+0 and
+               		d.created_time &lt;= #createdTimeEnd#+0
+               ) b on a.account_id = b.account_id
+                                      and n = 1
+		<include refid="AccountAll" />
+	</select> -->
+	<!-- 截止余额查询总记录数 老的截止余额查询方法 先注释不用
+	<select id="recordBalanceCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT COUNT(1) FROM hs_fin_account a 
+		left join (select d.account_id,
+                    d.created_time,
+                    d.balance,
+                    ROW_NUMBER() OVER(PARTITION BY d.account_id 
+                    ORDER BY d.created_time desc,d.account_detail_id desc) N
+               from HS_FIN_DETAIL d 
+               where
+               		d.created_time >= #createdTimeBegin#+0 and
+               		d.created_time &lt;= #createdTimeEnd#+0
+               ) b on a.account_id = b.account_id
+                                      and n = 1
+		<include refid="AccountAll" />
+	</select> -->
+	<!-- 截止余额分页条件查询机型 -->
+	<select id="queryBalancePagedList" parameterClass="java.util.Map" resultMap="addBaseResultMap">
+		SELECT   
+		a.ACCOUNT_ID, a.CENTER_ID, a.DATA_ID, a.ACCOUNT_TYPE_ID, a.BALANCE,
+		a.ALARM_BALANCE, a.LOCK_BALANCE, 
+    	a.DELAY_LOCK_TIME, a.ACCOUNT_STATUS, a.CLOSE_TIME, a.REMARK,
+    	a.CREATED_BY, a.CREATED_TIME, a.MODIFIED_BY, 
+    	a.MODIFIED_TIME
+		,b.balance as CLOSE_BALANCE ,
+		b.NO 
+		FROM hs_fin_account	a 
+		inner join hs_balance_end b on a.account_id=b.account_id 
+		where b.no=#finNo#  and b.CREATED_TIME=#createdTime# +0
+	</select>
+	<!-- 截止余额查询总记录数 -->
+	<select id="recordBalanceCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT COUNT(1) FROM hs_fin_account	a 
+		inner join hs_balance_end b on a.account_id=b.account_id 
+		where b.no=#finNo#  and b.CREATED_TIME=#createdTime# +0
+	</select>
+	<!-- 截止余额临时表序列 -->
+	<select id="queryFinNo" resultClass="java.lang.Long">
+		SELECT  seq_temp_no.Nextval FROM DUAL 
+	</select>
+	<!-- 获取帐号ID -->
+	<select id="getAccountId" resultClass="java.lang.Long">
+		SELECT SEQ_FIN_ACCOUNT.NEXTVAL AS accountId FROM DUAL
+	</select>
+	<!-- 查询登录网点是否为财务中心 -->
+	<select id="isFinanceCenter" parameterClass="java.lang.Long" resultClass="java.lang.Integer">
+		SELECT COUNT(1) FROM HS_BASIC_SITE WHERE SITE_TYPE_ID IN ( 
+		SELECT DICT_ID FROM HS_BASIC_DICT WHERE TYPE_CODE = 'site_type' 
+		AND DICT_NAME LIKE '%财务中心%') AND SITE_ID = #value#
+	</select>
+	<!-- 查看付款方帐号 查看收款方帐号 调帐账号-->
+	<select id="queryInOutAccount" parameterClass="java.util.Map" resultMap="BaseResultMap">
+		SELECT <include refid="AccountSql" /> 
+		FROM hs_fin_account 
+		<include refid="likeWhere"/>
+		ORDER BY CREATED_TIME  				
+	</select>	
+	
+	<!-- 专门为充值修改的模糊查询 -->
+	<select id="queryTopUpAccount" parameterClass="java.util.Map" resultMap="BaseResultMap">
+		SELECT 
+		   ACCOUNT_ID,
+	       CENTER_ID,
+	       DATA_ID,
+	       ACCOUNT_TYPE_ID,
+	       BALANCE,
+	       ALARM_BALANCE,
+	       LOCK_BALANCE,
+	       DELAY_LOCK_TIME,
+	       ACCOUNT_STATUS,
+	       CLOSE_TIME,
+	       (CASE T.ACCOUNT_TYPE_ID 
+	       WHEN 13 THEN (SELECT E.EMPLOYEE_CODE FROM HS_BASIC_EMPLOYEE E WHERE E.EMPLOYEE_ID=T.DATA_ID) 
+	       WHEN 14 THEN (SELECT P.PART_CODE FROM HS_BASIC_PART P WHERE P.PART_ID=T.DATA_ID) 
+	       WHEN 15 THEN (SELECT C.CUSTOMER_CODE FROM HS_BASIC_CUSTOMER C WHERE C.CUSTOMER_ID=T.DATA_ID ) 
+	       ELSE (SELECT S.SITE_CODE FROM HS_BASIC_SITE S WHERE S.SITE_ID=T.DATA_ID ) END ) AS REMARK,     
+	       CREATED_BY,
+	       CREATED_TIME,
+	       MODIFIED_BY,
+	       MODIFIED_TIME
+		FROM hs_fin_account T 
+		<include refid="likeWhere"/>
+		ORDER BY CREATED_TIME  				
+	</select>	
+	
+	<select id="getAccountBySiteId" parameterClass="java.util.Map" resultClass="java.lang.Long">
+		SELECT ACCOUNT_ID 	FROM hs_fin_account
+		<include refid="AccountAll"/>
+	</select>
+	
+	<!-- 根据开户行ID、开户户名ID和帐户类型查询实际余额 -->
+	<select id="getBalance" parameterClass="java.util.Map" resultClass="double">
+		SELECT BALANCE FROM hs_fin_account where CENTER_ID = #siteId# and DATA_ID = #dataId# 
+		AND ACCOUNT_TYPE_ID = #accountTypeId# AND ACCOUNT_STATUS in (1,0)  
+	</select>
+	
+	<!-- 根据开户户名ID和帐户类型查询账户信息 -->
+	<select id="queryAccountByDateIdAndTypeId" parameterClass="java.util.Map" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="AccountSql" /> 
+		FROM 
+			hs_fin_account 
+		where 
+			DATA_ID = #dataId# and ACCOUNT_TYPE_ID = #accountTypeId# 
+			AND ACCOUNT_STATUS in (1,0) 
+	</select>
+	
+	<select id="queryAccountName" parameterClass="map"	resultClass="Fin_Account">
+	   SELECT  T.ACCOUNT_ID AS ACCOUNTID,T.DATA_ID AS DATAID,T.ACCOUNT_TYPE_ID AS accountTypeId,
+	   CASE T.ACCOUNT_TYPE_ID 
+       WHEN 13 THEN (SELECT E.EMPLOYEE_NAME FROM HS_BASIC_EMPLOYEE E WHERE E.EMPLOYEE_ID=T.DATA_ID) 
+       WHEN 14 THEN (SELECT P.PART_NAME FROM HS_BASIC_PART P WHERE P.PART_ID=T.DATA_ID) 
+       WHEN 15 THEN (SELECT C.CUSTOMER_NAME FROM HS_BASIC_CUSTOMER C WHERE C.CUSTOMER_ID=T.DATA_ID ) 
+       ELSE (SELECT S.SITE_NAME FROM HS_BASIC_SITE S WHERE S.SITE_ID=T.DATA_ID ) END DATANAME 
+		FROM hs_fin_account t
+		<dynamic prepend="WHERE" >
+			<isNotEmpty prepend="AND" property="accountTypeId">
+		             ACCOUNT_TYPE_ID = #accountTypeId#
+		    </isNotEmpty>
+			<isEmpty prepend="AND" property="accountTypeId">
+		             ACCOUNT_TYPE_ID IN (10,11,12) 
+		    </isEmpty>
+			<isNotEmpty prepend="AND" property="accountStatus" >
+				ACCOUNT_STATUS = #accountStatus#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="centerId">
+		             CENTER_ID = #centerId#
+		    </isNotEmpty>
+		</dynamic>	
+	</select>
+	
+	<!-- 根据开户行、开户户名、账户类型查询账户Id -->
+	<select id="getAccountIdByMap" parameterClass="java.util.Map" resultClass="java.lang.Long">
+		SELECT 
+			ACCOUNT_ID 
+		FROM 
+			hs_fin_account
+		WHERE 
+			CENTER_ID = #centerId# AND DATA_ID = #dataId# 
+			AND ACCOUNT_TYPE_ID = #accountTypeId# AND 
+			<isEmpty property="accountStatus">
+				ACCOUNT_STATUS in (1,0) 
+			</isEmpty>
+			<isNotEmpty property="accountStatus">
+				ACCOUNT_STATUS = -1
+			</isNotEmpty>
+	</select>
+	<!-- 判断开户行下是否已经存在此帐号 -->
+	<select id="isExistsAccountVO" parameterClass="Fin_Account" resultClass="java.lang.Integer">
+		SELECT 
+			count(1) 
+		FROM 
+			hs_fin_account
+		WHERE 
+			 DATA_ID = #dataId# 
+			AND ACCOUNT_TYPE_ID = #accountTypeId# AND 
+			ACCOUNT_STATUS in (1,0) 
+	</select>
+	
+	<!-- 获取开户户名的普通、寄件、派件账户信息 -->
+	<select id="queryAccountByDataId" parameterClass="long" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="AccountSql" /> 
+		FROM 
+			hs_fin_account 
+		where 
+			DATA_ID = #dataId# and ACCOUNT_TYPE_ID in (10,11,12) 
+			AND ACCOUNT_STATUS in (1,0)  
+		ORDER BY ACCOUNT_TYPE_ID
+	</select>
+	
+	<!-- 获取当前网点余额信息 -->
+	<select id="getAmountBySiteId" parameterClass="java.util.Map" resultClass="Fin_Account">
+		SELECT 
+			BALANCE AS balance, ALARM_BALANCE AS alarmBalance ,LOCK_BALANCE lockBalance
+		FROM 
+			(SELECT 
+				BALANCE, ALARM_BALANCE,LOCK_BALANCE
+			FROM 
+				hs_fin_account 
+			WHERE 
+				DATA_ID = #siteId# AND ACCOUNT_TYPE_ID = #accountTypeId# AND ACCOUNT_STATUS in (1,0)  
+			ORDER BY CREATED_TIME DESC) 
+		WHERE ROWNUM=1
+	</select>
+	
+	<!-- 安能财付通充值查询帐号路由 -->
+	<select id="queryAccountsRoute" parameterClass="map" resultClass="Fin_Account" >
+		select a.account_id as accountId, a.center_id as centerId, 
+			a.data_id as dataId 
+		  from hs_basic_site_route_ex b
+		  left join hs_fin_account a
+		    on b.site_id_parent = a.center_id
+		   and b.site_id_son = a.data_id
+		   and a.account_type_id = #accountTypeId# 
+		   and a.account_status=1 
+		 where b.site_id = #topUpSite#
+		 	<isEqual property="collectionSite"  compareValue="1625" >
+		 		 and b.route_type &lt;= 4
+		 	</isEqual>
+		 	<isNotEqual  property="collectionSite"  compareValue="1625"  >
+		   and b.route_order &lt;
+		       (select min(x.route_order)
+		          from hs_basic_site_route_ex x
+		         where x.site_id = #topUpSite#
+		           and exists (select 1
+		                  from hs_basic_site_route_ex y
+		                 where y.site_id = #collectionSite#
+		                   and y.site_id_son = x.site_id_son))
+		 	</isNotEqual>
+		  order by b.route_order desc
+	</select>
+	
+	
+</sqlMap>

@@ -1,0 +1,1186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Opt_OrdOrderVO">
+	<typeAlias alias="ordOrder" type="com.chengfeng.ne.opt.orders.domain.OrdOrderVO" />
+
+	<typeAlias alias="homeOrder"
+		type="com.chengfeng.ne.opt.orders.domain.HomeOrdersVO" />
+	<resultMap class="com.chengfeng.ne.opt.orders.domain.OrdOrderVO"
+		id="BaseResultMap">
+		<result column="ORDER_ID" property="orderId" />
+		<result column="ORDER_NO" property="orderNo" />
+		<result column="EC_ID" property="ecId" />
+		<result column="EWB_NO" property="ewbNo" />
+		<result column="LOGISTIC_NO" property="logisticNo" />
+		<result column="SEND_SITE_ID" property="sendSiteId" />
+		<result column="DISPATCH_SITE_ID" property="dispatchSiteId" />
+		<result column="ORDER_STATUS" property="orderStatus" />
+		<result column="TOTAL_PIECE" property="totalPiece" />
+		<result column="TOTAL_WEIGHT" property="totalWeight" />
+		<result column="TOTAL_VOL" property="totalVol" />
+		<result column="PAY_SIDE_ID" property="paySideId" />
+		<result column="PAY_MODE_ID" property="payModeId" />
+		<result column="FREIGHT_CHARGE_1" property="freightCharge1" />
+		<result column="FREIGHT_CHARGE" property="freightCharge" />
+		<result column="INSURED_AMOUNT" property="insuredAmount" />
+		<result column="COD_CHARGE" property="codCharge" />
+		<result column="EC_WAREHOUSE_ID" property="ecWarehouseId" />
+		<result column="RECEIVE_FLAG" property="receiveFlag" />
+		<result column="SMS_FLAG" property="smsFlag" />
+		<result column="SERVICE_TYPE" property="serviceType" />
+		<result column="PACKAGE_FLAG" property="packageFlag" />
+		<result column="PACKAGE_DESC" property="packageDesc" />
+		<result column="EWB_FLAG" property="ewbFlag" />
+		<result column="RECEIVE_EMPLOYEE_ID" property="receiveEmployeeId" />
+		<result column="SEND_COMPANY_NAME" property="sendCompanyName" />
+		<result column="SEND_LINK_MAN" property="sendLinkMan" />
+		<result column="SEND_PHONE_SMS" property="sendPhoneSms" />
+		<result column="SEND_PHONE" property="sendPhone" />
+		<result column="SEND_ADDRESS" property="sendAddress" />
+		<result column="SEND_POSTCODE" property="sendPostcode" />
+		<result column="SEND_PROVINCE" property="sendProvince" />
+		<result column="SEND_CITY" property="sendCity" />
+		<result column="SEND_COUNTY" property="sendCounty" />
+		<result column="SEND_START_TIME" property="sendStartTime" />
+		<result column="SEND_END_TIME" property="sendEndTime" />
+		<result column="DISPATCH_COMPANY_NAME" property="dispatchCompanyName" />
+		<result column="DISPATCH_LINK_MAN" property="dispatchLinkMan" />
+		<result column="DISPATCH_PHONE_SMS" property="dispatchPhoneSms" />
+		<result column="DISPATCH_PHONE" property="dispatchPhone" />
+		<result column="DISPATCH_ADDRESS" property="dispatchAddress" />
+		<result column="DISPATCH_POSTCODE" property="dispatchPostcode" />
+		<result column="DISPATCH_PROVINCE" property="dispatchProvince" />
+		<result column="DISPATCH_CITY" property="dispatchCity" />
+		<result column="DISPATCH_COUNTY" property="dispatchCounty" />
+		<result column="DISPATCH_START_TIME" property="dispatchStartTime" />
+		<result column="DISPATCH_END_TIME" property="dispatchEndTime" />
+		<result column="CREATED_TIME" property="createdTime" />
+		<result column="MODIFIED_BY" property="modifiedBy" />
+		<result column="MODIFIED_TIME" property="modifiedTime" />
+		<result column="RD_STATUS" property="rdStatus" />
+		<result column="COUPON" property="coupon" />
+		<result column="RETURN_TIME" property="returnTime" />
+		<result column="RETURN_TARGET" property="returnTarget" />
+		<result column="SUB_ORDER_ID" property="subOrderId" />
+		<result property="memberType" column="MEMBER_TYPE"/>
+		
+		<!-- <result property="deliveryType" column="DELIVERY_TYPE"/>
+		<result property="dispartTime" column="DISPART_TIME"/>
+		<result property="dispatchTown" column="DISPATCH_TOWN"/>
+		<result property="inputDispatchSiteId" column="INPUT_DISPATCH_SITE_ID"/>
+		<result property="inputSendSiteId" column="INPUT_SEND_SITE_ID"/>
+		<result property="orderBizType" column="ORDER_BIZ_TYPE"/>
+		<result property="sellerid" column="SELLERID"/>
+		<result property="sendTown" column="SEND_TOWN"/> -->
+	</resultMap>
+
+	<resultMap extends="BaseResultMap" class="ordOrder" id="ordOrderResultMap">
+		<result property="ordStatusVO" column="{orderId=ORDER_ID,orderStatus=ORDER_STATUS}"
+			select="Opt_OrdStatusVO.selectByPrimaryKey" />
+	</resultMap>
+	<!-- 揽件转运单 -->
+	<resultMap extends="BaseResultMap" class="ordOrder" id="plusResultMap">
+		<result property="ordItemsList" column="ORDER_ID"
+			select="Opt_OrdItemsVO.selectOrderItemsByOrderId" />
+		<result property="ordBankVO" column="ORDER_ID"
+			select="Opt_OrdBankVO.selectByPrimaryKey" />
+	</resultMap>
+	<resultMap class="com.chengfeng.ne.opt.orders.domain.OrdCountyVO"
+		id="BaseCountyMap">
+		<result column="SEND_PROVINCE" property="sendProvince" />
+		<result column="SEND_CITY" property="sendCity" />
+		<result column="SEND_COUNTY" property="sendCounty" />
+		<result column="SEND_SITE_ID" property="sendSiteId" />
+		<result column="COUNT" property="count" />
+	</resultMap>
+	<resultMap class="com.chengfeng.ne.opt.orders.domain.OrdCountyVO"
+		id="BaseCountyNoMap">
+		<result column="SEND_PROVINCE" property="sendProvince" />
+		<result column="SEND_CITY" property="sendCity" />
+		<result column="SEND_COUNTY" property="sendCounty" />
+	</resultMap>
+	<resultMap class="com.chengfeng.ne.opt.orders.domain.OrdMetaVO"
+		id="BaseMetaMap">
+		<result column="area_name" property="areaName" />
+		<result column="send_province" property="sendProvince" />
+		<result column="send_city" property="sendCity" />
+		<result column="arname" property="arName" />
+		<result column="yingshou" property="yingShou" />
+		<result column="jiedanchenggong" property="jieDanChengGong" />
+		<result column="chaoshijiedan" property="chaoShiJieDan" />
+		<result column="weijiedan" property="weiJieDan" />
+		<result column="jiedanshibai" property="jieDanShiBai" />
+		<result column="lanjianchenggong" property="lanJianChengGong" />
+		<result column="chaoshilanjian" property="chaoShiLanJian" />
+		<result column="weiLanJian" property="weiLanJian" />
+		<result column="lanjianshibai" property="lanJianShiBai" />
+		<result column="paijianchenggong" property="paiJianChengGong" />
+		<result column="weiqianshou" property="weiQianShou" />
+		<result column="ludan" property="luDan" />
+		<result column="weiludan" property="weiLuDan" />
+		<result column="send_site_id" property="sendSiteId" />
+	</resultMap>
+
+	<!-- 首页订单返回结果集 -->
+	<resultMap class="homeOrder" id="HomeOrdersResult">
+		<result property="sendSiteId" column="send_site_id" />
+		<result property="day" column="created_time" />
+		<result property="waitOrder" column="waitOrder" />
+		<result property="fialdOrder" column="fialdOrder" />
+		<result property="totalOrder" column="totalOrder" />
+	</resultMap>
+
+	<sql id="BaseColumnList">
+		ORDER_ID, ORDER_NO, EC_ID, EWB_NO, LOGISTIC_NO, SEND_SITE_ID, DISPATCH_SITE_ID,
+		ORDER_STATUS,
+		TOTAL_PIECE, TOTAL_WEIGHT, TOTAL_VOL, PAY_SIDE_ID, PAY_MODE_ID, FREIGHT_CHARGE_1,
+		FREIGHT_CHARGE, INSURED_AMOUNT, COD_CHARGE, EC_WAREHOUSE_ID,
+		RECEIVE_FLAG, SMS_FLAG,
+		SERVICE_TYPE, PACKAGE_FLAG, PACKAGE_DESC, EWB_FLAG, RECEIVE_EMPLOYEE_ID,
+		SEND_COMPANY_NAME,
+		SEND_LINK_MAN, SEND_PHONE_SMS, SEND_PHONE, SEND_ADDRESS, SEND_POSTCODE,
+		SEND_PROVINCE,
+		SEND_CITY, SEND_COUNTY, SEND_START_TIME, SEND_END_TIME, DISPATCH_COMPANY_NAME,
+		DISPATCH_LINK_MAN,
+		DISPATCH_PHONE_SMS, DISPATCH_PHONE, DISPATCH_ADDRESS, DISPATCH_POSTCODE,
+		DISPATCH_PROVINCE,
+		DISPATCH_CITY, DISPATCH_COUNTY, DISPATCH_START_TIME, DISPATCH_END_TIME,
+		CREATED_TIME,
+		MODIFIED_BY, MODIFIED_TIME, RD_STATUS,
+		COUPON,RETURN_TIME,RETURN_TARGET,SUB_ORDER_ID,MEMBER_TYPE 
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterClass="com.chengfeng.ne.opt.orders.domain.OrdOrderVO">
+		select
+		<include refid="BaseColumnList" />
+		from HS_ORD_ORDER
+		where ORDER_ID = #orderId#
+	</select>
+	<select id="selectByOrderNo" parameterClass="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="BaseColumnList" />
+		from HS_ORD_ORDER
+		where ORDER_NO = #orderNo# and EC_ID=63 and RD_STATUS=1
+	</select>
+	<select id="selectByOrderId" parameterClass="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="BaseColumnList" />
+		from HS_ORD_ORDER
+		where ORDER_ID = #orderId#
+	</select>
+	<!-- 拦件转运单 -->
+	<select id="queryByOrderId" parameterClass="java.lang.Long"
+		resultMap="plusResultMap">
+		select
+		<include refid="BaseColumnList" />
+		from HS_ORD_ORDER
+		where ORDER_ID = #orderId#
+	</select>
+	<select id="selectByEwbNo" parameterClass="java.lang.String"
+		resultMap="BaseResultMap">
+		SELECT
+			<include refid="BaseColumnList" />
+		FROM 
+			HS_ORD_ORDER
+		WHERE 
+			EWB_NO = #ewbNo# 
+		ORDER BY CREATED_TIME DESC
+	</select>
+	<insert id="insert" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdOrderVO">
+		<selectKey resultClass="long" keyProperty="orderId">
+			SELECT SEQ_ORD_ORDER_ID.nextval AS orderId FROM dual
+		</selectKey>
+		insert into HS_ORD_ORDER (ORDER_ID, ORDER_NO, EC_ID, EWB_NO,
+		LOGISTIC_NO,
+		SEND_SITE_ID, DISPATCH_SITE_ID, ORDER_STATUS, TOTAL_PIECE,
+		TOTAL_WEIGHT, TOTAL_VOL, PAY_SIDE_ID, PAY_MODE_ID,
+		FREIGHT_CHARGE_1, FREIGHT_CHARGE, INSURED_AMOUNT, COD_CHARGE,
+		EC_WAREHOUSE_ID, RECEIVE_FLAG, SMS_FLAG, SERVICE_TYPE,
+		PACKAGE_FLAG, PACKAGE_DESC, EWB_FLAG, RECEIVE_EMPLOYEE_ID,
+		SEND_COMPANY_NAME, SEND_LINK_MAN, SEND_PHONE_SMS, SEND_PHONE,
+		SEND_ADDRESS, SEND_POSTCODE, SEND_PROVINCE, SEND_CITY,
+		SEND_COUNTY, SEND_START_TIME, SEND_END_TIME, DISPATCH_COMPANY_NAME,
+		DISPATCH_LINK_MAN, DISPATCH_PHONE_SMS, DISPATCH_PHONE,
+		DISPATCH_ADDRESS, DISPATCH_POSTCODE, DISPATCH_PROVINCE,
+		DISPATCH_CITY, DISPATCH_COUNTY, DISPATCH_START_TIME,
+		DISPATCH_END_TIME, CREATED_TIME, MODIFIED_BY, MODIFIED_TIME,
+		RD_STATUS, COUPON,SUB_ORDER_ID,
+		DELIVERY_TYPE,DISPART_TIME,DISPATCH_TOWN,INPUT_DISPATCH_SITE_ID,
+       INPUT_SEND_SITE_ID,ORDER_BIZ_TYPE,RETURN_TARGET,RETURN_TIME,SELLERID,SEND_TOWN,OLD_ORDER_ID)
+		values (#orderId#, #orderNo#, #ecId#, #ewbNo:VARCHAR#, #logisticNo#,
+		#sendSiteId#, #dispatchSiteId#, #orderStatus#, #totalPiece#,
+		#totalWeight#, #totalVol#, #paySideId#, #payModeId#,
+		#freightCharge1#, #freightCharge#, #insuredAmount#, #codCharge#,
+		#ecWarehouseId#, #receiveFlag#, #smsFlag#, #serviceType#,
+		#packageFlag#, #packageDesc#, #ewbFlag#, #receiveEmployeeId#,
+		#sendCompanyName#, #sendLinkMan#, #sendPhoneSms#, #sendPhone#,
+		#sendAddress#, #sendPostcode#, #sendProvince#, #sendCity#,
+		#sendCounty#, #sendStartTime#, #sendEndTime#, #dispatchCompanyName#,
+		#dispatchLinkMan#, #dispatchPhoneSms#, #dispatchPhone#,
+		#dispatchAddress#, #dispatchPostcode#, #dispatchProvince#,
+		#dispatchCity#, #dispatchCounty#, #dispatchStartTime#,
+		#dispatchEndTime#, #createdTime#, #modifiedBy#, #modifiedTime#,
+		#rdStatus#, #coupon#,#subOrderId#,
+		#deliveryType#,#dispartTime#,#dispatchTown#,#inputDispatchSiteId#,
+		#inputSendSiteId#,#orderBizType#,#returnTarget#,#returnTime#,#sellerid#,#sendTown#,#oldOrderId#)
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdOrderVO">
+		update HS_ORD_ORDER
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="orderNo">
+				ORDER_NO = #orderNo:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="ecId">
+				EC_ID = #ecId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="ewbNo">
+				EWB_NO = #ewbNo:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="logisticNo">
+				LOGISTIC_NO = #logisticNo:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendSiteId">
+				SEND_SITE_ID = #sendSiteId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchSiteId">
+				DISPATCH_SITE_ID = #dispatchSiteId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="orderStatus">
+				ORDER_STATUS = #orderStatus:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="totalPiece">
+				TOTAL_PIECE = #totalPiece:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="totalWeight">
+				TOTAL_WEIGHT = #totalWeight:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="totalVol">
+				TOTAL_VOL = #totalVol:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="paySideId">
+				PAY_SIDE_ID = #paySideId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="payModeId">
+				PAY_MODE_ID = #payModeId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="freightCharge1">
+				FREIGHT_CHARGE_1 = #freightCharge1:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="freightCharge">
+				FREIGHT_CHARGE = #freightCharge:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="insuredAmount">
+				INSURED_AMOUNT = #insuredAmount:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="codCharge">
+				COD_CHARGE = #codCharge:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="ecWarehouseId">
+				EC_WAREHOUSE_ID = #ecWarehouseId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="receiveFlag">
+				RECEIVE_FLAG = #receiveFlag:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="smsFlag">
+				SMS_FLAG = #smsFlag:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="serviceType">
+				SERVICE_TYPE = #serviceType:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="packageFlag">
+				PACKAGE_FLAG = #packageFlag:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="packageDesc">
+				PACKAGE_DESC = #packageDesc:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="ewbFlag">
+				EWB_FLAG = #ewbFlag:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="receiveEmployeeId">
+				RECEIVE_EMPLOYEE_ID = #receiveEmployeeId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="sendCompanyName">
+				SEND_COMPANY_NAME = #sendCompanyName:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendLinkMan">
+				SEND_LINK_MAN = #sendLinkMan:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendPhoneSms">
+				SEND_PHONE_SMS = #sendPhoneSms:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendPhone">
+				SEND_PHONE = #sendPhone:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendAddress">
+				SEND_ADDRESS = #sendAddress:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendPostcode">
+				SEND_POSTCODE = #sendPostcode:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendProvince">
+				SEND_PROVINCE = #sendProvince:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendCity">
+				SEND_CITY = #sendCity:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendCounty">
+				SEND_COUNTY = #sendCounty:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendStartTime">
+				SEND_START_TIME = #sendStartTime:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendEndTime">
+				SEND_END_TIME = #sendEndTime:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchCompanyName">
+				DISPATCH_COMPANY_NAME = #dispatchCompanyName:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchLinkMan">
+				DISPATCH_LINK_MAN = #dispatchLinkMan:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchPhoneSms">
+				DISPATCH_PHONE_SMS = #dispatchPhoneSms:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchPhone">
+				DISPATCH_PHONE = #dispatchPhone:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchAddress">
+				DISPATCH_ADDRESS = #dispatchAddress:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchPostcode">
+				DISPATCH_POSTCODE = #dispatchPostcode:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchProvince">
+				DISPATCH_PROVINCE = #dispatchProvince:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchCity">
+				DISPATCH_CITY = #dispatchCity:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchCounty">
+				DISPATCH_COUNTY = #dispatchCounty:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchStartTime">
+				DISPATCH_START_TIME = #dispatchStartTime:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchEndTime">
+				DISPATCH_END_TIME = #dispatchEndTime:VARCHAR#
+			</isNotNull>
+
+			<isNotNull prepend="," property="modifiedBy">
+				MODIFIED_BY = #modifiedBy:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="modifiedTime">
+				MODIFIED_TIME = #modifiedTime:DATE#
+			</isNotNull>
+			<isNotNull prepend="," property="rdStatus">
+				RD_STATUS = #rdStatus:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="coupon">
+				COUPON = #coupon:VARCHAR#
+			</isNotNull>
+			<isNotEmpty prepend="," property="subOrderId">
+				SUB_ORDER_ID = #subOrderId:VARCHAR#
+			</isNotEmpty>
+		</dynamic>
+		where ORDER_ID = #orderId:DECIMAL#
+		 <isNotEmpty prepend=" and " property="ordStatuId">
+				SEND_SITE_ID = #ordStatuId#
+		</isNotEmpty>
+		 
+	</update>
+
+	<update id="updateOrderByOrderNo" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdOrderVO">
+		update HS_ORD_ORDER
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="orderNo">
+				ORDER_NO = #orderNo:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="ecId">
+				EC_ID = #ecId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="ewbNo">
+				EWB_NO = #ewbNo:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="logisticNo">
+				LOGISTIC_NO = #logisticNo:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendSiteId">
+				SEND_SITE_ID = #sendSiteId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchSiteId">
+				DISPATCH_SITE_ID = #dispatchSiteId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="orderStatus">
+				ORDER_STATUS = #orderStatus:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="totalPiece">
+				TOTAL_PIECE = #totalPiece:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="totalWeight">
+				TOTAL_WEIGHT = #totalWeight:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="totalVol">
+				TOTAL_VOL = #totalVol:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="paySideId">
+				PAY_SIDE_ID = #paySideId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="payModeId">
+				PAY_MODE_ID = #payModeId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="freightCharge1">
+				FREIGHT_CHARGE_1 = #freightCharge1:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="freightCharge">
+				FREIGHT_CHARGE = #freightCharge:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="insuredAmount">
+				INSURED_AMOUNT = #insuredAmount:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="codCharge">
+				COD_CHARGE = #codCharge:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="ecWarehouseId">
+				EC_WAREHOUSE_ID = #ecWarehouseId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="receiveFlag">
+				RECEIVE_FLAG = #receiveFlag:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="smsFlag">
+				SMS_FLAG = #smsFlag:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="serviceType">
+				SERVICE_TYPE = #serviceType:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="packageFlag">
+				PACKAGE_FLAG = #packageFlag:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="packageDesc">
+				PACKAGE_DESC = #packageDesc:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="ewbFlag">
+				EWB_FLAG = #ewbFlag:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="receiveEmployeeId">
+				RECEIVE_EMPLOYEE_ID = #receiveEmployeeId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="sendCompanyName">
+				SEND_COMPANY_NAME = #sendCompanyName:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendLinkMan">
+				SEND_LINK_MAN = #sendLinkMan:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendPhoneSms">
+				SEND_PHONE_SMS = #sendPhoneSms:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendPhone">
+				SEND_PHONE = #sendPhone:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendAddress">
+				SEND_ADDRESS = #sendAddress:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendPostcode">
+				SEND_POSTCODE = #sendPostcode:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendProvince">
+				SEND_PROVINCE = #sendProvince:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendCity">
+				SEND_CITY = #sendCity:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendCounty">
+				SEND_COUNTY = #sendCounty:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendStartTime">
+				SEND_START_TIME = #sendStartTime:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="sendEndTime">
+				SEND_END_TIME = #sendEndTime:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchCompanyName">
+				DISPATCH_COMPANY_NAME = #dispatchCompanyName:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchLinkMan">
+				DISPATCH_LINK_MAN = #dispatchLinkMan:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchPhoneSms">
+				DISPATCH_PHONE_SMS = #dispatchPhoneSms:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchPhone">
+				DISPATCH_PHONE = #dispatchPhone:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchAddress">
+				DISPATCH_ADDRESS = #dispatchAddress:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchPostcode">
+				DISPATCH_POSTCODE = #dispatchPostcode:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchProvince">
+				DISPATCH_PROVINCE = #dispatchProvince:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchCity">
+				DISPATCH_CITY = #dispatchCity:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchCounty">
+				DISPATCH_COUNTY = #dispatchCounty:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchStartTime">
+				DISPATCH_START_TIME = #dispatchStartTime:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="dispatchEndTime">
+				DISPATCH_END_TIME = #dispatchEndTime:VARCHAR#
+			</isNotNull>
+
+			<isNotNull prepend="," property="modifiedBy">
+				MODIFIED_BY = #modifiedBy:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="modifiedTime">
+				MODIFIED_TIME = #modifiedTime:DATE#
+			</isNotNull>
+			<isNotNull prepend="," property="rdStatus">
+				RD_STATUS = #rdStatus:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="coupon">
+				COUPON = #coupon:VARCHAR#
+			</isNotNull>
+			<isNotEmpty prepend="," property="subOrderId">
+				SUB_ORDER_ID = #subOrderId:VARCHAR#
+			</isNotEmpty>
+		</dynamic>
+		where ORDER_ID = #orderId:DECIMAL#
+	</update>
+	<update id="updateByPrimaryKey" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdOrderVO">
+		update HS_ORD_ORDER
+		set ORDER_NO = #orderNo:VARCHAR#,
+		EC_ID = #ecId:DECIMAL#,
+		EWB_NO = #ewbNo:VARCHAR#,
+		LOGISTIC_NO = #logisticNo:VARCHAR#,
+		SEND_SITE_ID = #sendSiteId:DECIMAL#,
+		DISPATCH_SITE_ID = #dispatchSiteId:DECIMAL#,
+		ORDER_STATUS = #orderStatus:DECIMAL#,
+		TOTAL_PIECE = #totalPiece:DECIMAL#,
+		TOTAL_WEIGHT = #totalWeight:DECIMAL#,
+		TOTAL_VOL = #totalVol:DECIMAL#,
+		PAY_SIDE_ID = #paySideId:DECIMAL#,
+		PAY_MODE_ID = #payModeId:DECIMAL#,
+		FREIGHT_CHARGE_1 = #freightCharge1:DECIMAL#,
+		FREIGHT_CHARGE = #freightCharge:DECIMAL#,
+		INSURED_AMOUNT = #insuredAmount:DECIMAL#,
+		COD_CHARGE = #codCharge:DECIMAL#,
+		EC_WAREHOUSE_ID = #ecWarehouseId:DECIMAL#,
+		RECEIVE_FLAG = #receiveFlag:DECIMAL#,
+		SMS_FLAG = #smsFlag:DECIMAL#,
+		SERVICE_TYPE = #serviceType:DECIMAL#,
+		PACKAGE_FLAG = #packageFlag:DECIMAL#,
+		PACKAGE_DESC = #packageDesc:VARCHAR#,
+		EWB_FLAG = #ewbFlag:DECIMAL#,
+		RECEIVE_EMPLOYEE_ID = #receiveEmployeeId:DECIMAL#,
+		SEND_COMPANY_NAME = #sendCompanyName:VARCHAR#,
+		SEND_LINK_MAN = #sendLinkMan:VARCHAR#,
+		SEND_PHONE_SMS = #sendPhoneSms:VARCHAR#,
+		SEND_PHONE = #sendPhone:VARCHAR#,
+		SEND_ADDRESS = #sendAddress:VARCHAR#,
+		SEND_POSTCODE = #sendPostcode:VARCHAR#,
+		SEND_PROVINCE = #sendProvince:VARCHAR#,
+		SEND_CITY = #sendCity:VARCHAR#,
+		SEND_COUNTY = #sendCounty:VARCHAR#,
+		SEND_START_TIME = #sendStartTime:VARCHAR#,
+		SEND_END_TIME = #sendEndTime:VARCHAR#,
+		DISPATCH_COMPANY_NAME = #dispatchCompanyName:VARCHAR#,
+		DISPATCH_LINK_MAN = #dispatchLinkMan:VARCHAR#,
+		DISPATCH_PHONE_SMS = #dispatchPhoneSms:VARCHAR#,
+		DISPATCH_PHONE = #dispatchPhone:VARCHAR#,
+		DISPATCH_ADDRESS = #dispatchAddress:VARCHAR#,
+		DISPATCH_POSTCODE = #dispatchPostcode:VARCHAR#,
+		DISPATCH_PROVINCE = #dispatchProvince:VARCHAR#,
+		DISPATCH_CITY = #dispatchCity:VARCHAR#,
+		DISPATCH_COUNTY = #dispatchCounty:VARCHAR#,
+		DISPATCH_START_TIME = #dispatchStartTime:VARCHAR#,
+		DISPATCH_END_TIME = #dispatchEndTime:VARCHAR#,
+		MODIFIED_BY = #modifiedBy:DECIMAL#,
+		MODIFIED_TIME = #modifiedTime:DATE#,
+		RD_STATUS = #rdStatus:DECIMAL#,
+		COUPON = #coupon:VARCHAR#,
+		SUB_ORDER_ID = #subOrderId:VARCHAR#
+		where ORDER_ID = #orderId:DECIMAL#
+	</update>
+
+	<sql id="selectColumnList">
+		o.ORDER_ID, o.ORDER_NO, o.EC_ID, o.EWB_NO, LOGISTIC_NO, SEND_SITE_ID,
+		DISPATCH_SITE_ID, o.ORDER_STATUS,
+		TOTAL_PIECE, TOTAL_WEIGHT, TOTAL_VOL, PAY_SIDE_ID, PAY_MODE_ID, FREIGHT_CHARGE_1,
+		FREIGHT_CHARGE, INSURED_AMOUNT, COD_CHARGE, EC_WAREHOUSE_ID,
+		RECEIVE_FLAG, SMS_FLAG,
+		SERVICE_TYPE, PACKAGE_FLAG, PACKAGE_DESC, EWB_FLAG, RECEIVE_EMPLOYEE_ID,
+		SEND_COMPANY_NAME,
+		SEND_LINK_MAN, SEND_PHONE_SMS, SEND_PHONE, SEND_ADDRESS, SEND_POSTCODE,
+		SEND_PROVINCE,
+		SEND_CITY, SEND_COUNTY, SEND_START_TIME, SEND_END_TIME, DISPATCH_COMPANY_NAME,
+		DISPATCH_LINK_MAN,
+		DISPATCH_PHONE_SMS, DISPATCH_PHONE, DISPATCH_ADDRESS, DISPATCH_POSTCODE,
+		DISPATCH_PROVINCE,
+		DISPATCH_CITY, DISPATCH_COUNTY, DISPATCH_START_TIME, DISPATCH_END_TIME,
+		o.CREATED_TIME,
+		MODIFIED_BY, MODIFIED_TIME, RD_STATUS,
+		COUPON,RETURN_TIME,RETURN_TARGET,SUB_ORDER_ID,MEMBER_TYPE
+	</sql>
+
+	<update id="updateStatusByOrderNo" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdOrderVO">
+		update HS_ORD_ORDER
+		set
+		ORDER_STATUS = #orderStatus#
+		where ORDER_NO = #orderNo# and EC_ID=63 and RD_STATUS=1
+	</update>
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isEqual property="statusType" compareValue="0" prepend="AND">
+				o.ORDER_STATUS=1
+			</isEqual>
+			<isEqual property="statusType" compareValue="1" prepend="AND">
+				o.ORDER_STATUS=0
+			</isEqual>
+			<isEqual property="statusType" compareValue="2" prepend="AND">
+				o.ORDER_STATUS in(0,1)
+			</isEqual>
+			<isNotEmpty prepend="AND" property="ecId">
+				o.EC_ID=#ecId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="ewbNoList">
+				o.EWB_NO IN
+				<iterate open="(" close=")" conjunction="," property="ewbNoList">
+					#ewbNoList[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="logisticNoList">
+				o.ORDER_NO IN
+				<iterate open="(" close=")" conjunction="," property="logisticNoList">
+					#logisticNoList[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="startTime">
+				o.CREATED_TIME >= #startTime# + 0
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="endTime">
+				o.CREATED_TIME &lt;= #endTime# + 0
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="dispatchSiteId">
+				o.DISPATCH_SITE_ID= #dispatchSiteId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="orderStatus">
+				o.ORDER_STATUS= #orderStatus#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="orderSource">
+				o.EC_ID= #orderSource#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="sendProvince">
+				o.SEND_PROVINCE= #sendProvince#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="cancelReason">
+				s.ORDER_CANCEL_ID= #cancelReason#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="handlerCancel">
+				o.ORDER_STATUS= -1
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="sendCust">
+				o.SEND_LINK_MAN= #sendCust#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="sendAddr">
+				o.SEND_ADDRESS LIKE '%'||#sendAddr#||'%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="arriveCust">
+				o.DISPATCH_LINK_MAN= #arriveCust#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="arrvieAddr">
+				o.DISPATCH_ADDRESS LIKE '%'||#arrvieAddr#||'%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="subOrderId">
+				o.SUB_ORDER_ID = #subOrderId#
+			</isNotEmpty>
+
+			<isNotEmpty prepend="AND" property="county">
+				o.SEND_COUNTY LIKE '%'||#county#||'%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="county">
+				o.SEND_PROVINCE LIKE '%'||#province#||'%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="county">
+				o.SEND_CITY LIKE '%'||#city#||'%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="nonparts">
+				o.SEND_SITE_ID=-1
+			</isNotEmpty>
+
+			<!-- 已转单 -->
+			<isEmpty property="isTrunEwbNo">
+				<isNotEmpty prepend="AND" property="tookwaybill">
+					o.SEND_SITE_ID<![CDATA[<>]]>-1
+					AND o.ORDER_STATUS=3
+				</isNotEmpty>
+				<isNotEmpty prepend="and" property="tookwaySiteId">
+					o.SEND_SITE_ID = #tookwaySiteId#
+				</isNotEmpty>
+			</isEmpty>
+			<isNotEmpty property="isTrunEwbNo">
+				<isNotEmpty prepend="AND" property="tookwaybill">
+					o.SEND_SITE_ID<![CDATA[<>]]>-1
+					AND o.ORDER_STATUS=5
+				</isNotEmpty>
+				<isNotEmpty prepend="and" property="tookwaySiteId">
+					o.SEND_SITE_ID = #tookwaySiteId#
+				</isNotEmpty>
+			</isNotEmpty>
+
+
+			<isNotEmpty prepend="AND" property="orderNo">
+				o.ORDER_NO=#orderNo#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="status">
+				o.SEND_SITE_ID<![CDATA[<>]]>-1
+				AND o.ORDER_STATUS=1
+			</isNotEmpty>
+			<isNotEmpty property="TimeBegin" prepend="AND">
+				o.CREATED_TIME >= #TimeBegin# +0
+			</isNotEmpty>
+			<isNotEmpty property="TimeEnd" prepend="AND">
+				o.CREATED_TIME <![CDATA[<=]]> 
+				#TimeEnd# +0
+			</isNotEmpty>
+			<isEqual property="siteType" compareValue="0" prepend="AND">
+				o.SEND_SITE_ID<![CDATA[<>]]>-1
+				AND o.ORDER_STATUS in(0,1)
+			</isEqual>
+			<isEqual property="siteType" compareValue="1" prepend="AND">
+				o.ORDER_STATUS=0
+			</isEqual>
+			<isNotEmpty prepend="and" property="siteId">
+				o.SEND_SITE_ID = #siteId#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="orderNo">
+				o.ORDER_NO = #orderNo#
+			</isNotEmpty>
+			<!-- <isNotEmpty property="county" prepend="AND">
+				o.SEND_COUNTY = #county#
+			</isNotEmpty> -->
+			<isNotEmpty property="province" prepend="AND">
+				o.SEND_PROVINCE = #province#
+			</isNotEmpty>
+			<isNotEmpty property="city" prepend="AND">
+				o.SEND_CITY = #city#
+			</isNotEmpty>
+			<isNotEmpty property="overTime" prepend="AND">
+				(sysdate -
+				o.CREATED_TIME)*24 > #overTime#
+			</isNotEmpty>
+			<isNotEmpty property="overDay" prepend="AND">
+				sysdate-o.CREATED_TIME>3
+			</isNotEmpty>
+			<isNotEmpty property="beginDay" prepend="AND">
+				sysdate-o.CREATED_TIME<![CDATA[<]]>3
+			</isNotEmpty>
+			<isNotEmpty property="orderStatus" prepend="AND">
+				o.ORDER_STATUS=#orderStatus#
+			</isNotEmpty>
+			<!-- <isNotEmpty property="areaName" prepend="AND"> o.send_site_id=(select 
+				distinct x.send_site_id from hs_ord_order x join hs_basic_site_detail y on 
+				x.send_site_id=y.site_id join hs_basic_area z on z.area_id=y.area_id where 
+				z.area_name=#areaName#) </isNotEmpty> -->
+			<isEqual property="ewbNOt" compareValue="0" prepend="AND">
+				o.EWB_NO!='0'
+			</isEqual>
+			<isEqual property="ewbNOt" compareValue="1" prepend="AND">
+				o.EWB_NO='0'
+			</isEqual>
+			<isNotEmpty property="centerCancelConditions" prepend=" AND ">
+				(
+				<isNotEmpty property="orderCenterStatus">
+					o.ORDER_STATUS = #orderCenterStatus#
+				</isNotEmpty>
+				<isEmpty property="orderCenterStatus">
+					o.ORDER_STATUS in(0,1,3)
+				</isEmpty>
+				<isNotEmpty property="centerHandler" prepend=" OR ">
+					o.ORDER_STATUS = -1
+				</isNotEmpty>
+				)
+			</isNotEmpty>
+
+			<isNotEmpty property="newCenterQueryStatus" prepend="and">
+				o.ORDER_STATUS IN
+				<iterate open="(" close=")" conjunction=","
+					property="newCenterQueryStatus">
+					#newCenterQueryStatus[]#
+				</iterate>
+			</isNotEmpty>
+			
+			<isNotEmpty property="memberType" prepend="and">
+				o.MEMBER_TYPE = #memberType# 
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<select id="queryPagedList" parameterClass="java.util.Map"
+		resultMap="ordOrderResultMap">
+		SELECT
+		ORDER_ID, 
+		ORDER_NO, 
+		EC_ID, 
+		EWB_NO, 
+		LOGISTIC_NO, 
+		SEND_SITE_ID, 
+		DISPATCH_SITE_ID,
+		ORDER_STATUS,
+		TOTAL_PIECE, 
+		TOTAL_WEIGHT, 
+		TOTAL_VOL, 
+		PAY_SIDE_ID, 
+		PAY_MODE_ID, 
+		FREIGHT_CHARGE_1,
+		FREIGHT_CHARGE, 
+		INSURED_AMOUNT, 
+		COD_CHARGE, 
+		EC_WAREHOUSE_ID,
+		RECEIVE_FLAG, 
+		SMS_FLAG,
+		SERVICE_TYPE, 
+		PACKAGE_FLAG, 
+		PACKAGE_DESC, 
+		EWB_FLAG, 
+		RECEIVE_EMPLOYEE_ID,
+		SEND_COMPANY_NAME,
+		SEND_LINK_MAN, 
+		SEND_PHONE_SMS, 
+		SEND_PHONE, 
+		SEND_ADDRESS, 
+		SEND_POSTCODE,
+		SEND_PROVINCE,
+		SEND_CITY, 
+		SEND_COUNTY, 
+		SEND_START_TIME, 
+		SEND_END_TIME, 
+		DISPATCH_COMPANY_NAME,
+		DISPATCH_LINK_MAN,
+		DISPATCH_PHONE_SMS, 
+		DISPATCH_PHONE, 
+		DISPATCH_ADDRESS, 
+		DISPATCH_POSTCODE,
+		DISPATCH_PROVINCE,
+		DISPATCH_CITY, 
+		DISPATCH_COUNTY, 
+		DISPATCH_START_TIME, 
+		DISPATCH_END_TIME,
+		CREATED_TIME,
+		MODIFIED_BY, 
+		MODIFIED_TIME, 
+		RD_STATUS,
+		COUPON,
+		RETURN_TIME,
+		RETURN_TARGET,
+		SUB_ORDER_ID,
+		MEMBER_TYPE
+		FROM
+		(SELECT
+		<include refid="selectColumnList" />
+		,
+		ROW_NUMBER() OVER(PARTITION BY o.ORDER_ID ORDER BY s.ORDER_STATUS DESC) AS r
+		FROM
+		HS_ORD_ORDER o INNER JOIN HS_ORD_STATUS s on o.ORDER_ID = s.ORDER_ID
+		<isNotEmpty property="orderEmp">
+			INNER JOIN HS_ORD_STATUS s1 ON o.ORDER_ID = s1.ORDER_ID AND s1.CREATED_BY=
+			#orderEmp# AND s1.ORDER_STATUS IN(1,2)
+		</isNotEmpty>
+		<isNotEmpty property="ironsEmp">
+			INNER JOIN HS_ORD_STATUS s2 ON o.ORDER_ID = s2.ORDER_ID AND s2.CREATED_BY=
+			#ironsEmp# AND s2.ORDER_STATUS in(3,4)
+		</isNotEmpty>
+		<isNotEmpty property="dispatchEmp">
+			INNER JOIN HS_ORD_STATUS s3 on o.ORDER_ID = s3.ORDER_ID AND s3.CREATED_BY=
+			#dispatchEmp# and s3.ORDER_STATUS IN(6,7) 
+		</isNotEmpty>
+		<isNotEmpty property="txtCancelEmp">
+			INNER JOIN HS_ORD_STATUS s4 on o.ORDER_ID = s4.ORDER_ID AND s4.CREATED_BY=
+			#txtCancelEmp# AND (s4.ORDER_STATUS = -1)
+		</isNotEmpty>
+		<include refid="dynamicWhere" />
+		)
+		WHERE r=1
+	</select>
+
+	<select id="queryPagedListNoParts" parameterClass="java.util.Map"
+		resultMap="ordOrderResultMap">
+		SELECT
+		<include refid="selectColumnList" />
+		from
+		HS_ORD_ORDER o
+		<include refid="dynamicWhere" />
+	</select>
+	<select id="recordCountNoParts" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM
+		HS_ORD_ORDER o
+		<include refid="dynamicWhere" />
+	</select>
+	<select id="recordCount" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM
+		(SELECT
+		<!-- <include refid="selectColumnList" />
+		, -->
+		ROW_NUMBER() OVER(PARTITION BY o.order_id ORDER BY s.order_status DESC) AS r
+		from
+		HS_ORD_ORDER o
+		INNER join hs_ord_status s on o.ORDER_ID = s.ORDER_ID
+		<isNotEmpty property="orderEmp">
+			INNER join hs_ord_status s1 on o.ORDER_ID = s1.ORDER_ID and s1.CREATED_BY=
+			#orderEmp# and (s1.ORDER_STATUS = 1 or s1.ORDER_STATUS =2)
+		</isNotEmpty>
+		<isNotEmpty property="ironsEmp">
+			INNER join hs_ord_status s2 on o.ORDER_ID = s2.ORDER_ID and s2.CREATED_BY=
+			#ironsEmp# and (s2.ORDER_STATUS = 3 or s2.ORDER_STATUS =4)
+		</isNotEmpty>
+		<isNotEmpty property="dispatchEmp">
+			INNER join hs_ord_status s3 on o.ORDER_ID = s3.ORDER_ID and s3.CREATED_BY=
+			#dispatchEmp# and (s3.ORDER_STATUS = 6 or s3.ORDER_STATUS =7)
+		</isNotEmpty>
+		<isNotEmpty property="txtCancelEmp">
+			INNER join hs_ord_status s4 on o.ORDER_ID = s4.ORDER_ID and s4.CREATED_BY=
+			#txtCancelEmp# and (s4.ORDER_STATUS = -1)
+		</isNotEmpty>
+		<include refid="dynamicWhere" />
+		)
+		WHERE r=1
+	</select>
+	<select id="queryCountyList" parameterClass="java.util.Map"
+		resultMap="BaseCountyNoMap">
+		select * from(
+		select
+		SEND_COUNTY,SEND_PROVINCE,SEND_CITY
+		from
+		HS_ORD_ORDER
+		where
+		SEND_COUNTY like '%'||#county#||'%' or
+		SEND_PROVINCE like '%'||#county#||'%' or
+		SEND_CITY like '%'||#county#||'%'
+		group by
+		SEND_COUNTY,SEND_PROVINCE,SEND_CITY having count(SEND_COUNTY)>=1
+		) where #num#>=rownum
+	</select>
+
+	<!-- 超时未处理 -->
+	<sql id="overTimeUntreatedWhere">
+		<dynamic prepend="where">
+			<isEqual property="statusType" compareValue="0" prepend="AND">
+				ORDER_STATUS=1
+			</isEqual>
+			<isEqual property="statusType" compareValue="1" prepend="AND">
+				ORDER_STATUS=0
+			</isEqual>
+			<isEqual property="statusType" compareValue="2" prepend="AND">
+				( ORDER_STATUS=0 or ORDER_STATUS=1 )
+			</isEqual>
+			<isNotEmpty property="overTime" prepend="AND">
+				(sysdate - CREATED_TIME)*24 > #overTime#
+			</isNotEmpty>
+			<isNotEmpty property="TimeBegin" prepend="AND">
+				CREATED_TIME >= #TimeBegin#+0
+			</isNotEmpty>
+			<isNotEmpty property="TimeEnd" prepend="AND">
+				CREATED_TIME <![CDATA[<=]]>
+				#TimeEnd#+0
+			</isNotEmpty>
+			<isNotEmpty property="county" prepend="AND">
+				SEND_COUNTY like '%'||#county#||'%'
+			</isNotEmpty>
+			<isNotEmpty property="province" prepend="AND">
+				SEND_PROVINCE like '%'||#province#||'%'
+			</isNotEmpty>
+			<isNotEmpty property="city" prepend="AND">
+				SEND_CITY like '%'||#city#||'%'
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<select id="queryPagedListForOverTimeUntreated" parameterClass="java.util.Map"
+		resultMap="BaseCountyMap">
+		select
+		send_province,
+		<isEqual property="check" compareValue="0"><!-- 按照区县、城市、省份、揽件网点 -->
+			send_city,send_county,SEND_SITE_ID,
+		</isEqual>
+		<isEqual property="check" compareValue="1"><!-- 按照省份 -->
+			'' as send_city, '' as send_county, 0 as SEND_SITE_ID,
+		</isEqual>
+		<isEqual property="check" compareValue="2"><!-- 按照省份、城市 -->
+			send_city, '' as send_county, 0 as SEND_SITE_ID,
+		</isEqual>
+		<isEqual property="check" compareValue="3"><!-- 按照省份、城市、区县 -->
+			send_city,send_county, 0 as SEND_SITE_ID,
+		</isEqual>
+		count(order_id) as COUNT
+		from
+		hs_ord_order
+		<include refid="overTimeUntreatedWhere" />
+		group by
+		<isEqual property="check" compareValue="0"><!-- 按照区县、城市、省份、揽件网点 -->
+			send_province,send_city,send_county,SEND_SITE_ID
+		</isEqual>
+		<isEqual property="check" compareValue="1"><!-- 按照省份 -->
+			send_province
+		</isEqual>
+		<isEqual property="check" compareValue="2"><!-- 按照省份、城市 -->
+			send_province,send_city
+		</isEqual>
+		<isEqual property="check" compareValue="3"><!-- 按照省份、城市、区县 -->
+			send_province,send_city,send_county
+		</isEqual>
+	</select>
+	<select id="recoreCountForOverTimeUntreated" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
+		select
+		count(count(1))
+		from
+		hs_ord_order
+		<include refid="overTimeUntreatedWhere" />
+		group by
+		<isEqual property="check" compareValue="0"><!-- 按照区县、城市、省份、揽件网点 -->
+			send_province,send_city,send_county,SEND_SITE_ID
+		</isEqual>
+		<isEqual property="check" compareValue="1"><!-- 按照省份 -->
+			send_province
+		</isEqual>
+		<isEqual property="check" compareValue="2"><!-- 按照省份、城市 -->
+			send_province,send_city
+		</isEqual>
+		<isEqual property="check" compareValue="3"><!-- 按照省份、城市、区县 -->
+			send_province,send_city,send_county
+		</isEqual>
+	</select>
+	<!-- 汇总统计 -->
+	<select id="queryPagedListForMetaAnalysis" parameterClass="java.util.Map"
+		resultMap="BaseMetaMap">
+		select
+		area_name,send_province,send_city,arname,send_site_id,yingshou,jiedanchenggong,chaoshijiedan,
+		weijiedan,jiedanshibai,lanjianchenggong,chaoshilanjian,weilanjian,lanjianshibai,paijianchenggong,weiqianshou,ludan,weiludan
+		from(
+		select
+		a.area_name,o.send_province,o.send_city,
+		(select area_name from hs_basic_area where
+		area_id=a.parent_area_id) arname,send_site_id,
+
+		count(o.send_site_id) as yingshou,
+		count(case when o.order_status=1 then 1 else null end ) as jiedanchenggong,
+		count(case when o.order_status=0 and sysdate-o.created_time>3 then 1
+		else null end ) as chaoshijiedan,
+		count(case when o.order_status=0 and sysdate-o.created_time<![CDATA[<]]>3
+		then 1 else null end ) as weijiedan,
+		count(case when o.order_status=2 then 1 else null end ) as jiedanshibai,
+		count(case when o.order_status=3 then 1 else null end ) as
+		lanjianchenggong,
+		count(case when o.order_status=1 and sysdate-o.created_time>3 then 1 else null
+		end ) as chaoshilanjian,
+		count(
+
+		case when o.order_status=1 and sysdate-o.created_time<![CDATA[<]]>3
+		then 1 else null end
+
+		) as weilanjian,
+		count(case when o.order_status=4 then 1 else null end ) as lanjianshibai,
+		count(case when o.order_status=6 then 1 else null end ) as
+		paijianchenggong,
+		count(case when o.order_status=5 then 1 else null end ) as weiqianshou,
+
+		count(case when o.ewb_no!='0' then 1 else null end ) as ludan,
+		count(case when o.ewb_no='0' then 1 else null end ) as weiludan
+		from
+		hs_ord_order o join
+		hs_basic_site_detail d on
+		o.send_site_id=d.site_id join
+		hs_basic_area a on
+		a.area_id=d.area_id
+		<!-- left join hs_ord_status s1 on o.order_id=s1.order_id and s1.order_status=1
+		left join hs_ord_status s2 on o.order_id=s2.order_id and
+		s2.order_status=2
+		left join hs_ord_status s3 on o.order_id=s3.order_id and s3.order_status=3
+		left join hs_ord_status s4 on o.order_id=s4.order_id and
+		s3.order_status=4
+		left join hs_ord_status s5 on o.order_id=s5.order_id and s3.order_status=5
+		left join hs_ord_status s6 on o.order_id=s6.order_id and
+		s3.order_status=6
+		left join hs_ord_status s7 on o.order_id=s7.order_id and s3.order_status=7 -->
+		<include refid="dynamicWhere" />
+		group by
+		a.area_name,a.parent_area_id,o.send_province,o.send_city,send_site_id
+		)
+	</select>
+	<select id="recoreCountForMetaAnalysis" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
+		select
+		count(1)
+		from
+		(select
+		a.area_name,o.send_province,o.send_city,o.SEND_SITE_ID
+		from
+		hs_ord_order o join
+		hs_basic_site_detail d on
+		o.send_site_id=d.site_id join
+		hs_basic_area a on
+		a.area_id=d.area_id
+		<include refid="dynamicWhere" />
+		group by
+		a.area_name,o.send_province,o.send_city,o.SEND_SITE_ID)
+	</select>
+
+	<!-- 首页订单汇总 -->
+	<select id="queryHomeOrders" parameterClass="long" resultMap="HomeOrdersResult">
+		select count(1) as totalOrder,
+		created_time,
+		send_site_id,
+		sum((case
+		when m.order_status = 0 then
+		1
+		else
+		0
+		end)) as waitOrder,
+		sum((case
+		when m.order_status = -1 then
+		1
+		else
+		0
+		end)) as fialdOrder
+		from (select t.order_no,
+		t.send_site_id,
+		t.order_status,
+		TO_CHAR(TRUNC(t.created_time), 'dd') AS created_time
+		from hs_ord_order t
+		where t.created_time >= sysdate - 7
+		and t.created_time &lt;= sysdate
+		and t.send_site_id in
+		(SELECT s.site_id
+		FROM HS_BASIC_SITE s
+		START WITH s.SITE_ID = #siteId#
+		CONNECT BY NOCYCLE PRIOR SITE_ID = PARENT_SITE_ID)
+		and t.rd_status = 1) m
+		group by send_site_id, created_time
+	</select>
+
+	<!-- 根据订单号和电商ID获取订单数据 -->
+	<select id="getOrderByOrderNoAndEcId" parameterClass="map" resultMap="BaseResultMap">
+		SELECT
+			<include refid="BaseColumnList" />
+		FROM HS_ORD_ORDER
+		WHERE 
+			ORDER_NO = #orderNo# AND EC_ID = #ecId# 
+			AND RD_STATUS = 1
+	</select>
+	<select id="getOrderInfoByOrderId" parameterClass="java.lang.Long" resultMap="BaseResultMap">
+		SELECT
+			<include refid="BaseColumnList" />
+		FROM HS_ORD_ORDER
+		WHERE 
+			OLD_ORDER_ID = #oldOrderId# AND RD_STATUS = 1
+	</select>
+	
+</sqlMap>

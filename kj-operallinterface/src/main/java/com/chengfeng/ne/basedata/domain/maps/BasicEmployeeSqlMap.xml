@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicEmployeeVO">
+	<typeAlias alias="BasicEmployee" type="com.chengfeng.ne.basedata.domain.BasicEmployeeVO" />
+	<!-- 返回结果集 -->
+	<resultMap id="EmployeeResult" class="BasicEmployee">
+		<result property="employeeId" column="EMPLOYEE_ID" />
+		<result property="employeeCode" column="EMPLOYEE_CODE" />
+		<result property="employeeName" column="EMPLOYEE_NAME" />
+		<result property="employeePinyin" column="EMPLOYEE_PINYIN" />
+		<result property="employeeOrder" column="EMPLOYEE_ORDER" />
+		<result property="siteId" column="SITE_ID" />
+		<result property="deptJobId" column="DEPT_JOB_ID" />
+		<result property="idCard" column="ID_CARD" />
+		<result property="sex" column="SEX" />
+		<result property="phone" column="PHONE" />
+		<result property="phoneSms" column="PHONE_SMS" />
+		<result property="e_mail" column="E_MAIL" />
+		<result property="birthday" column="BIRTHDAY" />
+		<result property="address" column="ADDRESS" />
+		<result property="selfRemark" column="SELF_REMARK" />
+		<result property="blUse" column="BL_USE" />
+		<result property="startDate" column="START_DATE" />
+		<result property="endDate" column="END_DATE" />
+		<result property="basicSalar" column="BASIC_SALAR" />
+		<result property="addSalar" column="ADD_SALAR" />
+		<result property="limitSumAmount" column="LIMIT_SUM_AMOUNT" />
+		<result property="limitOneAmount" column="LIMIT_ONE_AMOUNT" />
+		<result property="transportToolId" column="TRANSPORT_TOOL_ID" />
+		<result property="partId" column="PART_ID" />
+		<result property="jobRemark" column="JOB_REMARK" />
+		<result property="driverLicenseType" column="DRIVER_LICENSE_TYPE" />
+		<result property="bankId" column="BANK_ID" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />
+		<result property="employeeNo" column="EMPLOYEE_NO" />
+		<result property="BankAccountId" column="BANK_ACCOUNT_ID" />
+		<result property="BankAccountName" column="BANK_ACCOUNT_NAME" />
+		<result property="BankAccountNo" column="BANK_ACCOUNT_NO" />
+		<result property="alipayNo" column="ALIPAY_NO"/>
+		<result property="weChatNo" column="WECHAT_NO"/>
+		<result property="realNameStatus" column="REAL_NAME_STATUS"/>
+		<result property="partFlag" column="PART_FLAG"/>
+	</resultMap>
+	<resultMap id="EmpResult" class="BasicEmployee">
+		<result property="employeeId" column="EMPLOYEE_ID" />
+		<result property="employeeName" column="EMPLOYEE_NAME" />
+		<result property="phone" column="PHONE" />
+	</resultMap>
+	
+	<!-- 返回结果集 -->
+	<resultMap id="EmpPageResult" extends="EmployeeResult" class="BasicEmployee">
+		<result property="deptId" column="DEPT_ID" />
+		<result property="jobId" column="JOB_ID" />
+		<result property="userId" column="USER_ID" />
+		<result property="pdaPwd" column="PDA_PWD" />
+	</resultMap>
+
+	<!-- 新增员工oracle -->
+	<insert id="doCreateEmployee" parameterClass="BasicEmployee">
+		<selectKey resultClass="long" keyProperty="employeeId">
+			SELECT
+			SEQ_BASIC_EMPLOYEE.nextval AS employeeId FROM dual
+		</selectKey>
+		insert into
+		HS_BASIC_EMPLOYEE
+		(EMPLOYEE_ID,EMPLOYEE_CODE,EMPLOYEE_NAME,EMPLOYEE_PINYIN,EMPLOYEE_ORDER,SITE_ID,DEPT_JOB_ID,ID_CARD,
+		SEX,PHONE,PHONE_SMS,E_MAIL,BIRTHDAY,ADDRESS,SELF_REMARK,BL_USE,START_DATE,END_DATE,BASIC_SALAR,ADD_SALAR,
+		LIMIT_SUM_AMOUNT,LIMIT_ONE_AMOUNT,TRANSPORT_TOOL_ID,PART_ID,JOB_REMARK,DRIVER_LICENSE_TYPE,BANK_ID,
+		CREATED_BY,CREATED_TIME,MODIFIED_BY,MODIFIED_TIME,RD_STATUS,EMPLOYEE_NO,BANK_ACCOUNT_ID,BANK_ACCOUNT_NAME,BANK_ACCOUNT_NO,
+		PART_FLAG,ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS)
+		values
+		(#employeeId#,#employeeCode#,#employeeName#,#employeePinyin#,#employeeOrder#,#siteId#,#deptJobId#,#idCard#,
+		#sex#,#phone#,#phoneSms#,#e_mail#,#birthday#,#address#,#selfRemark#,#blUse#,#startDate#,#endDate#,#basicSalar#,
+		#addSalar#,#limitSumAmount#,#limitOneAmount#,#transportToolId#,#partId#,#jobRemark#,#driverLicenseType#,#bankId#,
+		#createdBy#,#createdTime#,#modifiedBy#,#modifiedTime#,1,#employeeNo#,#BankAccountId#,#BankAccountName#,#BankAccountNo#,
+		#partFlag#,#alipayNo#,#weChatNo#,#realNameStatus#)
+	</insert>
+
+	<!-- 修改员工 -->
+	<update id="doSaveEmployee" parameterClass="BasicEmployee">
+		update
+		HS_BASIC_EMPLOYEE set
+		EMPLOYEE_CODE=#employeeCode#,EMPLOYEE_NAME=#employeeName#,EMPLOYEE_PINYIN=#employeePinyin#,
+		EMPLOYEE_ORDER=#employeeOrder#,SITE_ID=#siteId#,DEPT_JOB_ID=#deptJobId#,ID_CARD=#idCard#,
+		SEX=#sex#,PHONE=#phone#,PHONE_SMS=#phoneSms#,E_MAIL=#e_mail#,BIRTHDAY=#birthday#,ADDRESS=#address#,SELF_REMARK=#selfRemark#,
+		BL_USE=#blUse#,START_DATE=#startDate#,END_DATE=#endDate#,BASIC_SALAR=#basicSalar#,ADD_SALAR=#addSalar#,
+		LIMIT_SUM_AMOUNT=#limitSumAmount#,LIMIT_ONE_AMOUNT=#limitOneAmount#,TRANSPORT_TOOL_ID=#transportToolId#,
+		PART_ID=#partId#,JOB_REMARK=#jobRemark#,DRIVER_LICENSE_TYPE=#driverLicenseType#,BANK_ID=#bankId#,
+		MODIFIED_BY=#modifiedBy#,MODIFIED_TIME=#modifiedTime#,BANK_ACCOUNT_ID=#BankAccountId#,
+		BANK_ACCOUNT_NAME=#BankAccountName#,BANK_ACCOUNT_NO=#BankAccountNo#,EMPLOYEE_NO=#employeeNo#,PART_FLAG=#partFlag#,
+		ALIPAY_NO=#alipayNo#,WECHAT_NO=#weChatNo#,REAL_NAME_STATUS=#realNameStatus#
+		where
+		EMPLOYEE_ID=#employeeId#
+	</update>
+
+	<!-- 删除员工 -->
+	<delete id="doDeleteEmployee" parameterClass="BasicEmployee">
+		UPDATE HS_BASIC_EMPLOYEE 
+		SET 
+			EMPLOYEE_CODE = #employeeCode#, 
+			MODIFIED_BY = #modifiedBy#, 
+			MODIFIED_TIME = SYSDATE, 
+			RD_STATUS = 0 
+		WHERE 
+			EMPLOYEE_ID = #employeeId# 
+	</delete>
+	
+	<!-- 按编号查询员工 -->
+	<select id="queryEmploreeByCode" resultMap="EmployeeResult"
+		parameterClass="java.lang.String">
+		select 
+			employee_id, employee_code, employee_name, employee_pinyin, employee_order, 
+			site_id, dept_job_id, id_card, sex, phone, phone_sms, e_mail, birthday, 
+			address, self_remark, bl_use, start_date, end_date, basic_salar, add_salar, 
+			limit_sum_amount, limit_one_amount, transport_tool_id, part_id, job_remark, 
+			driver_license_type, bank_id, created_by, created_time, 
+			modified_by, modified_time, rd_status,employee_no,bank_account_id, bank_account_name, bank_account_no,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+		from HS_BASIC_EMPLOYEE where
+			EMPLOYEE_CODE=#employeeCode#
+	</select>
+	
+	<!-- 按ID查询员工 -->
+	<select id="queryEmploreeById" resultMap="EmployeeResult"
+		parameterClass="long">
+		select 
+			employee_id, employee_code, employee_name, employee_pinyin, employee_order, 
+			site_id, dept_job_id, id_card, sex, phone, phone_sms, e_mail, birthday, 
+			address, self_remark, bl_use, start_date, end_date, basic_salar, add_salar, 
+			limit_sum_amount, limit_one_amount, transport_tool_id, part_id, job_remark, 
+			driver_license_type, bank_id, created_by, created_time, 
+			modified_by, modified_time, rd_status,employee_no,bank_account_id, bank_account_name, bank_account_no,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+		from HS_BASIC_EMPLOYEE where
+			EMPLOYEE_ID=#employeeId# and RD_STATUS=1
+	</select>
+	
+		<!-- 缓存专用  查询所有员工信息  add by Jeff 2015.07.15-->
+	<select id="queryEmploreeList" resultMap="EmployeeResult">
+		select 
+			employee_id, employee_code, employee_name, employee_pinyin, employee_order, 
+			site_id, dept_job_id, id_card, sex, phone, phone_sms, e_mail, birthday, 
+			address, self_remark, bl_use, start_date, end_date, basic_salar, add_salar, 
+			limit_sum_amount, limit_one_amount, transport_tool_id, part_id, job_remark, 
+			driver_license_type, bank_id, created_by, created_time, 
+			modified_by, modified_time, rd_status,employee_no,bank_account_id, bank_account_name, bank_account_no,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+		from HS_BASIC_EMPLOYEE where RD_STATUS=1
+	</select>
+	
+	<!-- 获取自定义顺序最大值 -->
+	<select id="getMinEmployeeCode" parameterClass="java.lang.String" resultClass="java.lang.String">
+		<![CDATA[	
+		SELECT 
+			MIN(t.EMPLOYEE_CODE)
+  		FROM 
+  			(SELECT 
+  				#siteCode# || LPAD(ROWNUM, 3, '0') AS EMPLOYEE_CODE
+          	FROM DUAL
+        	CONNECT BY ROWNUM <= 999) t
+  		LEFT JOIN HS_BASIC_EMPLOYEE e ON e.EMPLOYEE_CODE = t.EMPLOYEE_CODE
+ 		WHERE e.EMPLOYEE_CODE IS NULL
+ 		]]>
+	</select>
+	
+	<!-- 获取自定义顺序最大值 -->
+	<select id="getMaxEmployeeOrder" resultClass="int">
+		select max(EMPLOYEE_ORDER) from HS_BASIC_EMPLOYEE where RD_STATUS=1
+	</select>
+	
+	<!-- 按名称模糊查询员工 -->
+	<select id="queryEmpNameByLike" parameterClass="java.lang.String"
+		resultMap="EmployeeResult">
+		select 
+			employee_id, employee_code, employee_name, employee_pinyin, employee_order, 
+			site_id, dept_job_id, id_card, sex, phone, phone_sms, e_mail, birthday, 
+			address, self_remark, bl_use, start_date, end_date, basic_salar, add_salar, 
+			limit_sum_amount, limit_one_amount, transport_tool_id, part_id, job_remark, 
+			driver_license_type, bank_id, created_by, created_time, 
+			modified_by, modified_time, rd_status,employee_no,bank_account_id, bank_account_name, bank_account_no,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+		from HS_BASIC_EMPLOYEE where
+			EMPLOYEE_NAME LIKE '%'||#employeeName#||'%' and RD_STATUS=1 order by EMPLOYEE_ORDER
+	</select>
+	
+	<!-- 按编号模糊查询员工 -->
+	<select id="queryEmpByCodeLike" parameterClass="java.lang.String"
+		resultMap="EmployeeResult">
+		select 
+			employee_id, employee_code, employee_name, employee_pinyin, employee_order, 
+			site_id, dept_job_id, id_card, sex, phone, phone_sms, e_mail, birthday, 
+			address, self_remark, bl_use, start_date, end_date, basic_salar, add_salar, 
+			limit_sum_amount, limit_one_amount, transport_tool_id, part_id, job_remark, 
+			driver_license_type, bank_id, created_by, created_time, 
+			modified_by, modified_time, rd_status,employee_no,bank_account_id, bank_account_name, bank_account_no,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+		from HS_BASIC_EMPLOYEE where
+			(EMPLOYEE_CODE LIKE '%'||#employeeCode#||'%') and RD_STATUS=1 
+			order by EMPLOYEE_ORDER
+	</select>
+	
+	<!-- 按名称、拼音、编号模糊查询员工 -->
+	<select id="queryEmpByLikePCN" parameterClass="java.util.HashMap"
+		resultMap="EmployeeResult">
+		<![CDATA[	
+		select * from (
+		select 
+			employee_id, employee_code, employee_name, employee_pinyin, employee_order,
+			site_id, dept_job_id, id_card, sex, phone, phone_sms, e_mail, birthday,
+			address, self_remark, bl_use, start_date, end_date, basic_salar, add_salar, 
+			limit_sum_amount, limit_one_amount, transport_tool_id, part_id, job_remark, 
+			driver_license_type, bank_id, created_by, created_time, 
+			modified_by, modified_time, rd_status,employee_no,bank_account_id, bank_account_name, bank_account_no,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+		from HS_BASIC_EMPLOYEE where 
+			RD_STATUS=1 and (EMPLOYEE_PINYIN LIKE '%'||#pinyin#||'%' or EMPLOYEE_NAME 
+			LIKE '%'||#title#||'%' or EMPLOYEE_CODE LIKE '%'||#title#||'%') 
+			and SITE_ID in (SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID =#siteId# 
+			CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID ) 
+		order by LENGTH(EMPLOYEE_NAME),EMPLOYEE_ORDER ) where  rownum <= #rownum# 
+		]]>
+	</select>
+	
+	<!-- 按名称、拼音、编号模糊查询员工 -->
+	<select id="queryEmpByPNCLikeAndSiteId" parameterClass="java.util.HashMap"
+		resultClass="BasicEmployee">
+		<![CDATA[	
+		SELECT 
+			EMPLOYEE_ID AS employeeId, EMPLOYEE_CODE AS employeeCode, 
+			EMPLOYEE_NAME AS employeeName, EMPLOYEE_PINYIN AS employeePinyin 
+		FROM
+			(SELECT 
+				EMPLOYEE_ID, EMPLOYEE_CODE, EMPLOYEE_NAME, EMPLOYEE_PINYIN
+			FROM HS_BASIC_EMPLOYEE WHERE 
+				RD_STATUS=1 and (EMPLOYEE_PINYIN LIKE '%'||#pinyin#||'%' or EMPLOYEE_NAME 
+				LIKE '%'||#title#||'%' or EMPLOYEE_CODE LIKE '%'||#title#||'%') 
+				AND SITE_ID =#siteId#
+			ORDER BY LENGTH(EMPLOYEE_NAME),EMPLOYEE_ORDER )
+		WHERE 
+			ROWNUM <= #rownum# 
+		]]>
+	</select>
+	
+	<!-- 根据拼音、编号、人名模糊查询非用户员工 -->
+	<select id="queryNotUserEmpByPNC" parameterClass="java.util.HashMap"
+		resultClass="BasicEmployee">
+		<![CDATA[	
+		SELECT 
+			EMPLOYEE_ID AS employeeId, EMPLOYEE_CODE AS employeeCode, 
+			EMPLOYEE_NAME AS employeeName, EMPLOYEE_PINYIN AS employeePinyin 
+		FROM
+			(SELECT 
+				EMPLOYEE_ID, EMPLOYEE_CODE, EMPLOYEE_NAME, EMPLOYEE_PINYIN
+			FROM HS_BASIC_EMPLOYEE WHERE 
+				RD_STATUS=1 AND (EMPLOYEE_PINYIN LIKE '%'||#pinyin#||'%' or EMPLOYEE_NAME 
+				LIKE '%'||#title#||'%' or EMPLOYEE_CODE LIKE '%'||#title#||'%') 
+				AND SITE_ID IN (SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID =#siteId# 
+				CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID ) AND  EMPLOYEE_ID NOT IN 
+				(SELECT EMPLOYEE_ID FROM HS_AUTH_USER WHERE RD_STATUS=1)
+		ORDER BY LENGTH(EMPLOYEE_NAME),EMPLOYEE_ORDER )
+		WHERE 
+			ROWNUM <= #rownum# 
+		]]>
+	</select>
+	
+	<!-- 按条件模糊查询开户户名为员工 -->
+	<select id="queryEmpAccountByPNC" parameterClass="java.util.HashMap"
+		resultClass="BasicEmployee">
+		select 
+			employee_id as employeeId, 
+			employee_code as employeeCode, 
+			employee_name as employeeName, 
+			employee_pinyin as employeePinyin
+		FROM HS_BASIC_EMPLOYEE P INNER JOIN HS_FIN_ACCOUNT F ON P.EMPLOYEE_ID = F.DATA_ID 
+		where 
+			RD_STATUS=1 and (EMPLOYEE_PINYIN LIKE '%'||#pinyin#||'%' or EMPLOYEE_NAME 
+			LIKE '%'||#title#||'%' or EMPLOYEE_CODE LIKE '%'||#title#||'%') 
+			AND F.ACCOUNT_TYPE_ID = 13 
+			<isEmpty property="accountStatus">
+				AND F.ACCOUNT_STATUS =1 
+			</isEmpty>
+			<isNotEmpty property="accountStatus" >
+				AND F.ACCOUNT_STATUS in($accountStatus$) 
+			</isNotEmpty>
+			AND F.CENTER_ID = #siteId#
+			AND ROWNUM &lt;= #rownum# 
+	</select>
+	<!-- 按条件模糊查询开户户名为员工(销户用) -->
+	<select id="queryXHEmpAccountByPNC" parameterClass="java.util.HashMap"
+		resultClass="BasicEmployee">
+		<![CDATA[	
+		select 
+			employee_id as employeeId, 
+			employee_code as employeeCode, 
+			employee_name as employeeName, 
+			employee_pinyin as employeePinyin ,
+			f.created_time as createdTime ,
+    		f.close_time as modifiedTime ,
+    		f.account_id as createdBy 
+		FROM HS_BASIC_EMPLOYEE P INNER JOIN HS_FIN_ACCOUNT F ON P.EMPLOYEE_ID = F.DATA_ID 
+		where 
+			 (EMPLOYEE_PINYIN LIKE '%'||#pinyin#||'%' or EMPLOYEE_NAME 
+			LIKE '%'||#title#||'%' or EMPLOYEE_CODE LIKE '%'||#title#||'%') 
+			AND F.ACCOUNT_TYPE_ID = 13 AND F.ACCOUNT_STATUS =-1 AND F.CENTER_ID = #siteId#
+			AND ROWNUM <= #rownum# 
+		]]>
+	</select>
+	
+	<!-- 按条件精确查询员工 -->
+	<select id="queryEmpByTitle" parameterClass="java.lang.String"
+		resultMap="EmployeeResult">
+		select 
+			employee_id, employee_code, employee_name, employee_pinyin, employee_order, 
+			site_id, dept_job_id, id_card, sex, phone, phone_sms, e_mail, birthday, 
+			address, self_remark, bl_use, start_date, end_date, basic_salar, add_salar, 
+			limit_sum_amount, limit_one_amount, transport_tool_id, part_id, job_remark, 
+			driver_license_type, bank_id, created_by, created_time, 
+			modified_by, modified_time, rd_status,employee_no,bank_account_id, bank_account_name, bank_account_no,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+		from HS_BASIC_EMPLOYEE where 
+			(EMPLOYEE_PINYIN=#employeePinyin# or 
+			EMPLOYEE_NAME=#employeeName# or EMPLOYEE_CODE=#employeeCode#) and RD_STATUS=1 order by EMPLOYEE_ORDER
+	</select>
+	
+	<!-- 根据网点查询员工 -->
+	<select id="queryEmpBySiteId" parameterClass="long"
+		resultMap="EmployeeResult">
+		select 
+			employee_id, employee_code, employee_name, employee_pinyin, employee_order, 
+			site_id, dept_job_id, id_card, sex, phone, phone_sms, e_mail, birthday, 
+			address, self_remark, bl_use, start_date, end_date, basic_salar, add_salar, 
+			limit_sum_amount, limit_one_amount, transport_tool_id, part_id, job_remark, 
+			driver_license_type, bank_id, created_by, created_time, 
+			modified_by, modified_time, rd_status,employee_no,bank_account_id, bank_account_name, bank_account_no,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+		from HS_BASIC_EMPLOYEE where 
+			RD_STATUS=1 and SITE_ID=#siteId# order by EMPLOYEE_ORDER
+	</select>
+	
+	<!-- 根据所属网点和时间查询员工信息 -->
+	<select id="queryEmpBySiteIdAndTime" parameterClass="java.util.Date"
+		resultMap="EmployeeResult">
+		<![CDATA[
+			select 
+				employee_id, employee_code, employee_name, employee_pinyin, employee_order, 
+				site_id, dept_job_id, id_card, sex, phone, phone_sms, e_mail, birthday, 
+				address, self_remark, bl_use, start_date, end_date, basic_salar, add_salar, 
+				limit_sum_amount, limit_one_amount, transport_tool_id, part_id, job_remark, 
+				driver_license_type, bank_id, created_by, created_time, 
+				modified_by, modified_time, rd_status,employee_no,bank_account_id, bank_account_name, bank_account_no,
+				ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+			from HS_BASIC_EMPLOYEE where 
+				RD_STATUS=1 and SITE_ID=#siteId# and 
+				(CREATED_TIME > #date# or MODIFIED_TIME > #date#) order by EMPLOYEE_ORDER
+		 ]]>
+	</select>
+	
+	<!-- 查询员工的ID和姓名 -->
+	<select id="queryEmployeeIdAndName" resultMap="EmpResult">
+		<![CDATA[
+			select 
+				employee_id, employee_name, phone
+			from 
+				HS_BASIC_EMPLOYEE 
+		 ]]>
+	</select>
+	
+	<!-- 根据用户Id查询部门岗位Id -->
+	<select id="getDeptJobIdByUserId" resultClass="java.lang.Long" parameterClass="java.lang.Long">
+		SELECT 
+			DEPT_JOB_ID 
+		FROM 
+			HS_BASIC_EMPLOYEE 
+		WHERE 
+			EMPLOYEE_ID = (SELECT EMPLOYEE_ID FROM HS_AUTH_USER WHERE USER_ID = #userId#)
+	</select>
+	
+	<!-- 根据登录网点和部门岗位查询员工 -->
+	<select id="queryEmpBySiteIdAndDeptJobId" parameterClass="java.util.Map" resultMap="EmployeeResult">
+		SELECT 
+			EMPLOYEE_ID, EMPLOYEE_CODE, EMPLOYEE_NAME, EMPLOYEE_PINYIN, EMPLOYEE_ORDER, 
+			SITE_ID, DEPT_JOB_ID, ID_CARD, SEX, PHONE, PHONE_SMS, E_MAIL, BIRTHDAY, 
+			ADDRESS, SELF_REMARK, BL_USE, START_DATE, END_DATE, BASIC_SALAR, ADD_SALAR, 
+			LIMIT_SUM_AMOUNT, LIMIT_ONE_AMOUNT, TRANSPORT_TOOL_ID, PART_ID, JOB_REMARK, 
+			DRIVER_LICENSE_TYPE, BANK_ID, CREATED_BY, CREATED_TIME, 
+			MODIFIED_BY, MODIFIED_TIME, RD_STATUS,EMPLOYEE_NO,BANK_ACCOUNT_ID, BANK_ACCOUNT_NAME, BANK_ACCOUNT_NO,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG 
+		FROM 
+			HS_BASIC_EMPLOYEE 
+		WHERE 
+			SITE_ID = #siteId# AND RD_STATUS = 1 AND
+			DEPT_JOB_ID = (SELECT DEPT_JOB_ID FROM HS_BASIC_EMPLOYEE WHERE EMPLOYEE_ID = #employeeId#)
+	</select>
+	<!-- 根据登录网点和部门岗位模糊查询员工 -->
+	<select id="queryEmpBySiteIdAndDeptJobIdLike" parameterClass="java.util.Map" resultClass="BasicEmployee">
+		<![CDATA[
+			SELECT EMPLOYEE_ID     AS employeeId,
+			       EMPLOYEE_CODE   AS employeeCode,
+			       EMPLOYEE_NAME   AS employeeName,
+			       EMPLOYEE_PINYIN AS employeePinyin
+	  	    FROM (SELECT EMPLOYEE_ID,
+	               EMPLOYEE_CODE,
+	               EMPLOYEE_NAME,
+	               EMPLOYEE_PINYIN,
+	               EMPLOYEE_ORDER
+	          FROM HS_BASIC_EMPLOYEE
+	         WHERE (EMPLOYEE_PINYIN LIKE '%' || #pinyin# || '%' or
+	               EMPLOYEE_NAME LIKE '%' || #title# || '%' or
+	               EMPLOYEE_CODE LIKE '%' || #title# || '%')
+	           AND DEPT_JOB_ID =
+	               (SELECT DEPT_JOB_ID
+	                  FROM HS_BASIC_EMPLOYEE
+	                 WHERE EMPLOYEE_ID = #employeeId#)
+	           AND RD_STATUS = 1
+	           AND SITE_ID = #siteId#
+	         ORDER BY LENGTH(EMPLOYEE_NAME), EMPLOYEE_ORDER)
+	 		WHERE ROWNUM <= #rownum#	
+	 		]]>
+	</select>
+	
+	<!-- 根据员工ID查询用户ID -->
+	<select id="getUserIdByEmpId" parameterClass="long" resultClass="long">
+		SELECT 
+			USER_ID 
+  		FROM 
+  			(SELECT 
+  				USER_ID,
+               	ROW_NUMBER() OVER(PARTITION BY EMPLOYEE_ID ORDER BY RD_STATUS DESC,
+               		CASE STATUS WHEN 'N' THEN 0 WHEN 'L' THEN 1 ELSE 2 END) AS r
+          	FROM 
+          		HS_AUTH_USER 
+         	WHERE 
+         		EMPLOYEE_ID = #employeeId#)
+ 		WHERE r = 1
+	</select>
+	
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty property = "employeeName" prepend = " and ">
+				EMPLOYEE_NAME = #employeeName#
+			</isNotEmpty>
+			
+			<isNotEmpty property = "verifyName" prepend = " and ">
+				EMPLOYEE_NAME = #verifyName# and SITE_ID in (SELECT s.SITE_ID FROM HS_BASIC_SITE s 
+				START WITH s.SITE_ID =#loginSiteId# CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID)
+			</isNotEmpty>
+		
+			<isNotEmpty property = "nameLike" prepend = " and ">
+				EMPLOYEE_NAME LIKE '%'||#nameLike#||'%'
+			</isNotEmpty>
+			
+			<isNotEmpty property = "codeLike" prepend = " and ">
+				EMPLOYEE_CODE = #codeLike#
+			</isNotEmpty>
+			
+			<isNotEmpty property = "employeeCodeLike" prepend = " or ">
+				EMPLOYEE_CODE = #employeeCodeLike#
+			</isNotEmpty>
+			<isNotEmpty property = "employeeNoLike" prepend = " or ">
+				EMPLOYEE_NO = #employeeNoLike#
+			</isNotEmpty>
+			
+			<isNotEmpty property = "siteId" prepend = " and ">
+				SITE_ID = #siteId#
+			</isNotEmpty>
+			<isEmpty property = "siteId" prepend = " and ">
+				SITE_ID in (SELECT s.SITE_ID FROM HS_BASIC_SITE s START WITH 
+				s.SITE_ID =#loginSiteId# CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID)
+			</isEmpty>
+			
+			<isNotEmpty property = "title" prepend = " and ">
+				( EMPLOYEE_PINYIN LIKE '%'||#pinyin#||'%' or EMPLOYEE_NAME LIKE 
+				'%'||#title#||'%' or EMPLOYEE_CODE LIKE '%'||#title#||'%'　）
+			</isNotEmpty>
+			
+			<isNotEmpty property = "date" prepend = " and ">
+				(e.CREATED_TIME > #date# or e.MODIFIED_TIME > #date# 
+				or u.CREATED_TIME > #date# or u.MODIFIED_TIME > #date#)
+			</isNotEmpty>
+			
+			<isNotEmpty property = "employeeNo" prepend = " and ">
+				e.EMPLOYEE_NO = 1
+			</isNotEmpty>
+			
+			<isNotEmpty property = "rdStatus" prepend = " and ">
+				e.RD_STATUS = 1
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+
+	<!-- 根据分页条件查询机型 -->
+	<select id="queryPagedList" parameterClass="java.util.Map" resultMap="EmpPageResult">
+		SELECT   
+      		e.EMPLOYEE_ID, EMPLOYEE_CODE, EMPLOYEE_NAME, EMPLOYEE_PINYIN, 
+      		EMPLOYEE_ORDER, SITE_ID,E.DEPT_JOB_ID, ID_CARD, SEX, PHONE, 
+      		PHONE_SMS, E_MAIL, BIRTHDAY, ADDRESS, SELF_REMARK, BL_USE, 
+      		START_DATE, END_DATE, BASIC_SALAR, ADD_SALAR, LIMIT_SUM_AMOUNT, 
+      		LIMIT_ONE_AMOUNT, TRANSPORT_TOOL_ID, PART_ID, JOB_REMARK, 
+      		DRIVER_LICENSE_TYPE, BANK_ID, e.CREATED_BY, e.CREATED_TIME, 
+      		e.MODIFIED_BY, e.MODIFIED_TIME, e.RD_STATUS,e.EMPLOYEE_NO, BANK_ACCOUNT_ID, 
+      		BANK_ACCOUNT_NAME, BANK_ACCOUNT_NO, DEPT_ID, JOB_ID, USER_ID, PDA_PWD,ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG
+      	FROM HS_BASIC_EMPLOYEE e
+      	LEFT JOIN HS_BASIC_DEPT_JOB dj ON e.DEPT_JOB_ID = dj.DEPT_JOB_ID
+      	LEFT JOIN HS_AUTH_USER u ON e.EMPLOYEE_ID = u.EMPLOYEE_ID AND u.RD_STATUS = 1 
+		<include refid="dynamicWhere" /> 
+		ORDER BY EMPLOYEE_ORDER, LENGTH(EMPLOYEE_NAME)
+	</select>
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		select count(1) from HS_BASIC_EMPLOYEE e
+		LEFT JOIN HS_AUTH_USER u ON e.EMPLOYEE_ID = u.EMPLOYEE_ID AND u.RD_STATUS = 1 
+		<include refid="dynamicWhere" />
+	</select>
+	
+	<resultMap id="EmpInfoResult" class="com.chengfeng.ne.basedata.domain.BasicEmployeeVO">
+		<result property="employeeId" column="EMPLOYEE_ID" />
+		<result property="employeeCode" column="EMPLOYEE_CODE" />
+		<result property="employeeName" column="EMPLOYEE_NAME" />
+		<result property="employeePinyin" column="EMPLOYEE_PINYIN" />
+	</resultMap>
+	
+	<!-- 根据分页条件查询机型 -->
+	<select id="queryPagedEmpList" parameterClass="java.util.Map" resultMap="EmpInfoResult">
+		SELECT EMPLOYEE_ID,
+			       EMPLOYEE_CODE,
+			       EMPLOYEE_NAME,
+			       EMPLOYEE_PINYIN
+		  FROM HS_BASIC_EMPLOYEE
+		 WHERE (EMPLOYEE_CODE LIKE '%'||#empName#||'%' OR EMPLOYEE_NAME LIKE '%'||#empName#||'%')
+		   AND RD_STATUS = 1
+		 ORDER BY EMPLOYEE_CODE
+	</select>
+	<!-- 查询总记录数 -->
+	<select id="queryRecordCountByEmp" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT COUNT(*)
+		  FROM HS_BASIC_EMPLOYEE
+		 WHERE (EMPLOYEE_CODE LIKE '%'||#empName#||'%' OR EMPLOYEE_NAME LIKE '%'||#empName#||'%')
+		 AND RD_STATUS = 1
+	</select>
+	
+	<!-- 根据条件查询员工-->
+	<select id="queryEmployeeByCondition" resultMap="EmployeeResult" parameterClass="java.util.Map">
+		SELECT 
+			* 
+		FROM 
+			HS_BASIC_EMPLOYEE 
+		WHERE 
+			EMPLOYEE_CODE = #employeeCodeLike#
+			<isNotEmpty property = "employeeNoLike" prepend=" OR ">
+				EMPLOYEE_NO = #employeeNoLike# 
+			</isNotEmpty>
+	</select>
+	<select id="queryEmpBySiteIdAndEmpName" resultMap="EmployeeResult" parameterClass="java.util.Map">
+		SELECT 
+			EMPLOYEE_ID, EMPLOYEE_CODE, EMPLOYEE_NAME, EMPLOYEE_PINYIN, EMPLOYEE_ORDER, 
+			SITE_ID, DEPT_JOB_ID, ID_CARD, SEX, PHONE, PHONE_SMS, E_MAIL, BIRTHDAY, 
+			ADDRESS, SELF_REMARK, BL_USE, START_DATE, END_DATE, BASIC_SALAR, ADD_SALAR, 
+			LIMIT_SUM_AMOUNT, LIMIT_ONE_AMOUNT, TRANSPORT_TOOL_ID, PART_ID, JOB_REMARK, 
+			DRIVER_LICENSE_TYPE, BANK_ID, CREATED_BY, CREATED_TIME, 
+			MODIFIED_BY, MODIFIED_TIME, RD_STATUS,EMPLOYEE_NO,BANK_ACCOUNT_ID, BANK_ACCOUNT_NAME, BANK_ACCOUNT_NO,
+			ALIPAY_NO,WECHAT_NO,REAL_NAME_STATUS,nvl(PART_FLAG,0) PART_FLAG 
+		FROM 
+			HS_BASIC_EMPLOYEE 
+		WHERE 
+			SITE_ID = #siteId# AND RD_STATUS = 1 AND EMPLOYEE_NAME=#empName#
+	</select>
+</sqlMap>

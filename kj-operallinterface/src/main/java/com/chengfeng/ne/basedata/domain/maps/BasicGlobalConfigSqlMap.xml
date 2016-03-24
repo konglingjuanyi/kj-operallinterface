@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="GlobalConfigVO" >
+  <typeAlias alias="GlobalConfig" type="com.chengfeng.ne.basedata.domain.GlobalConfigVO"/>
+  <resultMap id="BaseResultMap" class="com.chengfeng.ne.basedata.domain.GlobalConfigVO" >
+    <result column="GLOBAL_CONFIG_ID" property="globalConfigId"  />
+    <result column="GLOBAL_CONFIG_CODE" property="globalConfigCode"  />
+    <result column="GLOBAL_CONFIG_NAME" property="globalConfigName"  />
+    <result column="GLOBAL_CONFIG_VALUE" property="globalConfigValue"  />
+    <result column="BL_USER" property="blUser"  />
+    <result column="REMARK" property="remark"  />
+    <result column="CREATED_BY" property="createdBy"  />
+    <result column="CREATED_TIME" property="createdTime"  />
+    <result column="MODIFIED_BY" property="modifiedBy"  />
+    <result column="MODIFIED_TIME" property="modifiedTime"  />
+    <result column="RD_STATUS" property="rdStatus"  />
+  </resultMap>
+  <sql id="GlobalConfigSql" >
+    GLOBAL_CONFIG_ID, GLOBAL_CONFIG_CODE, GLOBAL_CONFIG_NAME, GLOBAL_CONFIG_VALUE, BL_USER, 
+    REMARK, CREATED_BY, CREATED_TIME, MODIFIED_BY, MODIFIED_TIME, RD_STATUS
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterClass="Long" >
+    SELECT 
+    <include refid="GlobalConfigSql" />
+    FROM HS_BASIC_GLOBAL_CONFIG
+    where GLOBAL_CONFIG_ID = #globalConfigId#
+  </select>
+
+  <update id="updateByPrimaryKey" parameterClass="GlobalConfig" >
+    update HS_BASIC_GLOBAL_CONFIG
+    set GLOBAL_CONFIG_CODE = #globalConfigCode#,
+      GLOBAL_CONFIG_NAME = #globalConfigName#,
+      GLOBAL_CONFIG_VALUE = #globalConfigValue#,
+      REMARK = #remark#,  
+      MODIFIED_BY = #modifiedBy#,
+      MODIFIED_TIME = #modifiedTime#  
+    where GLOBAL_CONFIG_ID = #globalConfigId#
+  </update>
+    
+    <!-- 根据编号查-->
+    <select id="getGlobalConfigByCode"  resultClass="GlobalConfig">
+    	SELECT 
+		GLOBAL_CONFIG_ID as globalConfigId,
+		GLOBAL_CONFIG_CODE as globalConfigCode,
+	    GLOBAL_CONFIG_NAME as globalConfigName
+		FROM HS_BASIC_GLOBAL_CONFIG 
+		where GLOBAL_CONFIG_CODE = #globalConfigCode#
+    </select>
+    <sql id="dynamicWhere">
+		<dynamic prepend="where">			
+			<isNotEmpty prepend=" and " property="globalConfigCode"> 
+				GLOBAL_CONFIG_CODE = #globalConfigCode#
+			</isNotEmpty>		
+			<isNotEmpty prepend=" and " property="globalConfigName"> 
+				GLOBAL_CONFIG_NAME = #globalConfigName#
+			</isNotEmpty>		
+			<isEmpty prepend=" and " property="rdStatus"> 
+				RD_STATUS = 1 
+			</isEmpty>								
+		</dynamic>
+	</sql>
+  	<!-- 根据名称查 -->
+    <select id="getGlobalConfigByName"  resultClass="GlobalConfig">
+    	SELECT 
+		GLOBAL_CONFIG_ID as globalConfigId,
+		GLOBAL_CONFIG_CODE as globalConfigCode,
+	    GLOBAL_CONFIG_NAME as globalConfigName,
+	    GLOBAL_CONFIG_VALUE as globalConfigValue
+		FROM HS_BASIC_GLOBAL_CONFIG 
+		where GLOBAL_CONFIG_NAME = #globalConfigName#
+    </select>
+    
+  <!-- 根据分页条件查询机型 -->
+	<select id="queryPagedList" parameterClass="java.util.Map" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="GlobalConfigSql" />
+		FROM HS_BASIC_GLOBAL_CONFIG
+		<include refid="dynamicWhere" /> 		
+	</select>
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		select count(1) from HS_BASIC_GLOBAL_CONFIG
+		<include refid="dynamicWhere" />
+	</select>
+	
+	
+</sqlMap>

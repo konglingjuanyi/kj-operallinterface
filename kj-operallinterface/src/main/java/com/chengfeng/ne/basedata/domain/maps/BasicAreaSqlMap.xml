@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicAreaVO">
+	<typeAlias alias="BasicArea" type="com.chengfeng.ne.basedata.domain.BasicAreaVO" />
+		<!-- 返回结果集 -->
+	<resultMap id="AreaResult" class="com.chengfeng.ne.basedata.domain.BasicAreaVO">
+		<result property="areaId" column="AREA_ID" />
+		<result property="areaCode" column="AREA_CODE" />
+		<result property="areaName" column="AREA_NAME" />
+		<result property="areaPinyin" column="AREA_PINYIN" />
+		<result property="areaOrder" column="AREA_ORDER" />
+		<result property="parentAreaId" column="PARENT_AREA_ID" />
+		<result property="areaLevel" column="AREA_LEVEL" />
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />	
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />		
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />		
+	</resultMap>
+		<!-- 返回模糊查询结果集 -->
+	<resultMap id="AreaLikeResult" class="com.chengfeng.ne.basedata.domain.BasicAreaVO">
+		<result property="areaId" column="AREA_ID" />
+		<result property="areaCode" column="AREA_CODE" />
+		<result property="areaName" column="AREA_NAME" />
+		<result property="areaPinyin" column="AREA_PINYIN" />			
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="BasicAreasql">
+	    <![CDATA[
+        	AREA_ID ,
+        	AREA_CODE ,
+        	AREA_NAME ,
+        	AREA_PINYIN ,
+        	AREA_ORDER ,
+        	PARENT_AREA_ID ,
+        	AREA_LEVEL ,
+        	REMARK ,
+        	CREATED_BY ,
+        	CREATED_TIME ,
+        	MODIFIED_BY ,
+        	MODIFIED_TIME ,
+        	RD_STATUS 
+	    ]]>
+	</sql>
+	
+	 <!-- 新增片区 -->
+	<insert id="doCreateArea" parameterClass="BasicArea">
+		<selectKey resultClass="long" keyProperty="areaId">
+			SELECT SEQ_BASIC_AREA.NEXTVAL AS areaId FROM DUAL
+		</selectKey>
+		INSERT INTO
+		HS_BASIC_AREA(AREA_ID,AREA_CODE,AREA_NAME,AREA_PINYIN,AREA_ORDER,PARENT_AREA_ID,AREA_LEVEL,REMARK,CREATED_BY,CREATED_TIME,MODIFIED_BY,MODIFIED_TIME,RD_STATUS)
+		VALUES
+		(#areaId#,#areaCode#,#areaName#,#areaPinyin#,#areaOrder#,#parentAreaId#,#areaLevel#,#remark#,#createdBy#, #createdTime# ,#modifiedBy#,#modifiedTime#,1)
+	</insert>
+	
+	 <!-- 修改片区 -->
+	<update id="doModifyArea"  parameterClass="BasicArea" >
+		UPDATE HS_BASIC_AREA SET		
+		AREA_CODE = #areaCode#,
+		AREA_NAME = #areaName#,
+		AREA_PINYIN = #areaPinyin#,
+		AREA_ORDER = #areaOrder#,
+		PARENT_AREA_ID = #parentAreaId#,
+		AREA_LEVEL = #areaLevel#,
+		REMARK = #remark#,		
+		MODIFIED_BY = #modifiedBy#,
+		MODIFIED_TIME = #modifiedTime#  	
+		where AREA_ID = #areaId# 	
+	</update>
+	
+	<!-- 删除片区 -->
+	<update id="doDeleteArea" parameterClass="BasicArea">
+		UPDATE HS_BASIC_AREA SET
+		AREA_CODE = #areaCode#,
+		AREA_NAME = #areaName#,
+		MODIFIED_BY = #modifiedBy#,
+		MODIFIED_TIME = #modifiedTime# ,
+		RD_STATUS = 0 
+		WHERE
+		AREA_ID = #areaId#
+	</update>
+	
+	<!-- 根据片区Id查询 -->
+	<select id="queryAreaById" parameterClass="java.lang.Long"
+		resultMap="AreaResult">
+		SELECT <include refid="BasicAreasql"/> 
+		FROM
+		HS_BASIC_AREA WHERE AREA_ID = #areaId#
+	</select>
+	
+	<!-- 根据片区编号查询 -->
+	<select id="getAreaByCode" parameterClass="java.lang.String"
+		resultMap="AreaResult">
+		SELECT <include refid="BasicAreasql"/>  
+		FROM
+		HS_BASIC_AREA WHERE AREA_CODE = #areaCode#
+	</select>
+	
+	<!-- 根据片区名称查询 -->
+	<select id="getAreaByName" parameterClass="java.lang.String"
+		resultMap="AreaResult">
+		SELECT <include refid="BasicAreasql"/>  
+		FROM
+		HS_BASIC_AREA WHERE AREA_NAME = #areaName#
+	</select>
+	
+	<!-- 获取最大自定义顺序 -->
+	<select id="getMaxAreaOrder" resultClass="java.lang.Long">
+		SELECT MAX(AREA_ORDER) FROM
+		HS_BASIC_AREA 
+	</select>
+	
+	<!-- 根据片区编号模糊查询 -->
+	<select id="queryAreaByCode" parameterClass="java.util.Map"
+		resultMap="AreaLikeResult">
+		SELECT  
+		AREA_ID , 
+		AREA_CODE ,
+		AREA_NAME ,
+		AREA_PINYIN
+		FROM
+		<![CDATA[ HS_BASIC_AREA WHERE AREA_CODE LIKE '%'||#areaCode#||'%' AND RD_STATUS =1  
+		AND ROWNUM <= #rownum# ORDER BY AREA_ORDER ]]>
+	</select>
+	
+	<!-- 模糊查询 -->
+	<select id="queryAreaByPNC" parameterClass="java.util.Map"
+		resultMap="AreaLikeResult">
+		SELECT  
+		AREA_ID , 
+		AREA_CODE ,
+		AREA_NAME ,
+		AREA_PINYIN
+		FROM
+		HS_BASIC_AREA WHERE RD_STATUS =1 AND  (AREA_CODE LIKE '%'||#areaName#||'%'  
+		or AREA_NAME LIKE '%'||#areaName#||'%' or AREA_PINYIN LIKE '%'||#areaPinyin#||'%'
+		) 
+		AND ROWNUM &lt;= #rownum# 
+		ORDER BY AREA_ORDER 
+	</select>
+	
+	<!-- 获取所有片区 -->
+	<select id="queryAreaList"  resultMap="AreaResult">
+		SELECT <include refid="BasicAreasql"/> 
+		FROM HS_BASIC_AREA WHERE RD_STATUS =1  ORDER BY AREA_ORDER
+	</select>
+	
+	<!-- 缓存所有片区 -->
+	<select id="queryAreaListByCache"  resultMap="AreaResult">
+	SELECT 
+	<include refid="BasicAreasql"/> 
+	
+    FROM HS_BASIC_AREA T WHERE RD_STATUS =1  ORDER BY AREA_ORDER
+	</select>
+	
+	<!-- 根据上级片区编号查询 -->
+	<select id="queryAreaByParentId" parameterClass="java.lang.Long"
+		resultMap="AreaResult">
+		SELECT <include refid="BasicAreasql"/>   		
+		FROM 
+		HS_BASIC_AREA WHERE PARENT_AREA_ID = #parentAreaId# AND RD_STATUS =1  ORDER BY AREA_ORDER
+	</select>
+	
+	<!-- 根据片区ID查询其下所有子及孙节点 -->
+	<select id="queryAreaListById" parameterClass="java.lang.Long"
+		resultMap="AreaResult">
+		SELECT <include refid="BasicAreasql"/> 
+		FROM ( SELECT <include refid="BasicAreasql"/> 
+		FROM HS_BASIC_AREA  
+		START WITH AREA_ID =#parentAreaId#
+		CONNECT BY NOCYCLE PRIOR AREA_ID=PARENT_AREA_ID  ) WHERE AREA_ID != #parentAreaId#	
+		AND	RD_STATUS =1 ORDER BY AREA_ORDER
+	</select>
+	
+	<!-- 根据片区层级查询 -->
+	<select id="queryAreaByLevel" parameterClass="java.lang.Integer"
+		resultMap="AreaResult">
+		SELECT <include refid="BasicAreasql"/>   		
+		FROM 
+		<![CDATA[ HS_BASIC_AREA WHERE AREA_LEVEL <= #value# AND RD_STATUS =1  ORDER BY AREA_ORDER ]]>
+	</select>
+	
+	<!-- 根据片区名称查询 -->
+	<select id="queryAreaByName" parameterClass="java.lang.String"
+		resultMap="AreaLikeResult">
+		SELECT 
+		AREA_ID , 
+		AREA_CODE ,
+		AREA_NAME ,
+		AREA_PINYIN
+		FROM
+		HS_BASIC_AREA where AREA_NAME LIKE '%'||#areaName#||'%' AND RD_STATUS =1  ORDER BY AREA_ORDER
+	</select>
+	
+	<!-- 获取当前网点有权操作网点对应的末级片区ID -->
+	<select id="queryAreaIdByPermissions" parameterClass="long" resultClass="long">
+		SELECT 
+			DISTINCT a.AREA_ID 
+		FROM 
+			HS_BASIC_AREA a 
+		INNER JOIN HS_BASIC_SITE_DETAIL d ON d.AREA_ID = a.AREA_ID
+		WHERE 
+			SITE_ID IN (SELECT s.SITE_ID FROM HS_BASIC_SITE s START WITH 
+			s.SITE_ID =#siteId# CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID)
+	</select>
+	
+	<!-- 获取当前网点有权操作网点对应的末级片区 -->
+	<select id="queryAreaByPermissions" parameterClass="map" resultMap="AreaResult">
+		SELECT 
+			DISTINCT * 
+		FROM 
+			(SELECT 
+				a.AREA_ID, AREA_CODE, AREA_NAME, 
+	        	AREA_PINYIN, AREA_ORDER, PARENT_AREA_ID, 
+	        	AREA_LEVEL, a.REMARK, a.CREATED_BY, a.CREATED_TIME, 
+	        	a.MODIFIED_BY, a.MODIFIED_TIME, a.RD_STATUS 
+			FROM 
+				HS_BASIC_AREA a 
+			INNER JOIN HS_BASIC_SITE_DETAIL d ON d.AREA_ID = a.AREA_ID
+			WHERE 
+				SITE_ID IN (SELECT s.SITE_ID FROM HS_BASIC_SITE s START WITH 
+				s.SITE_ID =#siteId# CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID ) AND 
+				<![CDATA[
+				AREA_LEVEL <= #levle#
+				]]>
+			)
+		ORDER BY AREA_ORDER 
+	</select>
+	
+		<!-- 根据网点ID查询片区信息 -->
+	<select id="queryAreaBySiteId" parameterClass="java.lang.Long"
+		resultMap="AreaResult">
+		SELECT 
+			A.AREA_ID ,
+        	A.AREA_CODE ,
+        	A.AREA_NAME ,
+        	A.AREA_PINYIN ,
+        	A.AREA_ORDER ,
+        	A.PARENT_AREA_ID ,
+        	A.AREA_LEVEL ,
+        	A.REMARK ,
+        	A.CREATED_BY ,
+        	A.CREATED_TIME ,
+        	A.MODIFIED_BY ,
+        	A.MODIFIED_TIME ,
+        	A.RD_STATUS 
+		FROM HS_BASIC_SITE_DETAIL D 
+		INNER JOIN HS_BASIC_AREA A ON D.AREA_ID = A.AREA_ID
+		WHERE D.SITE_ID = #siteId#
+	</select>
+	
+</sqlMap>

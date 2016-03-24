@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Role" >
+
+  <typeAlias alias="AuthRole" type="com.chengfeng.ne.basedata.domain.Role" />
+	
+  <resultMap id="BaseResultMap" class="com.chengfeng.ne.basedata.domain.Role" >
+    <result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+    <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR" />
+    <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+    <result column="ROLE_PINYIN" property="rolePinyin" jdbcType="VARCHAR" />
+    <result column="ROLE_ORDER" property="roleOrder" jdbcType="DECIMAL" />
+    <result column="BL_USE" property="blUse" jdbcType="DECIMAL" />
+    <result column="SITE_TYPE_ID" property="siteTypeId" jdbcType="DECIMAL" />
+    <result column="BL_BASIC" property="blBasic" jdbcType="DECIMAL" />
+    <result column="BL_OWE" property="blOwe" jdbcType="DECIMAL" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="CREATED_BY" property="createdBy" jdbcType="DECIMAL" />
+    <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="MODIFIED_BY" property="modifiedBy" jdbcType="DECIMAL" />
+    <result column="MODIFIED_TIME" property="modifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="BaseColumns" >
+    ROLE_ID, ROLE_CODE, ROLE_NAME, ROLE_PINYIN, ROLE_ORDER, BL_USE, SITE_TYPE_ID, BL_BASIC, 
+    BL_OWE, REMARK, CREATED_BY, CREATED_TIME, MODIFIED_BY, MODIFIED_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterClass="com.chengfeng.ne.basedata.domain.Role" >
+    select 
+    <include refid="Role.BaseColumns" />
+    from HS_AUTH_ROLE
+    where ROLE_ID = #roleId:DECIMAL#
+  </select>
+  
+  
+  <select id="queryAllRole" resultMap="BaseResultMap" parameterClass="com.chengfeng.ne.basedata.domain.Role" >
+    select 
+    <include refid="Role.BaseColumns" />
+    from HS_AUTH_ROLE
+	order by ROLE_ORDER
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterClass="com.chengfeng.ne.basedata.domain.Role" >
+    delete from HS_AUTH_ROLE
+    where ROLE_ID = #roleId:DECIMAL#
+  </delete>
+  <insert id="insert" parameterClass="com.chengfeng.ne.basedata.domain.Role" >
+  	<selectKey resultClass="int" type="pre" keyProperty="roleId" >     
+       SELECT SEQ_AUTH_ROLE.NEXTVAL AS VALUE FROM DUAL     
+   </selectKey>
+    insert into HS_AUTH_ROLE (ROLE_ID, ROLE_CODE, ROLE_NAME, ROLE_PINYIN, 
+      ROLE_ORDER, BL_USE, SITE_TYPE_ID, BL_BASIC, 
+      BL_OWE, REMARK, CREATED_BY, CREATED_TIME, MODIFIED_BY, 
+      MODIFIED_TIME)
+    values (#roleId#, #roleCode:VARCHAR#, #roleName:VARCHAR#, #rolePinyin:VARCHAR#, 
+      #roleOrder:DECIMAL#, #blUse:DECIMAL#, #siteTypeId:DECIMAL#, #blBasic:DECIMAL#, 
+      #blOwe:DECIMAL#, #remark:VARCHAR#, #createdBy:DECIMAL#, SYSDATE, #modifiedBy:DECIMAL#, 
+      #modifiedTime:TIMESTAMP#)
+  </insert>
+  <insert id="insertSelective" parameterClass="com.chengfeng.ne.basedata.domain.Role" >
+    insert into HS_AUTH_ROLE
+    <dynamic prepend="(" >
+      <isNotNull prepend="," property="roleId" >
+        ROLE_ID
+      </isNotNull>
+      <isNotNull prepend="," property="roleCode" >
+        ROLE_CODE
+      </isNotNull>
+      <isNotNull prepend="," property="roleName" >
+        ROLE_NAME
+      </isNotNull>
+      <isNotNull prepend="," property="rolePinyin" >
+        ROLE_PINYIN
+      </isNotNull>
+      <isNotNull prepend="," property="roleOrder" >
+        ROLE_ORDER
+      </isNotNull>
+      <isNotNull prepend="," property="blUse" >
+        BL_USE
+      </isNotNull>
+      <isNotNull prepend="," property="siteTypeId" >
+        SITE_TYPE_ID
+      </isNotNull>
+      <isNotNull prepend="," property="blBasic" >
+        BL_BASIC
+      </isNotNull>
+      <isNotNull prepend="," property="blOwe" >
+        BL_OWE
+      </isNotNull>
+      <isNotNull prepend="," property="remark" >
+        REMARK
+      </isNotNull>
+      <isNotNull prepend="," property="createdBy" >
+        CREATED_BY
+      </isNotNull>
+      <isNotNull prepend="," property="createdTime" >
+        CREATED_TIME
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedBy" >
+        MODIFIED_BY
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedTime" >
+        MODIFIED_TIME
+      </isNotNull>
+      )
+    </dynamic>
+    values
+    <dynamic prepend="(" >
+      <isNotNull prepend="," property="roleId" >
+        #roleId:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="roleCode" >
+        #roleCode:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="roleName" >
+        #roleName:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="rolePinyin" >
+        #rolePinyin:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="roleOrder" >
+        #roleOrder:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="blUse" >
+        #blUse:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="siteTypeId" >
+        #siteTypeId:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="blBasic" >
+        #blBasic:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="blOwe" >
+        #blOwe:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="remark" >
+        #remark:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="createdBy" >
+        #createdBy:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="createdTime" >
+        #createdTime:DATE#
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedBy" >
+        #modifiedBy:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedTime" >
+        #modifiedTime:DATE#
+      </isNotNull>
+      )
+    </dynamic>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterClass="com.chengfeng.ne.basedata.domain.Role" >
+    update HS_AUTH_ROLE
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="roleCode" >
+        ROLE_CODE = #roleCode:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="roleName" >
+        ROLE_NAME = #roleName:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="rolePinyin" >
+        ROLE_PINYIN = #rolePinyin:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="roleOrder" >
+        ROLE_ORDER = #roleOrder:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="blUse" >
+        BL_USE = #blUse:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="siteTypeId" >
+        SITE_TYPE_ID = #siteTypeId:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="blBasic" >
+        BL_BASIC = #blBasic:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="blOwe" >
+        BL_OWE = #blOwe:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="remark" >
+        REMARK = #remark:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="createdBy" >
+        CREATED_BY = #createdBy:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="createdTime" >
+        CREATED_TIME = #createdTime:DATE#
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedBy" >
+        MODIFIED_BY = #modifiedBy:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="modifiedTime" >
+        MODIFIED_TIME = #modifiedTime:DATE#
+      </isNotNull>
+    </dynamic>
+    where ROLE_ID = #roleId:DECIMAL#
+  </update>
+  <update id="updateByPrimaryKey" parameterClass="com.chengfeng.ne.basedata.domain.Role" >
+    update HS_AUTH_ROLE
+    set ROLE_CODE = #roleCode:VARCHAR#,
+      ROLE_NAME = #roleName:VARCHAR#,
+      ROLE_PINYIN = #rolePinyin:VARCHAR#,
+      ROLE_ORDER = #roleOrder:DECIMAL#,
+      BL_USE = #blUse:DECIMAL#,
+      SITE_TYPE_ID = #siteTypeId:DECIMAL#,
+      BL_BASIC = #blBasic:DECIMAL#,
+      BL_OWE = #blOwe:DECIMAL#,
+      REMARK = #remark:VARCHAR#,
+      MODIFIED_BY = #modifiedBy:DECIMAL#,
+      MODIFIED_TIME = SYSDATE
+    where ROLE_ID = #roleId:DECIMAL#
+  </update>
+  
+      <sql id="dynamicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty property = "roleName" prepend = " and ">
+				ROLE_NAME like '%'||#roleName#||'%'
+			</isNotEmpty>
+			<isNotEmpty property = "menuName" prepend=" and">
+				AR.RES_NAME like '%'||#menuName#||'%'
+				AND AR.RES_TYPE = 'MENU'
+			</isNotEmpty>
+			<isNotEmpty property="siteType" prepend=" and">
+				RST.SITE_TYPE_ID = #siteType#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+
+	<!-- 根据分页条件查询机型 -->
+	<select id="queryPagedList" parameterClass="java.util.Map" resultMap="BaseResultMap">
+		SELECT  
+		R.ROLE_ID, R.ROLE_CODE, R.ROLE_NAME, R.ROLE_PINYIN, R.ROLE_ORDER, R.BL_USE, R.SITE_TYPE_ID, R.BL_BASIC, 
+    	R.BL_OWE, R.REMARK, R.CREATED_BY, R.CREATED_TIME, R.MODIFIED_BY, R.MODIFIED_TIME
+		FROM HS_AUTH_ROLE R
+		<isNotEmpty property="menuName">
+			LEFT JOIN HS_AUTH_ROLE_RESOURCE RR ON R.ROLE_ID = RR.ROLE_ID 
+			LEFT JOIN HS_AUTH_RESOURCE AR ON RR.RES_ID = AR.RES_ID	
+		</isNotEmpty>
+		<isNotEmpty property="siteType">
+			INNER JOIN HS_AUTH_ROLE_SITE_TYPE RST ON R.ROLE_ID = RST.ROLE_ID
+		</isNotEmpty>
+		<include refid="dynamicWhere" />
+	</select>
+	
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		select count(*)
+		FROM HS_AUTH_ROLE R
+		<isNotEmpty property="menuName">
+			LEFT JOIN HS_AUTH_ROLE_RESOURCE RR ON R.ROLE_ID = RR.ROLE_ID 
+			LEFT JOIN HS_AUTH_RESOURCE AR ON RR.RES_ID = AR.RES_ID	
+		</isNotEmpty>
+		<isNotEmpty property="siteType">
+			INNER JOIN HS_AUTH_ROLE_SITE_TYPE RST ON R.ROLE_ID = RST.ROLE_ID
+		</isNotEmpty>
+		<include refid="dynamicWhere" />
+	</select>
+	
+	<!-- 根据用户ID查询角色信息 -->
+	<select id="queryRolesByUserId" parameterClass="java.lang.Long" resultMap="BaseResultMap">
+		SELECT R.ROLE_ID,
+		       R.ROLE_CODE,
+		       R.ROLE_NAME,
+		       R.ROLE_PINYIN,
+		       R.ROLE_ORDER,
+		       R.BL_USE,
+		       R.SITE_TYPE_ID,
+		       R.BL_BASIC,
+		       R.BL_OWE,
+		       R.REMARK,
+		       R.CREATED_BY,
+		       R.CREATED_TIME,
+		       R.MODIFIED_BY,
+		       R.MODIFIED_TIME
+		  FROM HS_AUTH_ROLE R, HS_AUTH_USER_ROLE UR
+		 WHERE UR.ROLE_ID = R.ROLE_ID
+		   AND UR.USER_ID = #userId#
+		   ORDER BY R.ROLE_ID
+	</select>
+	
+	<select id="queryUserRoles" parameterClass="java.util.Map" resultMap="BaseResultMap">
+		SELECT DISTINCT
+			   R.ROLE_ID,
+		       R.ROLE_CODE,
+		       R.ROLE_NAME,
+		       R.ROLE_PINYIN,
+		       R.ROLE_ORDER,
+		       R.BL_USE,
+		       R.SITE_TYPE_ID,
+		       R.BL_BASIC,
+		       R.BL_OWE,
+		       R.REMARK,
+		       R.CREATED_BY,
+		       R.CREATED_TIME,
+		       R.MODIFIED_BY,
+		       R.MODIFIED_TIME
+		  FROM HS_AUTH_ROLE R,HS_AUTH_USER_ROLE UR
+		  WHERE (UR.ROLE_ID = R.ROLE_ID AND UR.USER_ID =  #userId#)
+		  <isNotEmpty property="deptJobId">
+		  	union 
+			SELECT DISTINCT R.ROLE_ID,
+			                R.ROLE_CODE,
+			                R.ROLE_NAME,
+			                R.ROLE_PINYIN,
+			                R.ROLE_ORDER,
+			                R.BL_USE,
+			                R.SITE_TYPE_ID,
+			                R.BL_BASIC,
+			                R.BL_OWE,
+			                R.REMARK,
+			                R.CREATED_BY,
+			                R.CREATED_TIME,
+			                R.MODIFIED_BY,
+			                R.MODIFIED_TIME               
+			  FROM HS_AUTH_ROLE R, HS_AUTH_JOB_ROLE JR
+			  where 
+			  R.ROLE_ID = JR.ROLE_ID AND JR.DEPT_JOB_ID = #deptJobId#
+		  </isNotEmpty> 
+	</select>
+	
+		<!-- 根据资源ID查询角色信息 -->
+	<select id="queryRolesByResId" parameterClass="java.lang.Integer" resultMap="BaseResultMap">
+		 SELECT R.ROLE_ID,
+		        R.ROLE_CODE,
+		        R.ROLE_NAME,
+		        R.ROLE_PINYIN,
+		        R.ROLE_ORDER,
+		        R.BL_USE,
+		        R.SITE_TYPE_ID,
+		        R.BL_BASIC,
+		        R.BL_OWE,
+		        R.REMARK,
+		        R.CREATED_BY,
+		        R.CREATED_TIME,
+		        R.MODIFIED_BY,
+		        R.MODIFIED_TIME
+		   FROM HS_AUTH_ROLE R, HS_AUTH_ROLE_RESOURCE RR
+		  WHERE R.ROLE_ID = RR.ROLE_ID
+		    AND RR.RES_ID = #resId#
+		   ORDER BY R.ROLE_ID
+	</select>
+	
+	<!-- 获取最大自定义顺序 -->
+	<select id="getMaxRoleOrder" resultClass="java.lang.Long">
+		SELECT MAX(ROLE_ORDER) FROM
+		HS_AUTH_ROLE 
+	</select>
+	
+	<!-- 根据名称、code模糊查询资源 -->
+	<select id="queryRoleByPCN" resultClass="AuthRole" parameterClass="java.util.Map">
+			select * from 
+			(SELECT R.ROLE_ID as roleId,
+            R.ROLE_CODE as roleCode,
+            R.ROLE_NAME as roleName,
+            R.ROLE_PINYIN as rolePinyin
+		 	FROM HS_AUTH_ROLE R
+		 	<isNotEmpty property="siteTypeId">
+		 	, HS_AUTH_ROLE_SITE_TYPE T
+		 	</isNotEmpty> 
+			WHERE (R.ROLE_CODE LIKE '%'||#text#||'%'
+			OR R.ROLE_NAME LIKE '%'||#text#||'%'
+			OR R.ROLE_PINYIN LIKE '%'||#text#||'%')
+			<isNotEmpty property="siteTypeId">
+			AND T.ROLE_ID = R.ROLE_ID
+			AND T.SITE_TYPE_ID = #siteTypeId#
+			</isNotEmpty> 
+		    ORDER BY LENGTH(R.ROLE_NAME))
+		    WHERE ROWNUM &lt;=#rownum#
+	</select>
+	
+	<select id="queryRoleByName" resultMap="BaseResultMap" parameterClass="java.lang.String">
+		SELECT 
+		<include refid="BaseColumns"/> 
+		FROM HS_AUTH_ROLE R WHERE R.ROLE_NAME = #roleName#
+	</select>
+	<!-- 根据网点类型ID查询角色 -->
+	<select id="queryRoleBySiteTypeId" resultMap="BaseResultMap" parameterClass="java.util.Map">
+		 SELECT R.ROLE_ID,
+           R.ROLE_CODE,
+           R.ROLE_NAME,
+           R.ROLE_PINYIN,
+           R.ROLE_ORDER,
+           R.BL_USE,
+           R.SITE_TYPE_ID,
+           R.BL_BASIC,
+           R.BL_OWE,
+           R.REMARK,
+           R.CREATED_BY,
+           R.CREATED_TIME,
+           R.MODIFIED_BY,
+           R.MODIFIED_TIME
+	     FROM HS_AUTH_ROLE R
+	     INNER JOIN HS_AUTH_ROLE_SITE_TYPE t on T.ROLE_ID = R.ROLE_ID
+	     <isNotEmpty property="userId">
+	     INNER JOIN HS_AUTH_USER_ROLE UR ON UR.ROLE_ID = R.ROLE_ID
+		 </isNotEmpty>
+	     AND T.SITE_TYPE_ID = #siteTypeId#
+	     <isNotEmpty property="userId">
+	     AND UR.USER_ID = #userId#
+	     </isNotEmpty>
+		 
+ 
+	</select>
+	
+	<select id="queryUserOtherRole" resultMap="BaseResultMap" parameterClass="java.util.Map">
+	SELECT R.ROLE_ID,
+           R.ROLE_CODE,
+           R.ROLE_NAME,
+           R.ROLE_PINYIN,
+           R.ROLE_ORDER,
+           R.BL_USE,
+           R.SITE_TYPE_ID,
+           R.BL_BASIC,
+           R.BL_OWE,
+           R.REMARK,
+           R.CREATED_BY,
+           R.CREATED_TIME,
+           R.MODIFIED_BY,
+           R.MODIFIED_TIME
+ 	FROM HS_AUTH_ROLE R, HS_AUTH_USER_ROLE T 
+	WHERE T.USER_ID = #userId# 
+	AND T.ROLE_ID = R.ROLE_ID
+	AND T.ROLE_ID NOT IN(select rst.role_id from hs_auth_role_site_type rst where rst.site_type_id = #siteTypeId#)
+	</select>
+	
+</sqlMap>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Opt_OrderAddressLibraryVO">
+	<typeAlias alias="OrderAddressLibrary" type="com.chengfeng.ne.opt.orders.domain.OrderAddressLibraryVO"/>
+    <resultMap id="OrderAddressLibraryResult" class="com.chengfeng.ne.opt.orders.domain.OrderAddressLibraryVO">
+        <result property="libraryId" column="LIBRARY_ID"/>
+        <result property="customerName" column="CUSTOMER_NAME"/>
+        <result property="customerPhone" column="CUSTOMER_PHONE"/>
+        <result property="customerTel" column="CUSTOMER_TEL"/>
+        <result property="countryId" column="COUNTRY_ID"/>
+        <result property="provinceId" column="PROVINCE_ID"/>
+        <result property="cityId" column="CITY_ID"/>
+        <result property="countyId" column="COUNTY_ID"/>
+        <result property="postcode" column="POSTCODE"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="siteId" column="SITE_ID"/>
+        <result property="remark" column="REMARK"/>
+        <result property="createdBy" column="CREATED_BY"/>
+        <result property="createdTime" column="CREATED_TIME"/>
+        <result property="modifiedBy" column="MODIFIED_BY"/>
+        <result property="modifiedTime" column="MODIFIED_TIME"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="OrderAddressLibrarySql">
+	    <![CDATA[
+        	LIBRARY_ID ,
+        	CUSTOMER_NAME ,
+        	CUSTOMER_PHONE ,
+        	CUSTOMER_TEL ,
+        	COUNTRY_ID ,
+        	PROVINCE_ID ,
+        	CITY_ID ,
+        	COUNTY_ID ,
+        	POSTCODE ,
+        	ADDRESS ,
+        	SITE_ID ,
+        	REMARK ,
+        	CREATED_BY ,
+        	CREATED_TIME ,
+        	MODIFIED_BY ,
+        	MODIFIED_TIME 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" >
+       <selectKey resultClass="java.lang.Long"  keyProperty="libraryId" >
+            SELECT  SEQ_order_address_library.NEXTVAL AS ID FROM DUAL 
+        </selectKey>
+    <![CDATA[
+        INSERT INTO HS_ORDER_ADDRESS_LIBRARY (
+        	LIBRARY_ID ,
+        	CUSTOMER_NAME ,
+        	CUSTOMER_PHONE ,
+        	CUSTOMER_TEL ,
+        	COUNTRY_ID ,
+        	PROVINCE_ID ,
+        	CITY_ID ,
+        	COUNTY_ID ,
+        	POSTCODE ,
+        	ADDRESS ,
+        	SITE_ID ,
+        	REMARK ,
+        	CREATED_BY ,
+        	CREATED_TIME ,
+        	MODIFIED_BY ,
+        	MODIFIED_TIME 
+        ) VALUES (
+        	#libraryId# ,
+        	#customerName# ,
+        	#customerPhone# ,
+        	#customerTel# ,
+        	#countryId# ,
+        	#provinceId# ,
+        	#cityId# ,
+        	#countyId# ,
+        	#postcode# ,
+        	#address# ,
+        	#siteId# ,
+        	#remark# ,
+        	#createdBy# ,
+        	#createdTime# ,
+        	#modifiedBy# ,
+        	#modifiedTime# 
+        )
+    ]]>
+    </insert>
+
+    <update id="update" >
+    <![CDATA[
+        UPDATE HS_ORDER_ADDRESS_LIBRARY SET
+	        CUSTOMER_NAME = #customerName# ,
+	        CUSTOMER_PHONE = #customerPhone# ,
+	        CUSTOMER_TEL = #customerTel# ,
+	        COUNTRY_ID = #countryId# ,
+	        PROVINCE_ID = #provinceId# ,
+	        CITY_ID = #cityId# ,
+	        COUNTY_ID = #countyId# ,
+	        POSTCODE = #postcode# ,
+	        ADDRESS = #address# ,
+	        SITE_ID = #siteId# ,
+	        REMARK = #remark# ,
+	        CREATED_BY = #createdBy# ,
+	        CREATED_TIME = #createdTime# ,
+	        MODIFIED_BY = #modifiedBy# ,
+	        MODIFIED_TIME = #modifiedTime# 
+        WHERE 
+	        LIBRARY_ID = #libraryId# 
+    ]]>
+    </update>
+	
+	<!-- 根据条件动态修改 -->
+	<update id="updateByPrimaryKey" parameterClass="OrderAddressLibrary" >
+    UPDATE HS_ORDER_ADDRESS_LIBRARY 
+    <dynamic prepend="set" >
+	      <isNotNull prepend="," property="customerName" >
+	        CUSTOMER_NAME = #customerName#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="customerPhone" >
+	        CUSTOMER_PHONE = #customerPhone#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="customerTel" >
+	        CUSTOMER_TEL = #customerTel#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="countryId" >
+	        COUNTRY_ID = #countryId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="provinceId" >
+	        PROVINCE_ID = #provinceId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="cityId" >
+	        CITY_ID = #cityId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="countyId" >
+	        COUNTY_ID = #countyId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="postcode" >
+	        POSTCODE = #postcode#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="address" >
+	        ADDRESS = #address#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="siteId" >
+	        SITE_ID = #siteId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="remark" >
+	        REMARK = #remark#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="createdBy" >
+	        CREATED_BY = #createdBy#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="createdTime" >
+	        CREATED_TIME = #createdTime#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="modifiedBy" >
+	        MODIFIED_BY = #modifiedBy#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="modifiedTime" >
+	        MODIFIED_TIME = #modifiedTime#
+	      </isNotNull>   
+    </dynamic>
+    WHERE 
+	LIBRARY_ID = #libraryId# 
+  </update>
+
+    <delete id="delete">
+    <![CDATA[
+        DELETE FROM HS_ORDER_ADDRESS_LIBRARY WHERE
+        LIBRARY_ID = #libraryId# 
+    ]]>
+    </delete>
+    
+    <select id="getOrderAddressLibraryById" resultMap="OrderAddressLibraryResult">
+	    SELECT <include refid="OrderAddressLibrarySql"/>
+	    <![CDATA[
+	        FROM HS_ORDER_ADDRESS_LIBRARY 
+	        WHERE 
+		        LIBRARY_ID = #libraryId# 
+	    ]]>
+    </select>
+
+	<!-- 查询最大序列 -->
+	<select id="getMaxServersOrder" resultClass="Long">
+	  	SELECT 
+	    MAX(SERVERS_ORDER)
+	    FROM HS_ORDER_ADDRESS_LIBRARY
+	</select>
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+		       <isNotEmpty prepend="AND" property="libraryId">
+		             LIBRARY_ID = #libraryId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="customerName">
+		             CUSTOMER_NAME = #customerName#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="customerPhone">
+		             CUSTOMER_PHONE = #customerPhone#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="customerTel">
+		             CUSTOMER_TEL = #customerTel#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="countryId">
+		             COUNTRY_ID = #countryId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="provinceId">
+		             PROVINCE_ID = #provinceId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="cityId">
+		             CITY_ID = #cityId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="countyId">
+		             COUNTY_ID = #countyId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="postcode">
+		             POSTCODE = #postcode#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="address">
+		             ADDRESS = #address#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="siteId">
+		             SITE_ID = #siteId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="remark">
+		             REMARK = #remark#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="createdBy">
+		             CREATED_BY = #createdBy#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="createdTimeBegin">
+		             CREATED_TIME >= #createdTimeBegin#+ 0
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="createdTimeEnd">
+		             CREATED_TIME &lt;= #createdTimeEnd#+ 0
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="modifiedBy">
+		             MODIFIED_BY = #modifiedBy#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="modifiedTimeBegin">
+		             MODIFIED_TIME >= #modifiedTimeBegin#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="modifiedTimeEnd">
+		             MODIFIED_TIME &lt;= #modifiedTimeEnd#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="notLibraryId">
+		       		LIBRARY_ID != #notLibraryId#
+		       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+   <!-- 根据分页条件查询机型 -->
+	<select id="queryPagedList" parameterClass="java.util.Map" resultMap="OrderAddressLibraryResult">
+		SELECT 
+		<include refid="OrderAddressLibrarySql" />
+		FROM HS_ORDER_ADDRESS_LIBRARY
+		<include refid="dynamicWhere" />
+		ORDER BY CREATED_TIME
+	</select>
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT COUNT(1) FROM HS_ORDER_ADDRESS_LIBRARY
+		<include refid="dynamicWhere" />
+	</select>
+	<!-- 根据条件动态修改批量修改-->
+	<update id="updateByBatch" parameterClass="java.util.Map" >
+    	UPDATE HS_ORDER_ADDRESS_LIBRARY 
+    <dynamic prepend="set" >
+	      <isNotNull prepend="," property="customerName" >
+	        CUSTOMER_NAME = #customerName#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="customerPhone" >
+	        CUSTOMER_PHONE = #customerPhone#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="customerTel" >
+	        CUSTOMER_TEL = #customerTel#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="countryId" >
+	        COUNTRY_ID = #countryId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="provinceId" >
+	        PROVINCE_ID = #provinceId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="cityId" >
+	        CITY_ID = #cityId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="countyId" >
+	        COUNTY_ID = #countyId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="postcode" >
+	        POSTCODE = #postcode#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="address" >
+	        ADDRESS = #address#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="siteId" >
+	        SITE_ID = #siteId#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="remark" >
+	        REMARK = #remark#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="createdBy" >
+	        CREATED_BY = #createdBy#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="createdTime" >
+	        CREATED_TIME = #createdTime#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="modifiedBy" >
+	        MODIFIED_BY = #modifiedBy#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="modifiedTime" >
+	        MODIFIED_TIME = #modifiedTime#
+	      </isNotNull>   
+    </dynamic>
+    WHERE 
+	LIBRARY_ID in 
+	<iterate open="(" close=")" conjunction="," property="libraryIdList">
+		#libraryIdList[]#
+	</iterate>
+  </update>
+</sqlMap>
+

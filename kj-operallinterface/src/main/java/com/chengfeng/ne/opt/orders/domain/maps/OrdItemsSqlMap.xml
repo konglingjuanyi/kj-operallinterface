@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Opt_OrdItemsVO" >
+  <resultMap id="BaseResultMap" class="com.chengfeng.ne.opt.orders.domain.OrdItemsVO" >
+    <result column="ORDER_ID" property="orderId" />
+    <result column="GOODS_ORDER" property="goodsOrder" />
+    <result column="GOODS_TYPE" property="goodsType" />
+    <result column="GOODS_NAME" property="goodsName" />
+    <result column="PIECE" property="piece" />
+    <result column="REMARK" property="remark" />
+  </resultMap> 
+  <sql id="BaseColumnList" >
+    ORDER_ID, GOODS_ORDER, GOODS_TYPE, GOODS_NAME, PIECE, REMARK
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdItemsVOKey" >
+    select 
+    <include refid="BaseColumnList" />
+    from HS_ORD_ITEMS
+    where ORDER_ID = #orderId:DECIMAL#
+      and GOODS_ORDER = #goodsOrder:DECIMAL#
+  </select>
+  <delete id="deleteByPrimaryKey" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdItemsVOKey" >
+    delete from HS_ORD_ITEMS
+    where ORDER_ID = #orderId:DECIMAL#
+      and GOODS_ORDER = #goodsOrder:DECIMAL#
+  </delete>
+  <insert id="insert" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdItemsVO" >
+    insert into HS_ORD_ITEMS (ORDER_ID, GOODS_ORDER, GOODS_TYPE, GOODS_NAME, 
+      PIECE, REMARK)
+    values (#orderId:DECIMAL#, #goodsOrder:DECIMAL#, #goodsType:DECIMAL#, #goodsName:VARCHAR#, 
+      #piece:DECIMAL#, #remark:VARCHAR#)
+  </insert>
+  <insert id="insertSelective" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdItemsVO" >
+    insert into HS_ORD_ITEMS
+    <dynamic prepend="(" >
+      <isNotNull prepend="," property="orderId" >
+        ORDER_ID
+      </isNotNull>
+      <isNotNull prepend="," property="goodsOrder" >
+        GOODS_ORDER
+      </isNotNull>
+      <isNotNull prepend="," property="goodsType" >
+        GOODS_TYPE
+      </isNotNull>
+      <isNotNull prepend="," property="goodsName" >
+        GOODS_NAME
+      </isNotNull>
+      <isNotNull prepend="," property="piece" >
+        PIECE
+      </isNotNull>
+      <isNotNull prepend="," property="remark" >
+        REMARK
+      </isNotNull>
+      )
+    </dynamic>
+    values
+    <dynamic prepend="(" >
+      <isNotNull prepend="," property="orderId" >
+        #orderId:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="goodsOrder" >
+        #goodsOrder:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="goodsType" >
+        #goodsType:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="goodsName" >
+        #goodsName:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="piece" >
+        #piece:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="remark" >
+        #remark:VARCHAR#
+      </isNotNull>
+      )
+    </dynamic>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdItemsVO" >
+    update HS_ORD_ITEMS
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="goodsType" >
+        GOODS_TYPE = #goodsType:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="goodsName" >
+        GOODS_NAME = #goodsName:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="piece" >
+        PIECE = #piece:DECIMAL#
+      </isNotNull>
+      <isNotNull prepend="," property="remark" >
+        REMARK = #remark:VARCHAR#
+      </isNotNull>
+    </dynamic>
+    where ORDER_ID = #orderId:DECIMAL#
+      and GOODS_ORDER = #goodsOrder:DECIMAL#
+  </update>
+  <update id="updateByPrimaryKey" parameterClass="com.chengfeng.ne.opt.orders.domain.OrdItemsVO" >
+    update HS_ORD_ITEMS
+    set GOODS_TYPE = #goodsType:DECIMAL#,
+      GOODS_NAME = #goodsName:VARCHAR#,
+      PIECE = #piece:DECIMAL#,
+      REMARK = #remark:VARCHAR#
+    where ORDER_ID = #orderId:DECIMAL#
+      and GOODS_ORDER = #goodsOrder:DECIMAL#
+  </update>
+  
+  <select id="selectOrderItemsByOrderId" parameterClass="long" resultMap="BaseResultMap">
+  		select 
+  			ORDER_ID, GOODS_ORDER, GOODS_TYPE, GOODS_NAME, PIECE, REMARK 
+  		from 
+  			HS_ORD_ITEMS 
+  		where ORDER_ID=#orderId#
+  </select>
+</sqlMap>

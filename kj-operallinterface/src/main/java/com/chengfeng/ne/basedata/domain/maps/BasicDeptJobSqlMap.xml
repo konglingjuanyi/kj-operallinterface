@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicDeptJobVO">
+	<typeAlias alias="BasicDeptJob" type="com.chengfeng.ne.basedata.domain.BasicDeptJobVO" />
+	
+	<!-- 返回结果集 -->
+	<resultMap id="deptJobResult" class="com.chengfeng.ne.basedata.domain.BasicDeptJobVO">	
+		<result property="deptJobId" column="DEPT_JOB_ID" />		
+		<result property="jobId" column="JOB_ID" />		
+		<result property="deptId" column="DEPT_ID" />
+		<result property="deptJobName" column="DEPT_JOB_NAME" />
+	</resultMap>
+	
+	<!-- 新增部门岗位关系 -->
+	<insert id="doCreateDeptJob" parameterClass="BasicDeptJob">		
+		<selectKey resultClass="long" keyProperty="deptJobId">
+			SELECT SEQ_BASIC_DEPT_JOB.NEXTVAL AS deptJobId FROM DUAL
+		</selectKey>
+		INSERT INTO
+		HS_BASIC_DEPT_JOB(DEPT_JOB_ID,JOB_ID,DEPT_ID,DEPT_JOB_NAME)
+		VALUES
+		(#deptJobId#,#jobId#,#deptId#,#deptJobName#)
+	</insert>
+	
+	 <!-- 修改部门岗位关系 -->
+	<update id="doModifyDeptJob"  parameterClass="java.util.Map" >
+		UPDATE HS_BASIC_DEPT_JOB SET		
+		DEPT_ID = #deptId# ,
+		JOB_ID = #jobId#
+		WHERE  	DEPT_ID = #oldDeptId# AND 
+		JOB_ID = #oldJobId#
+	</update>
+	
+	<!-- 删除部门岗位关系 -->
+	<update id="doDeleteDeptJob" parameterClass="java.lang.Long">
+		DELETE FROM HS_BASIC_DEPT_JOB
+		WHERE JOB_ID = #jobID# 
+	</update>
+	
+	<!-- 删除部门岗位关系 -->
+	<delete id="doDeleteByDeptJob" parameterClass="BasicDeptJob">
+		DELETE FROM HS_BASIC_DEPT_JOB
+		WHERE JOB_ID = #jobId# AND DEPT_ID = #deptId# 
+	</delete>
+	
+	<!-- 查询所有部门岗位关系 -->
+	<select id="queryDeptJobList"  resultMap="deptJobResult">
+		SELECT DEPT_JOB_ID,JOB_ID,DEPT_ID,DEPT_JOB_NAME FROM HS_BASIC_DEPT_JOB
+	</select>
+	
+	<!-- 查询是否已经存在此部门岗位关系 -->
+	<select id="queryByDeptJobVO" parameterClass="BasicDeptJob" resultClass="Integer">
+		SELECT COUNT(1) FROM HS_BASIC_DEPT_JOB 
+		WHERE JOB_ID = #jobId# AND DEPT_ID = #deptId#
+	</select>
+	
+	<!-- 根据部门id和岗位id查询 -->
+	<select id="queryDeptJobByEntity" parameterClass="BasicDeptJob" resultMap="deptJobResult">
+		SELECT DEPT_JOB_ID,JOB_ID,DEPT_ID,DEPT_JOB_NAME FROM HS_BASIC_DEPT_JOB
+		WHERE JOB_ID = #jobId# AND DEPT_ID = #deptId# 
+	</select>
+	
+	<!-- 根据ID查询 -->
+	<select id="getDeptJobById" parameterClass="java.lang.Long" resultMap="deptJobResult">
+		SELECT DEPT_JOB_ID,JOB_ID,DEPT_ID,DEPT_JOB_NAME FROM HS_BASIC_DEPT_JOB
+		WHERE DEPT_JOB_ID = #deptJobId#  
+	</select>
+	
+	<!-- 根据JobID查询 -->
+	<select id="queryDeptJobByJobId" parameterClass="java.lang.Long" resultMap="deptJobResult">
+		SELECT DEPT_JOB_ID,JOB_ID,DEPT_ID,DEPT_JOB_NAME FROM HS_BASIC_DEPT_JOB
+		WHERE JOB_ID = #jobId#  
+	</select>
+	
+	<!-- 根据DeptID查询 -->
+	<select id="queryDeptJobByDeptId" parameterClass="java.lang.Long" resultMap="deptJobResult">
+		SELECT DEPT_JOB_ID,JOB_ID,DEPT_ID,DEPT_JOB_NAME FROM HS_BASIC_DEPT_JOB
+		WHERE DEPT_ID = #deptId#  
+	</select>
+	
+	<!-- 查询岗位下是否有员工 -->
+	<select id="getEmpByDeptJobId" parameterClass="BasicDeptJob" resultClass="java.lang.Integer">
+		SELECT COUNT(*) FROM HS_BASIC_EMPLOYEE WHERE DEPT_JOB_ID IN 
+		(SELECT DEPT_JOB_ID FROM HS_BASIC_DEPT_JOB
+		WHERE JOB_ID = #jobId# AND DEPT_ID = #deptId# )
+	</select>
+</sqlMap>

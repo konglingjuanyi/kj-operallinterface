@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="KjOpt_OrdStatusVO">
+	<resultMap id="BaseResultMap" class="com.chengfeng.kj.opt.orders.domain.OrdStatuVO">
+		<result column="ORDER_ID" property="orderId" />
+		<result column="ORDER_STATUS" property="orderStatus" />
+		<result column="SITE_ID" property="siteId" />
+		<result column="ORDER_CANCEL_ID" property="orderCancelId" />
+		<result column="CREATED_BY" property="createdBy" />
+		<result column="CREATED_TIME" property="createdTime" />
+	</resultMap>
+	<sql id="BaseColumnList">
+		ORDER_ID, ORDER_STATUS, SITE_ID, ORDER_CANCEL_ID,
+		CREATED_BY, CREATED_TIME
+	</sql>
+	<insert id="insertByTabName" parameterClass="java.util.Map">
+	insert into $tableName$ (
+	<include refid="BaseColumnList"/>
+	)
+	values(
+	#ordStatus.orderId#,
+	#ordStatus.orderStatus#,
+	#ordStatus.siteId#,
+	#ordStatus.orderCancelId#,
+	#ordStatus.createdBy#,
+	#ordStatus.createdTime#
+	)
+	</insert>
+	
+	<!-- 批量插入数据 -->
+	<insert id="insertBatch" parameterClass="java.util.Map">
+		<![CDATA[
+		INSERT ALL
+		]]>
+		<iterate  conjunction=" ">
+			into #tableName# (
+			<include refid="BaseColumnList" />
+			)
+			values(
+			#ordStatus[].orderId#,
+			#ordStatus[].orderStatus#,
+			#ordStatus[].siteId#,
+			#ordStatus[].orderCancelId#,
+			#ordStatus[].createdBy#,
+			#ordStatus[].createdTime#
+			)
+		</iterate>
+		<![CDATA[select * from dual]]>
+	</insert>
+</sqlMap>

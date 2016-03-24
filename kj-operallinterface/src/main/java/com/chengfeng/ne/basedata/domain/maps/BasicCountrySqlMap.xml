@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicCountryVO">
+	<typeAlias alias="BasicCountry" type="com.chengfeng.ne.basedata.domain.BasicCountryVO" />
+	<!-- 返回结果集 -->
+	<resultMap id="CountryResult" class="com.chengfeng.ne.basedata.domain.BasicCountryVO">
+		<result property="countryId" column="COUNTRY_ID" />
+		<result property="countryCode" column="COUNTRY_CODE" />
+		<result property="countryName" column="COUNTRY_NAME" />
+		<result property="countryPinyin" column="COUNTRY_PINYIN" />
+		<result property="countryOrder" column="COUNTRY_ORDER" />
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />
+	</resultMap>	
+
+	<!-- 新增国家oracle -->
+	<insert id="doCreateCountry" parameterClass="BasicCountry">
+		<selectKey resultClass="long" keyProperty="countryId">
+			SELECT SEQ_BASIC_REGION.nextval AS countryId FROM dual
+		</selectKey>
+		insert into
+		HS_BASIC_COUNTRY(COUNTRY_ID,COUNTRY_CODE,COUNTRY_NAME,COUNTRY_PINYIN,COUNTRY_ORDER,REMARK,CREATED_BY,CREATED_TIME,MODIFIED_BY,MODIFIED_TIME,RD_STATUS)
+		values
+		(#countryId#,#countryCode#,#countryName#,#countryPinyin#,#countryOrder#,#remark#,#createdBy#,#createdTime#,#modifiedBy#,#modifiedTime#,1)
+	</insert>
+
+	<!-- 修改国家 -->
+	<update id="doSaveCountry" parameterClass="BasicCountry">
+		update
+		HS_BASIC_COUNTRY set
+		COUNTRY_CODE=#countryCode#,COUNTRY_NAME=#countryName#,
+		COUNTRY_PINYIN=#countryPinyin#,COUNTRY_ORDER=#countryOrder#,
+		REMARK=#remark#,MODIFIED_BY=#modifiedBy#,MODIFIED_TIME=#modifiedTime#
+		where
+		COUNTRY_ID=#countryId#
+	</update>
+
+	<!-- 删除国家 -->
+	<delete id="doDeleteCountry" parameterClass="BasicCountry">
+		update HS_BASIC_COUNTRY 
+		set 
+			COUNTRY_CODE=#countryCode#,COUNTRY_NAME=#countryName#,MODIFIED_BY=#modifiedBy#,
+			MODIFIED_TIME=#modifiedTime#,RD_STATUS=0 
+		where COUNTRY_ID=#countryId#
+	</delete>
+
+	<!-- 获取自定义顺序最大值 -->
+	<select id="getMaxCountryOrder" resultClass="int">
+		select
+		max(COUNTRY_ORDER) from HS_BASIC_COUNTRY where RD_STATUS=1
+	</select>
+
+	<!-- 查询国家列表 -->
+	<select id="queryCountryList" resultMap="CountryResult">
+		select 
+			country_id, country_code, country_name, country_pinyin, country_order, remark,
+			created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_COUNTRY where 
+			RD_STATUS=1 order by COUNTRY_ORDER
+	</select>
+
+	<!-- 根据时间查询国家列表-->
+	<select id="queryCountryListByTime" resultMap="CountryResult" parameterClass="java.util.Date">
+	<![CDATA[
+		select 
+			country_id, country_code, country_name, country_pinyin, country_order, remark,
+			created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_COUNTRY 
+		where 
+			 (CREATED_TIME > #date# or MODIFIED_TIME > #date#)
+	 ]]>
+	</select>
+
+	<!-- 按ID查询国家 -->
+	<select id="queryCountryById" resultMap="CountryResult"
+		parameterClass="long">
+		select 
+			country_id, country_code, country_name, country_pinyin, country_order, remark,
+			created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_COUNTRY where
+			COUNTRY_ID=#countryId#
+	</select>
+
+	<!-- 按编号查询国家 -->
+	<select id="queryCountryByCode" resultMap="CountryResult"
+		parameterClass="java.lang.String">
+		select 
+			country_id, country_code, country_name, country_pinyin, country_order, remark,
+			created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_COUNTRY where
+			COUNTRY_CODE=#countryCode#
+	</select>
+
+	<!-- 按名称查询国家 -->
+	<select id="queryCountryByName" parameterClass="java.lang.String"
+		resultMap="CountryResult">
+		select 
+			country_id, country_code, country_name, country_pinyin, country_order, remark,
+			created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_COUNTRY where
+			COUNTRY_NAME=#countryName# order by COUNTRY_ORDER
+	</select>
+	
+	<!-- 根据名称、编号、拼音模糊查询国家 -->
+	<select id="queryCountryListByPCNLike" parameterClass="java.util.Map" resultClass="BasicCountry">
+		SELECT 
+			COUNTRY_ID AS countryId, COUNTRY_CODE AS countryCode, 
+			COUNTRY_NAME AS countryName, COUNTRY_PINYIN AS countryPinyin
+		FROM 
+			HS_BASIC_COUNTRY 
+		WHERE 
+			(COUNTRY_NAME LIKE '%'||#title#||'%' OR COUNTRY_CODE LIKE 
+			'%'||#title#||'%' OR COUNTRY_PINYIN LIKE '%'||#pinyin#||'%') 
+			AND RD_STATUS = 1 AND 
+		<![CDATA[ 
+			ROWNUM <= #rownum# 
+		]]>
+		ORDER BY LENGTH(COUNTRY_NAME)
+	</select>
+</sqlMap>

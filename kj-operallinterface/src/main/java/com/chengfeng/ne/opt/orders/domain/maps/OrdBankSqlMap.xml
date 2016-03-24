@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Opt_OrdBankVO" >
+	<typeAlias alias="OrdBank" type="com.chengfeng.ne.opt.orders.domain.OrdBankVO"/>
+  <resultMap id="OrdBankResult" class="OrdBank">
+        <result property="orderId" column="ORDER_ID"/>
+        <result property="accountBankName" column="ACCOUNT_BANK_NAME"/>
+        <result property="accountCode" column="ACCOUNT_CODE"/>
+        <result property="accountName" column="ACCOUNT_NAME"/>
+        <result property="bankarea" column="BANKAREA"/>
+        <result property="provinceName" column="PROVINCE_NAME"/>
+        <result property="cityName" column="CITY_NAME"/>
+        <result property="combinenum" column="COMBINENUM"/>
+        <result property="accountType" column="ACCOUNT_TYPE"/>
+    </resultMap>
+    <!-- 用于select查询公用抽取的列 -->
+	<sql id="OrdBankSql">
+	    <![CDATA[
+        	ORDER_ID ,
+        	ACCOUNT_BANK_NAME ,
+        	ACCOUNT_CODE ,
+        	ACCOUNT_NAME ,
+        	BANKAREA ,
+        	PROVINCE_NAME ,
+        	CITY_NAME ,
+        	COMBINENUM ,
+        	ACCOUNT_TYPE 
+	    ]]>
+	</sql>
+  <select id="selectByPrimaryKey" resultMap="OrdBankResult" parameterClass="java.lang.Long" >
+     SELECT <include refid="OrdBankSql"/>
+	    <![CDATA[
+	        FROM HS_ORD_BANK 
+	        WHERE 
+		        ORDER_ID = #orderId# 
+	    ]]>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterClass="java.lang.Long" >
+    delete from HS_ORD_BANK
+    where ORDER_ID = #orderId#
+  </delete>
+  <insert id="insert" >
+     <!--   <selectKey resultClass="java.lang.Long"  keyProperty="orderId" >
+            SELECT  SEQ_BASIC_ID.nextval AS ID FROM DUAL 
+        </selectKey> -->
+    <![CDATA[
+        INSERT INTO HS_ORD_BANK (
+        	ORDER_ID ,
+        	ACCOUNT_BANK_NAME ,
+        	ACCOUNT_CODE ,
+        	ACCOUNT_NAME ,
+        	BANKAREA ,
+        	PROVINCE_NAME ,
+        	CITY_NAME ,
+        	COMBINENUM ,
+        	ACCOUNT_TYPE 
+        ) VALUES (
+        	#orderId# ,
+        	#accountBankName# ,
+        	#accountCode# ,
+        	#accountName# ,
+        	#bankarea# ,
+        	#provinceName# ,
+        	#cityName# ,
+        	#combinenum# ,
+        	#accountType# 
+        )
+    ]]>
+    </insert>
+</sqlMap>

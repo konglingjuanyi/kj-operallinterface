@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicSiteDetailVO">
+	<typeAlias alias="BasicSiteDetail" type="com.chengfeng.ne.basedata.domain.BasicSiteDetailVO" />
+	
+	<!-- 返回结果集 -->
+	<resultMap id="SiteDetailResult" class="com.chengfeng.ne.basedata.domain.BasicSiteDetailVO">
+		<result property="siteId" column="SITE_ID" />
+		<result property="managerEmployeeId" column="MANAGER_EMPLOYEE_ID" />
+		<result property="managerPhone" column="MANAGER_PHONE" />
+		<result property="qryEmployeeId" column="QRY_EMPLOYEE_ID" />
+		<result property="qryPhone" column="QRY_PHONE" />	
+		<result property="taobaoEmployeeId" column="TAOBAO_EMPLOYEE_ID" />
+		<result property="taobaoPhone" column="TAOBAO_PHONE" />
+		<result property="problemEmployeeId" column="PROBLEM_EMPLOYEE_ID" />
+		<result property="problemPhone" column="PROBLEM_PHONE" />
+		<result property="saleEmployeeId" column="SALE_EMPLOYEE_ID" />
+		<result property="salePhone" column="SALE_PHONE" />
+		<result property="sosEmployeeId" column="SOS_EMPLOYEE_ID" />
+		<result property="sosPhone" column="SOS_PHONE" />
+		<result property="phoneSms" column="PHONE_SMS" />
+		<result property="fax" column="FAX" />
+		<result property="postCode" column="POSTCODE" />
+		<result property="address" column="ADDRESS" />
+		<result property="countryId" column="COUNTRY_ID" />
+		<result property="provinceId" column="PROVINCE_ID" />
+		<result property="cityId" column="CITY_ID" />
+		<result property="countyId" column="COUNTY_ID" />
+		<result property="areaId" column="AREA_ID" />
+		<result property="siteExplain" column="SITE_EXPLAIN" />
+		<result property="siteExplainId" column="SITE_EXPLAIN_CLOB_ID" />
+		<result property="startDate" column="START_DATE" />
+		<result property="endDate" column="END_DATE" />
+		<result property="blWeb" column="BL_WEB" />
+		<result property="webParentSiteId" column="WEB_PARENT_SITE_ID" />
+		<result property="webName" column="WEB_NAME" />
+		<result property="bankId" column="BANK_ID" />
+		<result property="bankAccountId" column="BANK_ACCOUNT_ID" />
+		<result property="bankAccountName" column="BANK_ACCOUNT_NAME" />
+		<result property="bankAccountNo" column="BANK_ACCOUNT_NO" />
+		<result property="normalTeuIn" column="NORMAL_TEU_IN" />
+		<result property="maxTeuIn" column="MAX_TEU_IN" />
+		<result property="normalTeuOut" column="NORMAL_TEU_OUT" />
+		<result property="maxTeuOut" column="MAX_TEU_OUT" />
+		<result property="maxStayRatio" column="MAX_STAY_RATIO" />
+		<result property="maxProblemRatio" column="MAX_PROBLEM_RATIO" />
+		<result property="remark" column="REMARK" />
+		<result property="interfaceSiteId" column="INTERFACE_SITE_ID" />		
+		<result property="cargoCenterSiteId" column="CARGO_CENTER_SITE_ID" />		
+		<result property="rangeClobId" column="RANGE_CLOB_ID" />		
+		<result property="outRangeClobId" column="OUT_RANGE_CLOB_ID" />		
+		<result property="specialRangeClobId" column="SPECIAL_RANGE_CLOB_ID" />
+		<result property="siteServicesType" column="SITE_SERVICES_TYPE" />
+		<result property="managerEmployeeName" column="MANAGER_EMPLOYEE_NAME" />
+		<result property="qryEmployeeName" column="QRY_EMPLOYEE_NAME" />
+		<result property="taobaoEmployeeName" column="TAOBAO_EMPLOYEE_NAME" />
+		<result property="problemEmployeeName" column="PROBLEM_EMPLOYEE_NAME" />
+		<result property="saleEmployeeName" column="SALE_EMPLOYEE_NAME" />
+		<result property="sosEmployeeName" column="SOS_EMPLOYEE_NAME" />
+	</resultMap>
+	<!-- 查询网点所在省份、城市 -->
+	<resultMap extends="SiteDetailResult" class="com.chengfeng.ne.basedata.domain.BasicSiteDetailVO" id="queryLocation">
+		<result property="provinceName" column="province_name"/>
+		<result property="cityName" column="hs_basic_city"/>
+	</resultMap>
+	<!-- 新加4列 -->
+	<resultMap extends="SiteDetailResult" class="BasicSiteDetail" id="addSiteDetailResult">
+		<result property="depositCurrencyId" column="DEPOSIT_CURRENCY_ID"/>
+		<result property="depositAmount" column="DEPOSIT_AMOUNT"/>
+		<result property="joinCurrencyId" column="JOIN_CURRENCY_ID"/>
+		<result property="joinAmount" column="JOIN_AMOUNT"/>
+	</resultMap>
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="BasicSiteDetailsql">
+	    <![CDATA[
+        	pro.province_name,
+	       city.city_name,
+	       SITE_ID,
+	       MANAGER_EMPLOYEE_ID,
+	       MANAGER_PHONE,
+	       QRY_EMPLOYEE_ID,
+	       QRY_PHONE,
+	       TAOBAO_EMPLOYEE_ID,
+	       TAOBAO_PHONE,
+	       PROBLEM_EMPLOYEE_ID,
+	       PROBLEM_PHONE,
+	       SALE_EMPLOYEE_ID,
+	       SALE_PHONE,
+	       SOS_EMPLOYEE_ID,
+	       SOS_PHONE,
+	       PHONE_SMS,
+	       FAX,
+	       d.POSTCODE,
+	       d.ADDRESS,
+	       d.COUNTRY_ID,
+	       d.PROVINCE_ID,
+	       d.CITY_ID,
+	       d.COUNTY_ID,
+	       d.AREA_ID,
+	       SITE_EXPLAIN_CLOB_ID,
+	       START_DATE,
+	       END_DATE,
+	       BL_WEB,
+	       WEB_PARENT_SITE_ID,
+	       WEB_NAME,
+	       BANK_ID,
+	       BANK_ACCOUNT_ID,
+	       BANK_ACCOUNT_NAME,
+	       BANK_ACCOUNT_NO,
+	       NORMAL_TEU_IN,
+	       MAX_TEU_IN,
+	       NORMAL_TEU_OUT,
+	       MAX_TEU_OUT,
+	       MAX_STAY_RATIO,
+	       MAX_PROBLEM_RATIO,
+	       d.REMARK,
+	       INTERFACE_SITE_ID,
+	       CARGO_CENTER_SITE_ID,
+	       RANGE_CLOB_ID,
+	       OUT_RANGE_CLOB_ID,
+	       SPECIAL_RANGE_CLOB_ID,
+	       SITE_SERVICES_TYPE ,
+	       MANAGER_EMPLOYEE_NAME ,
+	       QRY_EMPLOYEE_NAME ,
+	       TAOBAO_EMPLOYEE_NAME ,
+	       PROBLEM_EMPLOYEE_NAME ,
+	       SALE_EMPLOYEE_NAME ,
+	       SOS_EMPLOYEE_NAME 
+	    ]]>
+	</sql>
+	
+	 <!-- 新增网点详细信息 -->
+	<insert id="doCreateSiteDetail" parameterClass="BasicSiteDetail">		
+		INSERT INTO
+		HS_BASIC_SITE_DETAIL(SITE_ID,MANAGER_EMPLOYEE_ID,MANAGER_PHONE,QRY_EMPLOYEE_ID,QRY_PHONE,TAOBAO_EMPLOYEE_ID,
+		TAOBAO_PHONE,PROBLEM_EMPLOYEE_ID,PROBLEM_PHONE,SALE_EMPLOYEE_ID,SALE_PHONE,SOS_EMPLOYEE_ID,SOS_PHONE,PHONE_SMS,
+		FAX,POSTCODE,ADDRESS,COUNTRY_ID,PROVINCE_ID,CITY_ID,COUNTY_ID,AREA_ID,SITE_EXPLAIN_CLOB_ID,START_DATE,END_DATE,BL_WEB,
+		WEB_PARENT_SITE_ID,WEB_NAME,BANK_ID,
+		BANK_ACCOUNT_ID ,
+        BANK_ACCOUNT_NAME ,
+        BANK_ACCOUNT_NO ,
+        NORMAL_TEU_IN ,
+        MAX_TEU_IN ,
+        NORMAL_TEU_OUT ,
+        MAX_TEU_OUT ,
+        MAX_STAY_RATIO ,
+        MAX_PROBLEM_RATIO ,
+		REMARK ,
+		INTERFACE_SITE_ID,
+		CARGO_CENTER_SITE_ID,
+		RANGE_CLOB_ID ,
+       	OUT_RANGE_CLOB_ID ,
+       	SPECIAL_RANGE_CLOB_ID ,
+       	SITE_SERVICES_TYPE ,
+       	MANAGER_EMPLOYEE_NAME ,
+		QRY_EMPLOYEE_NAME ,
+		TAOBAO_EMPLOYEE_NAME ,
+		PROBLEM_EMPLOYEE_NAME ,
+		SALE_EMPLOYEE_NAME ,
+		SOS_EMPLOYEE_NAME 
+		)
+		VALUES
+		(#siteId#,#managerEmployeeId#,#managerPhone#,#qryEmployeeId#,#qryPhone#,
+		#taobaoEmployeeId#,#taobaoPhone#,#problemEmployeeId#,#problemPhone#,#saleEmployeeId#,
+		#salePhone#,#sosEmployeeId#,#sosPhone#,#phoneSms#,#fax#,#postCode#,#address#,
+		#countryId#,#provinceId#,#cityId#,#countyId#,#areaId#,#siteExplainId#,#startDate#,#endDate#,
+		#blWeb#,#webParentSiteId#,#webName#,#bankId#,
+		#bankAccountId#,
+		#bankAccountName#,
+		#bankAccountNo#,
+		#normalTeuIn#,
+		#maxTeuIn#,
+		#normalTeuOut#,
+		#maxTeuOut#,
+		#maxStayRatio#,
+		#maxProblemRatio#,
+		#remark#,
+		#interfaceSiteId#,
+		#cargoCenterSiteId#,
+		#rangeClobId#,
+		#outRangeClobId#,
+		#specialRangeClobId#,
+		#siteServicesType# ,
+		#managerEmployeeName# ,
+		#qryEmployeeName# ,  
+		#taobaoEmployeeName# ,  
+		#problemEmployeeName# ,  
+		#saleEmployeeName# ,  
+		#sosEmployeeName#   
+		)
+	</insert>
+	
+	 <!-- 修改网点详细信息 -->
+	<update id="doModifySiteDetail"  parameterClass="BasicSiteDetail" >
+		UPDATE HS_BASIC_SITE_DETAIL SET					
+		MANAGER_EMPLOYEE_ID = #managerEmployeeId#,
+		MANAGER_PHONE = #managerPhone#,
+		QRY_EMPLOYEE_ID =#qryEmployeeId#,
+		QRY_PHONE=#qryPhone#,
+		TAOBAO_EMPLOYEE_ID =#taobaoEmployeeId#,
+		TAOBAO_PHONE =#taobaoPhone#,
+		PROBLEM_EMPLOYEE_ID = #problemEmployeeId#,
+		PROBLEM_PHONE =#problemPhone#,
+		SALE_EMPLOYEE_ID =#saleEmployeeId#,
+		SALE_PHONE =#salePhone#,
+		SOS_EMPLOYEE_ID =#sosEmployeeId#,
+		SOS_PHONE = #sosPhone#,
+		PHONE_SMS = #phoneSms#,
+		FAX = #fax#,
+		POSTCODE = #postCode#,
+		ADDRESS = #address#,
+		COUNTRY_ID=#countryId#,
+		PROVINCE_ID = #provinceId#,
+		CITY_ID=#cityId#,
+		COUNTY_ID=#countyId#,
+		AREA_ID=#areaId#,
+		SITE_EXPLAIN_CLOB_ID=#siteExplainId#,
+		START_DATE=#startDate#,
+		END_DATE=#endDate#,
+		BL_WEB=#blWeb#,
+		WEB_PARENT_SITE_ID=#webParentSiteId#,
+		WEB_NAME=#webName#,
+		BANK_ID=#bankId#,
+		BANK_ACCOUNT_ID=#bankAccountId#,
+		BANK_ACCOUNT_NAME=#bankAccountName#,
+		BANK_ACCOUNT_NO=#bankAccountNo#,
+		NORMAL_TEU_IN=#normalTeuIn#,
+		MAX_TEU_IN=#maxTeuIn# ,		
+		NORMAL_TEU_OUT=#normalTeuOut#,
+		MAX_TEU_OUT=#maxTeuOut# ,		
+		MAX_STAY_RATIO=#maxStayRatio#,
+		MAX_PROBLEM_RATIO=#maxProblemRatio# ,		
+		REMARK = #remark# ,
+		INTERFACE_SITE_ID = #interfaceSiteId# ,
+		CARGO_CENTER_SITE_ID= #cargoCenterSiteId# ,
+		RANGE_CLOB_ID = #rangeClobId# ,
+       	OUT_RANGE_CLOB_ID = #outRangeClobId# ,
+       	SPECIAL_RANGE_CLOB_ID = #specialRangeClobId# ,
+       	SITE_SERVICES_TYPE = #siteServicesType#	,
+       	MANAGER_EMPLOYEE_NAME = #managerEmployeeName#,
+		QRY_EMPLOYEE_NAME  = #qryEmployeeName#,
+		TAOBAO_EMPLOYEE_NAME  = #taobaoEmployeeName#,
+		PROBLEM_EMPLOYEE_NAME  = #problemEmployeeName#,
+		SALE_EMPLOYEE_NAME  = #saleEmployeeName#,	
+		SOS_EMPLOYEE_NAME  = #sosEmployeeName#	
+		WHERE SITE_ID = #siteId# 
+	</update>
+	
+	<!-- 删除网点详细信息 -->
+	<delete id="doDeleteSiteDetail" parameterClass="java.lang.Long">
+		DELETE FROM HS_BASIC_SITE_DETAIL
+		WHERE
+		SITE_ID = #siteId#
+	</delete>
+	
+	<!-- 根据网点详细信息Id查询 -->
+	<select id="querySiteDetailById" parameterClass="java.lang.Long"
+		resultMap="SiteDetailResult">
+		SELECT 
+		SITE_ID ,
+        	MANAGER_EMPLOYEE_ID ,
+        	MANAGER_PHONE ,
+        	QRY_EMPLOYEE_ID ,
+        	QRY_PHONE ,
+        	TAOBAO_EMPLOYEE_ID ,
+        	TAOBAO_PHONE ,
+        	PROBLEM_EMPLOYEE_ID ,
+        	PROBLEM_PHONE ,
+        	SALE_EMPLOYEE_ID ,
+        	SALE_PHONE ,
+        	SOS_EMPLOYEE_ID ,
+        	SOS_PHONE ,
+        	PHONE_SMS ,
+        	FAX ,
+        	POSTCODE ,
+        	ADDRESS ,
+        	COUNTRY_ID ,
+        	PROVINCE_ID ,
+        	CITY_ID ,
+        	COUNTY_ID ,
+        	AREA_ID ,
+        	SITE_EXPLAIN_CLOB_ID ,
+        	(SELECT CLOB_VALUE FROM HS_GLOBAL_CLOB WHERE T.SITE_EXPLAIN_CLOB_ID = CLOB_ID ) SITE_EXPLAIN ,
+        	START_DATE ,
+        	END_DATE ,
+        	BL_WEB ,
+        	WEB_PARENT_SITE_ID ,
+        	WEB_NAME ,
+        	BANK_ID ,
+        	BANK_ACCOUNT_ID ,
+        	BANK_ACCOUNT_NAME ,
+        	BANK_ACCOUNT_NO ,
+        	NORMAL_TEU_IN ,
+        	MAX_TEU_IN ,
+        	NORMAL_TEU_OUT ,
+        	MAX_TEU_OUT ,
+        	MAX_STAY_RATIO ,
+        	MAX_PROBLEM_RATIO ,
+        	REMARK ,
+        	INTERFACE_SITE_ID ,
+        	CARGO_CENTER_SITE_ID ,
+        	RANGE_CLOB_ID ,
+        	OUT_RANGE_CLOB_ID ,
+        	SPECIAL_RANGE_CLOB_ID ,
+        	SITE_SERVICES_TYPE ,
+        	MANAGER_EMPLOYEE_NAME ,
+	        QRY_EMPLOYEE_NAME ,
+	        TAOBAO_EMPLOYEE_NAME ,
+	        PROBLEM_EMPLOYEE_NAME ,
+	        SALE_EMPLOYEE_NAME ,
+	        SOS_EMPLOYEE_NAME 
+		FROM
+		HS_BASIC_SITE_DETAIL T WHERE SITE_ID = #siteId#
+	</select>				
+	
+	<!-- 根据网点详细信息Id查询 -->
+	<select id="selectByPrimaryKey" parameterClass="BasicSiteDetail"
+		resultMap="SiteDetailResult">
+		SELECT 
+		SITE_ID ,
+        	MANAGER_EMPLOYEE_ID ,
+        	MANAGER_PHONE ,
+        	QRY_EMPLOYEE_ID ,
+        	QRY_PHONE ,
+        	TAOBAO_EMPLOYEE_ID ,
+        	TAOBAO_PHONE ,
+        	PROBLEM_EMPLOYEE_ID ,
+        	PROBLEM_PHONE ,
+        	SALE_EMPLOYEE_ID ,
+        	SALE_PHONE ,
+        	SOS_EMPLOYEE_ID ,
+        	SOS_PHONE ,
+        	PHONE_SMS ,
+        	FAX ,
+        	POSTCODE ,
+        	ADDRESS ,
+        	COUNTRY_ID ,
+        	PROVINCE_ID ,
+        	CITY_ID ,
+        	COUNTY_ID ,
+        	AREA_ID ,
+        	SITE_EXPLAIN_CLOB_ID ,
+        	(SELECT CLOB_VALUE FROM HS_GLOBAL_CLOB WHERE T.SITE_EXPLAIN_CLOB_ID = CLOB_ID ) SITE_EXPLAIN ,
+        	START_DATE ,
+        	END_DATE ,
+        	BL_WEB ,
+        	WEB_PARENT_SITE_ID ,
+        	WEB_NAME ,
+        	BANK_ID ,
+        	BANK_ACCOUNT_ID ,
+        	BANK_ACCOUNT_NAME ,
+        	BANK_ACCOUNT_NO ,
+        	NORMAL_TEU_IN ,
+        	MAX_TEU_IN ,
+        	NORMAL_TEU_OUT ,
+        	MAX_TEU_OUT ,
+        	MAX_STAY_RATIO ,
+        	MAX_PROBLEM_RATIO ,
+        	REMARK ,
+        	INTERFACE_SITE_ID  ,
+        	CARGO_CENTER_SITE_ID ,
+        	RANGE_CLOB_ID ,
+        	OUT_RANGE_CLOB_ID ,
+        	SPECIAL_RANGE_CLOB_ID ,
+        	SITE_SERVICES_TYPE ,
+        	MANAGER_EMPLOYEE_NAME ,
+	       QRY_EMPLOYEE_NAME ,
+	       TAOBAO_EMPLOYEE_NAME ,
+	       PROBLEM_EMPLOYEE_NAME ,
+	       SALE_EMPLOYEE_NAME ,
+	       SOS_EMPLOYEE_NAME 
+		FROM
+		HS_BASIC_SITE_DETAIL T WHERE SITE_ID = #siteId#
+	</select>				
+		
+	<!-- 根据网点ID查询查件负责人 -->
+	<select id="queryDetailBySiteId" parameterClass="java.lang.Long"
+		resultClass="BasicSiteDetail">
+				SELECT QRY_EMPLOYEE_ID   AS qryEmployeeId,
+				       QRY_EMPLOYEE_NAME AS empName,
+				       QRY_PHONE         AS qryPhone,
+				       sale_phone        as salePhone
+				  	FROM HS_BASIC_SITE_DETAIL T WHERE SITE_ID = #siteId#
+	</select>	
+	
+	<!-- 修改押金、币别 -->
+	<update id="doModifyCurrency"  parameterClass="BasicSiteDetail" >
+		UPDATE HS_BASIC_SITE_DETAIL SET					
+		DEPOSIT_CURRENCY_ID = #depositCurrencyId#,
+		DEPOSIT_AMOUNT = #depositAmount# ,
+		JOIN_CURRENCY_ID = #joinCurrencyId# ,
+		JOIN_AMOUNT = #joinAmount#
+		WHERE SITE_ID = #siteId# 	
+	</update>
+	<!-- 账单中查询押金币别用到 -->
+	<select id="queryCurrencyById"  resultMap="addSiteDetailResult" >
+		SELECT 
+		SITE_ID ,
+        	MANAGER_EMPLOYEE_ID ,
+        	MANAGER_PHONE ,
+        	QRY_EMPLOYEE_ID ,
+        	QRY_PHONE ,
+        	TAOBAO_EMPLOYEE_ID ,
+        	TAOBAO_PHONE ,
+        	PROBLEM_EMPLOYEE_ID ,
+        	PROBLEM_PHONE ,
+        	SALE_EMPLOYEE_ID ,
+        	SALE_PHONE ,
+        	SOS_EMPLOYEE_ID ,
+        	SOS_PHONE ,
+        	PHONE_SMS ,
+        	FAX ,
+        	POSTCODE ,
+        	ADDRESS ,
+        	COUNTRY_ID ,
+        	PROVINCE_ID ,
+        	CITY_ID ,
+        	COUNTY_ID ,
+        	AREA_ID ,
+        	'' as SITE_EXPLAIN ,
+        	SITE_EXPLAIN_CLOB_ID ,
+        	START_DATE ,
+        	END_DATE ,
+        	BL_WEB ,
+        	WEB_PARENT_SITE_ID ,
+        	WEB_NAME ,
+        	BANK_ID ,
+        	BANK_ACCOUNT_ID ,
+        	BANK_ACCOUNT_NAME ,
+        	BANK_ACCOUNT_NO ,
+        	NORMAL_TEU_IN ,
+        	MAX_TEU_IN ,
+        	NORMAL_TEU_OUT ,
+        	MAX_TEU_OUT ,
+        	MAX_STAY_RATIO ,
+        	MAX_PROBLEM_RATIO ,
+        	REMARK ,
+        	INTERFACE_SITE_ID ,
+        	CARGO_CENTER_SITE_ID ,
+        	DEPOSIT_CURRENCY_ID,
+		DEPOSIT_AMOUNT,
+		JOIN_CURRENCY_ID ,
+		JOIN_AMOUNT ,
+		RANGE_CLOB_ID ,
+       	OUT_RANGE_CLOB_ID ,
+       	SPECIAL_RANGE_CLOB_ID ,
+       	SITE_SERVICES_TYPE ,
+       	MANAGER_EMPLOYEE_NAME ,
+	       QRY_EMPLOYEE_NAME ,
+	       TAOBAO_EMPLOYEE_NAME ,
+	       PROBLEM_EMPLOYEE_NAME ,
+	       SALE_EMPLOYEE_NAME ,
+	       SOS_EMPLOYEE_NAME 
+		FROM
+		HS_BASIC_SITE_DETAIL WHERE SITE_ID =#dataId# AND #accountTypeId# in(10,11,12)   
+	</select>			
+	
+	<!-- 获取网点的所属国家 -->
+	<select id="getCountryIdBySiteId" parameterClass="java.lang.Long"
+		resultClass="java.lang.Long">
+		SELECT 		
+        	COUNTRY_ID      	
+		FROM
+			HS_BASIC_SITE_DETAIL t 
+		WHERE 
+			SITE_ID = #siteId#
+	</select>
+	
+	<!-- 根据网点ID获取派送范围 -->
+	<select id="getRangeBySiteId" parameterClass="java.lang.Long"
+		resultClass="BasicSiteDetail">
+		SELECT 
+			PHONE_SMS AS phoneSms, 
+			FAX AS fax, 
+			POSTCODE AS postCode, 
+			MANAGER_EMPLOYEE_NAME AS managerEmployeeName, 
+			MANAGER_PHONE AS managerPhone, 
+        	nvl(c1.CLOB_VALUE,'') AS rangeClob, 
+        	nvl(c2.CLOB_VALUE,'') AS outRangeClob, 
+        	nvl(c3.CLOB_VALUE,'') AS specialRangeClob 
+		FROM
+			HS_BASIC_SITE_DETAIL t 
+		LEFT JOIN HS_GLOBAL_CLOB c1 ON c1.CLOB_ID = t.RANGE_CLOB_ID
+		LEFT JOIN HS_GLOBAL_CLOB c2 ON c2.CLOB_ID = t.OUT_RANGE_CLOB_ID
+		LEFT JOIN HS_GLOBAL_CLOB c3 ON c3.CLOB_ID = t.SPECIAL_RANGE_CLOB_ID
+		WHERE 
+			SITE_ID = #siteId#
+	</select>
+	<select id="querySiteLocation" parameterClass="java.lang.Long" resultClass="BasicSiteDetail">
+		select pro.province_name as provinceName,
+       city.city_name as cityName,
+       d.site_id as siteId,
+       d.city_id as cityId,
+       d.province_id as provinceId from hs_basic_site_detail d
+		left join hs_basic_province pro on d.province_id=pro.province_id
+		left join hs_basic_city city on city.city_id=d.city_id
+		where d.site_id=#siteId#
+	</select>
+</sqlMap>

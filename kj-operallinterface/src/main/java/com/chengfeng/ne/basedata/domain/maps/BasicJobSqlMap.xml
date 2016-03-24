@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicJobVO">
+	<typeAlias alias="BasicJob" type="com.chengfeng.ne.basedata.domain.BasicJobVO" />
+	
+	<!-- 返回结果集 -->
+	<resultMap id="jobResult" class="com.chengfeng.ne.basedata.domain.BasicJobVO">
+		<result property="jobId" column="JOB_ID" />
+		<result property="jobCode" column="JOB_CODE" />
+		<result property="jobName" column="JOB_NAME" />		
+		<result property="jobPinyin" column="JOB_PINYIN" />	
+		<result property="jobOrder" column="JOB_ORDER" />
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />	
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="BasicJobsql">
+	    <![CDATA[
+        	JOB_ID ,
+        	JOB_CODE ,
+        	JOB_NAME ,
+        	JOB_PINYIN ,
+        	JOB_ORDER ,
+        	REMARK ,
+        	CREATED_BY ,
+        	CREATED_TIME ,
+        	MODIFIED_BY ,
+        	MODIFIED_TIME ,
+        	RD_STATUS 
+	    ]]>
+	</sql>
+	
+	 <!-- 新增岗位 -->
+	<insert id="doCreateJob" parameterClass="BasicJob" >
+		<selectKey resultClass="long" keyProperty="jobId">
+			SELECT SEQ_BASIC_JOB.NEXTVAL AS jobId FROM DUAL
+		</selectKey>
+		INSERT INTO
+		HS_BASIC_JOB(JOB_ID,JOB_CODE,JOB_NAME,JOB_PINYIN,JOB_ORDER,REMARK,CREATED_BY,CREATED_TIME,MODIFIED_BY,MODIFIED_TIME,RD_STATUS)
+		VALUES
+		(#jobId#,#jobCode#,#jobName#,#jobPinyin#,#jobOrder#,#remark#,#createdBy#, #createdTime# ,#modifiedBy#,#modifiedTime#,1)
+	</insert>
+	
+	 <!-- 修改岗位 -->
+	<update id="doModifyJob"  parameterClass="BasicJob" >
+		UPDATE HS_BASIC_JOB SET		
+		JOB_CODE = #jobCode#,
+		JOB_NAME = #jobName#,
+		JOB_PINYIN = #jobPinyin#,
+		JOB_ORDER = #jobOrder#,		
+		REMARK = #remark#,		
+		MODIFIED_BY = #modifiedBy#,
+		MODIFIED_TIME = #modifiedTime#  	
+		WHERE JOB_ID = #jobId# 	
+	</update>
+	
+	<!-- 删除岗位 -->
+	<update id="doDeleteJob" parameterClass="BasicJob">
+		UPDATE HS_BASIC_JOB SET
+		JOB_CODE = #jobCode#,
+		JOB_NAME = #jobName#,
+		MODIFIED_BY = #modifiedBy#,
+		MODIFIED_TIME = #modifiedTime# ,
+		RD_STATUS = 0 
+		WHERE
+		JOB_ID = #jobId#
+	</update>
+	
+	<!-- 根据岗位Id查询 -->
+	<select id="queryJobById" parameterClass="java.lang.Long"
+		resultMap="jobResult">
+		SELECT <include refid="BasicJobsql"/> 
+		FROM
+		HS_BASIC_JOB WHERE JOB_ID = #jobId#
+	</select>
+	
+	<!-- 根据岗位编号查询 -->
+	<select id="getJobByCode" parameterClass="java.lang.String"
+		resultMap="jobResult">
+		SELECT <include refid="BasicJobsql"/> 
+		FROM
+		HS_BASIC_JOB WHERE JOB_CODE = #jobCode#
+	</select>
+
+	<!-- 获取所有岗位 -->
+	<select id="queryJobList" resultMap="jobResult">
+		SELECT 
+		<include refid="BasicJobsql"/>  
+		FROM
+		HS_BASIC_JOB  WHERE RD_STATUS = 1 
+	</select>
+
+	<!-- 获取所有岗位 -->
+	<select id="queryAllJob" resultMap="jobResult">
+		SELECT 
+		<include refid="BasicJobsql"/>  
+		FROM
+		HS_BASIC_JOB 
+	</select>
+
+	<!-- 根据部门ID查询其下所有岗位 -->
+	<select id="queryJobByDeptId" parameterClass="java.lang.Long" resultMap="jobResult">
+		SELECT <include refid="BasicJobsql"/> 
+		FROM
+		HS_BASIC_JOB WHERE JOB_ID IN (SELECT JOB_ID FROM HS_BASIC_DEPT_JOB WHERE DEPT_ID = #deptId# ) 
+		AND RD_STATUS = 1 
+		ORDER BY JOB_ORDER
+	</select>
+	
+	<!-- 按岗位名称查询  -->
+	<select id="queryJobByName" parameterClass="java.lang.String" resultMap="jobResult">
+		SELECT <include refid="BasicJobsql"/> 
+		FROM
+		HS_BASIC_JOB WHERE JOB_NAME = #jobName#   		
+	</select>
+	
+	<!-- 按岗位编号查询  -->
+	<select id="queryJobByCode" parameterClass="java.lang.String" resultMap="jobResult">
+		SELECT <include refid="BasicJobsql"/> 
+		FROM
+		HS_BASIC_JOB WHERE JOB_CODE = #jobCode#   		
+	</select>
+	
+	<!-- 获取最大自定义顺序 -->
+	<select id="getMaxJobOrder" resultClass="java.lang.Long">
+		SELECT MAX(JOB_ORDER) FROM
+		HS_BASIC_JOB 
+	</select>
+	
+</sqlMap>

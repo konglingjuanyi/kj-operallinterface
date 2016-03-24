@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="User">
+	<typeAlias alias="user" type="com.chengfeng.ne.basedata.domain.User" />
+	<resultMap id="BaseResultMap" class="com.chengfeng.ne.basedata.domain.User">
+		<result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+		<result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+		<result column="USER_PWD" property="userPwd" jdbcType="VARCHAR" />
+		<result column="USER_TYPE" property="userType" jdbcType="DECIMAL" />
+		<result column="EMPLOYEE_ID" property="employeeId" jdbcType="DECIMAL" />
+		<result column="BL_OA" property="blOa" jdbcType="DECIMAL" />
+		<result column="PDA_PWD" property="pdaPwd" jdbcType="VARCHAR" />
+		<result column="EXPIRE_DATE" property="expireDate" jdbcType="DATE" />
+		<result column="FAILURE_TIMES" property="failureTimes" jdbcType="DECIMAL" />
+		<result column="MESSAGE_INTERVAL" property="messageInterval" jdbcType="DECIMAL" />
+		<result column="LAST_OPERATE_TIME" property="lastOperateTime" />
+		<result column="LAST_OPERATE_IP" property="lastOperateIp" jdbcType="VARCHAR" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="CREATED_BY" property="createdBy" jdbcType="DECIMAL" />
+		<result column="CREATED_TIME" property="createdTime" jdbcType="DATE" />
+		<result column="MODIFIED_BY" property="modifiedBy" jdbcType="DECIMAL" />
+		<result column="MODIFIED_TIME" property="modifiedTime" jdbcType="DATE" />
+		<result column="RD_STATUS" property="rdStatus"/>
+	</resultMap>
+	
+	
+	
+	<sql id="BaseColumns">
+		USER_ID, USER_NAME, USER_PWD, USER_TYPE, EMPLOYEE_ID, BL_OA, PDA_PWD,
+		EXPIRE_DATE,
+		FAILURE_TIMES, MESSAGE_INTERVAL, LAST_OPERATE_TIME, LAST_OPERATE_IP, REMARK, STATUS,
+		CREATED_BY, CREATED_TIME, MODIFIED_BY, MODIFIED_TIME,RD_STATUS
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterClass="com.chengfeng.ne.basedata.domain.User">
+		select
+		<include refid="User.BaseColumns" />
+		from HS_AUTH_USER
+		where USER_ID = #userId:DECIMAL#
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterClass="com.chengfeng.ne.basedata.domain.User">
+		delete from HS_AUTH_USER
+		where USER_ID = #userId:DECIMAL#
+	</delete>
+
+	<update id="doDeleteUser" parameterClass="com.chengfeng.ne.basedata.domain.User">
+		UPDATE HS_AUTH_USER SET
+		MODIFIED_BY = #modifiedBy#,
+		MODIFIED_TIME = SYSDATE,
+		STATUS = 'D'
+		WHERE USER_ID = #userId#
+	</update>
+	<insert id="insert" parameterClass="com.chengfeng.ne.basedata.domain.User">
+		<selectKey resultClass="long" keyProperty="userId">
+			SELECT SEQ_AUTH_USER.nextval AS userId FROM DUAL
+		</selectKey>
+		insert into HS_AUTH_USER (USER_ID ,USER_NAME, USER_PWD, USER_TYPE,
+		EMPLOYEE_ID, BL_OA, PDA_PWD, EXPIRE_DATE, FAILURE_TIMES,
+		MESSAGE_INTERVAL, LAST_OPERATE_TIME, LAST_OPERATE_IP, REMARK,
+		STATUS, CREATED_BY, CREATED_TIME, MODIFIED_BY,
+		MODIFIED_TIME,RD_STATUS)
+		values (#userId# ,#userName:VARCHAR#, #userPwd:VARCHAR#, #userType:DECIMAL#,
+		#employeeId:DECIMAL#, #blOa:DECIMAL#, #pdaPwd:VARCHAR#, SYSDATE+90,
+		#failureTimes:DECIMAL#,
+		#messageInterval:DECIMAL#, #lastOperateTime:DATE#, #lastOperateIp:VARCHAR#, #remark:VARCHAR#,
+		#status:VARCHAR#, #createdBy:DECIMAL#, SYSDATE, #modifiedBy:DECIMAL#,
+		#modifiedTime:DATE#,1)
+	</insert>
+
+	<insert id="doInsertUser">
+		<selectKey resultClass="long" keyProperty="userId">
+			SELECT
+			SEQ_AUTH_USER.nextval AS userId FROM DUAL
+		</selectKey>
+		INSERT INTO HS_AUTH_USER (USER_ID ,USER_NAME ,USER_PWD ,USER_TYPE
+		,EMPLOYEE_ID ,BL_OA ,PDA_PWD ,
+		EXPIRE_DATE ,FAILURE_TIMES ,MESSAGE_INTERVAL ,LAST_OPERATE_TIME ,LAST_OPERATE_IP
+		,REMARK ,
+		STATUS ,CREATED_BY ,CREATED_TIME ,MODIFIED_BY ,MODIFIED_TIME ,RD_STATUS
+		) VALUES (
+		#userId# ,#userName# ,#userPwd# ,#userType# ,#employeeId# ,#blOa# ,#pdaPwd#
+		,#expireDate# ,
+		#failureTimes# ,#messageInterval# ,#lastOperateTime# ,#lastOperateIp# ,#remark# ,
+		#status# ,#createdBy# ,#createdTime# ,#modifiedBy# ,#modifiedTime# ,1
+		)
+	</insert>
+	<insert id="insertSelective" parameterClass="com.chengfeng.ne.basedata.domain.User">
+		insert into HS_AUTH_USER
+		<dynamic prepend="(">
+			<isNotNull prepend="," property="userId">
+				USER_ID
+			</isNotNull>
+			<isNotNull prepend="," property="userName">
+				USER_NAME
+			</isNotNull>
+			<isNotNull prepend="," property="userPwd">
+				USER_PWD
+			</isNotNull>
+			<isNotNull prepend="," property="userType">
+				USER_TYPE
+			</isNotNull>
+			<isNotNull prepend="," property="employeeId">
+				EMPLOYEE_ID
+			</isNotNull>
+			<isNotNull prepend="," property="blOa">
+				BL_OA
+			</isNotNull>
+			<isNotNull prepend="," property="pdaPwd">
+				PDA_PWD
+			</isNotNull>
+			<isNotNull prepend="," property="expireDate">
+				EXPIRE_DATE
+			</isNotNull>
+			<isNotNull prepend="," property="failureTimes">
+				FAILURE_TIMES
+			</isNotNull>
+			<isNotNull prepend="," property="messageInterval">
+				MESSAGE_INTERVAL
+			</isNotNull>
+			<isNotNull prepend="," property="lastOperateTime">
+				LAST_OPERATE_TIME
+			</isNotNull>
+			<isNotNull prepend="," property="lastOperateIp">
+				LAST_OPERATE_IP
+			</isNotNull>
+			<isNotNull prepend="," property="remark">
+				REMARK
+			</isNotNull>
+			<isNotNull prepend="," property="status">
+				STATUS
+			</isNotNull>
+			<isNotNull prepend="," property="createdBy">
+				CREATED_BY
+			</isNotNull>
+			<isNotNull prepend="," property="createdTime">
+				CREATED_TIME
+			</isNotNull>
+			<isNotNull prepend="," property="modifiedBy">
+				MODIFIED_BY
+			</isNotNull>
+			<isNotNull prepend="," property="modifiedTime">
+				MODIFIED_TIME
+			</isNotNull>
+			)
+		</dynamic>
+		values
+		<dynamic prepend="(">
+			<isNotNull prepend="," property="userId">
+				#userId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="userName">
+				#userName:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="userPwd">
+				#userPwd:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="userType">
+				#userType:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="employeeId">
+				#employeeId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="blOa">
+				#blOa:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="pdaPwd">
+				#pdaPwd:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="expireDate">
+				#expireDate:DATE#
+			</isNotNull>
+			<isNotNull prepend="," property="failureTimes">
+				#failureTimes:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="messageInterval">
+				#messageInterval:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="lastOperateTime">
+				#lastOperateTime:DATE#
+			</isNotNull>
+			<isNotNull prepend="," property="lastOperateIp">
+				#lastOperateIp:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="remark">
+				#remark:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="status">
+				#status:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="createdBy">
+				#createdBy:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="createdTime">
+				#createdTime:DATE#
+			</isNotNull>
+			<isNotNull prepend="," property="modifiedBy">
+				#modifiedBy:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="modifiedTime">
+				#modifiedTime:DATE#
+			</isNotNull>
+			)
+		</dynamic>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterClass="com.chengfeng.ne.basedata.domain.User">
+		update HS_AUTH_USER
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="userName">
+				USER_NAME = #userName:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="userPwd">
+				USER_PWD = #userPwd:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="userType">
+				USER_TYPE = #userType:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="employeeId">
+				EMPLOYEE_ID = #employeeId:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="blOa">
+				BL_OA = #blOa:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="pdaPwd">
+				PDA_PWD = #pdaPwd:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="expireDate">
+				EXPIRE_DATE = #expireDate:DATE#
+			</isNotNull>
+			<isNotNull prepend="," property="failureTimes">
+				FAILURE_TIMES = #failureTimes:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="messageInterval">
+				MESSAGE_INTERVAL = #messageInterval:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="lastOperateTime">
+				LAST_OPERATE_TIME = #lastOperateTime#
+			</isNotNull>
+			<isNotNull prepend="," property="lastOperateIp">
+				LAST_OPERATE_IP = #lastOperateIp:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="remark">
+				REMARK = #remark:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="status">
+				STATUS = #status:VARCHAR#
+			</isNotNull>
+			<isNotNull prepend="," property="createdBy">
+				CREATED_BY = #createdBy:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="createdTime">
+				CREATED_TIME = #createdTime:DATE#
+			</isNotNull>
+			<isNotNull prepend="," property="modifiedBy">
+				MODIFIED_BY = #modifiedBy:DECIMAL#
+			</isNotNull>
+			<isNotNull prepend="," property="modifiedTime">
+				MODIFIED_TIME = #modifiedTime:DATE#
+			</isNotNull>
+		</dynamic>
+		where USER_ID = #userId:DECIMAL#
+	</update>
+	<update id="updateByPrimaryKey" parameterClass="com.chengfeng.ne.basedata.domain.User">
+		update HS_AUTH_USER
+		set USER_NAME = #userName:VARCHAR#,
+		USER_PWD = #userPwd:VARCHAR#,
+		USER_TYPE = #userType:DECIMAL#,
+		EMPLOYEE_ID = #employeeId:DECIMAL#,
+		BL_OA = #blOa:DECIMAL#,
+		PDA_PWD = #pdaPwd:VARCHAR#,
+		<!-- EXPIRE_DATE = #expireDate:DATE#, -->
+		FAILURE_TIMES = #failureTimes:DECIMAL#,
+		MESSAGE_INTERVAL = #messageInterval:DECIMAL#,
+		LAST_OPERATE_TIME = #lastOperateTime#,
+		LAST_OPERATE_IP = #lastOperateIp:VARCHAR#,
+		REMARK = #remark:VARCHAR#,
+		STATUS = #status:VARCHAR#,
+		MODIFIED_BY = #modifiedBy:DECIMAL#,
+		MODIFIED_TIME = SYSDATE,
+		RD_STATUS = #rdStatus#
+		where USER_ID = #userId:DECIMAL#
+	</update>
+	<update id="updateUser" parameterClass="com.chengfeng.ne.basedata.domain.User">
+		<!-- update HS_AUTH_USER set USER_NAME=#userName#,EMPLOYEE_ID=#employeeId#, 
+			STATUS=#status#,BL_OA=#blOa#,USER_TYPE=#userType#, MESSAGE_INTERVAL=#messageInterval#, 
+			REMARK=#remark#,MODIFIED_BY=#modifiedBy#,MODIFIED_TIME=#modifiedTime# where 
+			USER_ID=#userId# -->
+		update HS_AUTH_USER
+		set USER_NAME = #userName#,EMPLOYEE_ID = #employeeId#,STATUS = #status#,
+		BL_OA = #blOa#,USER_TYPE = #userType#,MESSAGE_INTERVAL =
+		#messageInterval#,
+		REMARK = #remark#,MODIFIED_BY = #modifiedBy#,MODIFIED_TIME = #modifiedTime#
+		where USER_ID = #userId#
+	</update>
+	<select id="queryUserByName" parameterClass="java.lang.String"
+		resultMap="BaseResultMap">
+		from HS_AUTH_USER where USER_NAME = #USER_NAME#
+	</select>
+	<!-- 根据用户Id查用户 -->
+	<select id="getUserNameById" parameterClass="java.lang.Long"
+		resultClass="java.lang.String">
+		select USER_NAME from HS_AUTH_USER where USER_ID = #USER_ID#
+	</select>
+	<!-- 根据用户名查用户 -->
+	<select id="getUserByName" parameterClass="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		USER_ID, USER_NAME, USER_PWD, USER_TYPE, EMPLOYEE_ID, BL_OA, PDA_PWD,
+		EXPIRE_DATE,
+		FAILURE_TIMES, MESSAGE_INTERVAL, LAST_OPERATE_TIME, LAST_OPERATE_IP, REMARK, STATUS,
+		CREATED_BY, CREATED_TIME, MODIFIED_BY, MODIFIED_TIME
+		from HS_AUTH_USER
+		where USER_NAME=#userName# and RD_STATUS = 1
+	</select>
+
+	<sql id="searchResultMap">
+		USER_ID ,USER_NAME ,USER_TYPE ,EMPLOYEE_ID ,BL_OA ,EXPIRE_DATE ,
+		FAILURE_TIMES ,MESSAGE_INTERVAL ,LAST_OPERATE_IP ,REMARK ,STATUS
+	</sql>
+	<sql id="dynamicWhere">
+		<dynamic prepend="where">
+			<isNotEmpty property="userName" prepend="AND">
+				( U.USER_NAME like '%'||#userName#||'%' )
+			</isNotEmpty>
+			<isNotEmpty property="likeResName" prepend="AND" >
+				 exists (SELECT 1
+		          FROM hs_auth_user_role     ur,
+		               hs_auth_role_resource rr,
+		               hs_auth_resource      r
+		         where ur.user_id = u.user_id
+		           and ur.role_id =rr.role_id
+		           and rr.res_id=r.res_id
+		           and r.res_name like '%'||#likeResName#||'%'   
+		           union all 
+		           SELECT 1 FROM 
+		           hs_basic_employee ee ,
+		           hs_auth_job_role jr ,
+		           hs_auth_role_resource rr,
+		           hs_auth_resource  r
+		           where 
+		              u.employee_id=ee.employee_id 
+		              and ee.dept_job_id=jr.role_id
+		              and  rr.role_id=jr.role_id 
+		              and r.res_id=rr.res_id 
+		              and r.res_name like '%'||#likeResName#||'%'
+		           )
+			</isNotEmpty>
+			<isNotEmpty property="userType" prepend="AND">
+				( U.USER_TYPE = #userType# )
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend="AND">
+				( U.STATUS = #status# )
+			</isNotEmpty>
+			<isNotEmpty property="expireDate" prepend="AND">
+				( U.EXPIRE_DATE &lt;= #expireDate#)
+			</isNotEmpty>
+			<isNotEmpty property="empName" prepend="AND">
+				(E.EMPLOYEE_NAME = #empName#)
+			</isNotEmpty>
+			<isNotEmpty property="empCode" prepend="AND">
+				(E.EMPLOYEE_Code = #empCode#)
+			</isNotEmpty>
+			<isNotEmpty property="siteId" prepend="AND">
+				(E.SITE_ID = #siteId#)
+			</isNotEmpty>
+			<isEmpty property="siteId" prepend="AND">
+				S.SITE_ID IN ( SELECT SITE_ID FROM HS_BASIC_SITE START WITH SITE_ID = #currentSiteId#
+				CONNECT BY NOCYCLE PRIOR SITE_ID=PARENT_SITE_ID )
+			</isEmpty>
+			<isNotEmpty property="roleId" prepend="AND">
+				(ur.role_id = #roleId#)
+			</isNotEmpty>
+			and u.RD_STATUS = 1
+		</dynamic>
+	</sql>
+	<!-- 根据分页条件查询机型 -->
+	<select id="queryPagedList" parameterClass="java.util.Map" resultClass="user">
+		select roleCount,userId,userName,userPwd,userType,employeeId,
+			   employeeName,employeeCode,siteName,blOa,pdaPwd,expireDate,
+			   failureTimes,messageInterval,lastOperateTime,lastOperateIp,
+			   remark,status,createdBy,createdTime,modifiedBy,modifiedTime,rdStatus
+		 from (
+		SELECT 
+		(select count(1) from hs_auth_user_role r where r.user_id = u.user_id) as roleCount,
+		U.USER_ID as userId,
+		U.USER_NAME as userName,
+		U.USER_PWD as userPwd,
+		U.USER_TYPE as userType,
+		U.EMPLOYEE_ID as employeeId,
+		e.EMPLOYEE_NAME AS employeeName, 
+		e.EMPLOYEE_CODE AS employeeCode,
+		S.SITE_NAME as siteName,
+		U.BL_OA as blOa,
+		U.PDA_PWD as pdaPwd,
+		U.EXPIRE_DATE as expireDate,
+		U.FAILURE_TIMES as failureTimes,
+		U.MESSAGE_INTERVAL as messageInterval,
+		U.LAST_OPERATE_TIME as lastOperateTime,
+		U.LAST_OPERATE_IP as lastOperateIp,
+		U.REMARK as remark,
+		U.STATUS as status,
+		U.CREATED_BY as createdBy,
+		U.CREATED_TIME as createdTime,
+		U.MODIFIED_BY as modifiedBy,
+		U.MODIFIED_TIME as modifiedTime,
+		U.RD_STATUS as rdStatus
+		FROM HS_AUTH_USER U 
+		LEFT JOIN HS_BASIC_EMPLOYEE E ON U.EMPLOYEE_ID = E.EMPLOYEE_ID
+		LEFT JOIN HS_BASIC_SITE S ON E.SITE_ID = S.SITE_ID 
+		<isNotEmpty property="roleId">
+			LEFT JOIN HS_AUTH_USER_ROLE UR ON U.USER_ID = UR.USER_ID
+		</isNotEmpty>
+		<include refid="dynamicWhere" />
+		)
+	</select>
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
+		select count(*) 
+		FROM HS_AUTH_USER U 
+		LEFT JOIN HS_BASIC_EMPLOYEE E ON U.EMPLOYEE_ID = E.EMPLOYEE_ID
+		LEFT JOIN HS_BASIC_SITE S ON E.SITE_ID = S.SITE_ID 
+		<isNotEmpty property="roleId">
+			LEFT JOIN HS_AUTH_USER_ROLE UR ON U.USER_ID = UR.USER_ID
+		</isNotEmpty>
+		<include refid="dynamicWhere" />
+	</select>
+	<!-- 根据用户名查用户 -->
+	<select id="queryUserByUserName" parameterClass="java.lang.String"
+		resultMap="BaseResultMap">
+		SELECT 
+			USER_ID, USER_NAME, USER_PWD, USER_TYPE, EMPLOYEE_ID, BL_OA, PDA_PWD,
+			EXPIRE_DATE, FAILURE_TIMES, MESSAGE_INTERVAL, LAST_OPERATE_TIME, 
+			LAST_OPERATE_IP, REMARK, STATUS, CREATED_BY, CREATED_TIME, MODIFIED_BY, 
+			MODIFIED_TIME,RD_STATUS
+		FROM 
+			HS_AUTH_USER
+		WHERE 
+			USER_NAME=#userName#
+	</select>
+	<!-- 根据员工Id查用户 -->
+	<select id="queryUserByEmpId" parameterClass="java.lang.Long"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumns" />
+		FROM HS_AUTH_USER
+		WHERE EMPLOYEE_ID = #employeeId# AND RD_STATUS = 1
+	</select>
+	
+
+	<!-- 根据用户名获取所属网点 -->
+	<select id="getSiteIdByUserName" resultClass="long" parameterClass="java.lang.String">
+		SELECT
+  			e.SITE_ID 
+  		FROM 
+  			HS_AUTH_USER t
+  		INNER JOIN HS_BASIC_EMPLOYEE e ON e.EMPLOYEE_ID = t.EMPLOYEE_ID
+ 		WHERE 
+ 			EMPLOYEE_CODE = #employeeCode# and t.RD_STATUS = 1 
+ 			AND ROWNUM = 1 
+	</select>
+
+	<!-- 根据分页条件查询机型 -->
+	<select id="queryUserExportPagedList" parameterClass="java.util.Map"
+		resultClass="user">
+		SELECT 
+			u.USER_ID AS userId, 
+			u.USER_NAME AS userName, 
+			e.EMPLOYEE_ID AS employeeId, 
+			e.EMPLOYEE_CODE AS employeeCode, 
+			e.EMPLOYEE_NO AS employeeNo, 
+			e.EMPLOYEE_NAME AS employeeName, 
+			e.EMPLOYEE_PINYIN AS employeePinyin, 
+			s.SITE_ID AS siteId, 
+			s.SITE_CODE AS siteCode, 
+			u.PDA_PWD AS pdaPwd, 
+			e.BL_USE AS blUse, 
+			d.DICT_NAME AS siteType, 
+			e.RD_STATUS AS rdStatus
+		FROM 
+			HS_BASIC_EMPLOYEE e 
+		INNER JOIN HS_BASIC_SITE s ON s.SITE_ID = e.SITE_ID
+		INNER JOIN HS_BASIC_DICT d ON d.DICT_ID = s.SITE_TYPE_ID
+		LEFT JOIN HS_AUTH_USER u ON u.EMPLOYEE_ID = e.EMPLOYEE_ID 
+		<dynamic prepend="WHERE">
+			<isNotEmpty property = "rdStatus" prepend=" AND ">
+				e.RD_STATUS = #rdStatus# 
+			</isNotEmpty>
+			<isNotEmpty property = "date" prepend=" AND ">
+				(e.CREATED_TIME >= #date# OR e.MODIFIED_TIME >= #date#
+				OR u.CREATED_TIME >= #date# OR u.MODIFIED_TIME >= #date#)
+			</isNotEmpty>
+			<isNotEmpty property = "siteId" prepend=" AND ">
+				e.SITE_ID = #siteId# 
+			</isNotEmpty>
+			<isNotEmpty property = "siteCode" prepend=" AND ">
+				s.SITE_CODE = #siteCode# 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<!-- 根据员工编号获取对应用户数据 -->
+	<select id="getUserByEmployeeCode" parameterClass="java.lang.String" resultMap="BaseResultMap">
+		SELECT 
+			USER_ID, USER_NAME, USER_PWD, USER_TYPE, u.EMPLOYEE_ID, 
+			BL_OA, PDA_PWD, EXPIRE_DATE, FAILURE_TIMES, MESSAGE_INTERVAL, 
+			LAST_OPERATE_TIME, LAST_OPERATE_IP, u.REMARK, u.STATUS, 
+			u.CREATED_BY, u.CREATED_TIME, u.MODIFIED_BY, u.MODIFIED_TIME,u.RD_STATUS
+		FROM 
+			HS_AUTH_USER u 
+		INNER JOIN HS_BASIC_EMPLOYEE e ON e.EMPLOYEE_ID = u.EMPLOYEE_ID 
+		WHERE 
+			EMPLOYEE_CODE = #employeeCode# and u.RD_STATUS = 1
+	</select>
+	
+	<!-- 根据SiteId 查询所有用户  -->
+	<select id="queryUserListBySiteId" resultMap="BaseResultMap" parameterClass="java.lang.Long">
+		SELECT 
+			USER_ID, USER_NAME, USER_PWD, USER_TYPE, u.EMPLOYEE_ID, 
+			BL_OA, PDA_PWD, EXPIRE_DATE, FAILURE_TIMES, MESSAGE_INTERVAL, 
+			LAST_OPERATE_TIME, LAST_OPERATE_IP, u.REMARK, u.STATUS, 
+			u.CREATED_BY, u.CREATED_TIME, u.MODIFIED_BY, u.MODIFIED_TIME,u.RD_STATUS
+		 FROM HS_AUTH_USER u,HS_BASIC_EMPLOYEE E
+		WHERE u.EMPLOYEE_ID = E.EMPLOYEE_ID AND E.SITE_ID= #siteId#
+	</select>
+</sqlMap>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Opt_OrderinterfaceErrorVO">
+	<typeAlias alias="orderinterfaceError" type="com.chengfeng.ne.opt.orders.domain.OrderinterfaceErrorVO" />
+
+	<resultMap class="orderinterfaceError" id="BaseResultMap">
+		<result column="ORDER_ID" property="orderId" />
+		<result column="ORDER_NO" property="orderNo" />
+		<result column="ORDER_STATUS" property="orderStatus" />
+		<result column="ORDER_ERROR_MESSAGE" property="orderErrorMessage" />
+		<result column="CREATED_TIME" property="createdTime" />
+		<result column="ORDER_DATATYPE" property="orderDatatype" />
+		<result column="ORDER_CONTENT" property="orderContent" />
+	</resultMap>
+    <resultMap class="orderinterfaceError" id="optErrOrder" extends="BaseResultMap">
+    	<result column="REMARK" property="remark" />
+		<result column="REMARK1" property="remark1" />
+    </resultMap>
+	<sql id="BaseColumnList">
+		ORDER_ID, ORDER_STATUS, ORDER_ERROR_MESSAGE, CREATED_TIME, ORDER_DATATYPE, ORDER_CONTENT, ORDER_NO
+	</sql>
+	<!-- 查询错误订单列 -->
+	<sql id="ErrOrderList">
+		ORDER_ID, ORDER_STATUS, ORDER_ERROR_MESSAGE, CREATED_TIME, ORDER_DATATYPE, ORDER_CONTENT, ORDER_NO,REMARK,REMARK1
+	</sql>
+	<!-- 新增订单异常数据 -->
+	<insert id="insert" parameterClass="orderinterfaceError">
+		INSERT INTO HS_ORD_ORDERINTERFACE_ERROR (ORDER_ID, ORDER_STATUS,
+		 ORDER_ERROR_MESSAGE, ORDER_DATATYPE, ORDER_CONTENT, ORDER_NO)
+		VALUES (#orderId#,#orderStatus#,#orderErrorMessage#,#orderDatatype#,#orderContent#,#orderNo#)
+	</insert>
+	
+	<!-- 删除订单异常数据 -->
+	<delete id="delete" parameterClass="Map">
+		DELETE FROM HS_ORD_ORDERINTERFACE_ERROR WHERE ORDER_ID = #orderId# 
+		<isNotNull prepend="" property="orderDatatype">
+			AND ORDER_DATATYPE = #orderDatatype#
+		</isNotNull>
+	</delete>
+
+	<!-- 批量查询订单异常数据  -->
+	<select id="queryOrderinterfaceError" parameterClass="Map" resultMap="BaseResultMap">
+		SELECT <include refid="BaseColumnList" /> FROM (
+			SELECT <include refid="BaseColumnList" />
+					FROM HS_ORD_ORDERINTERFACE_ERROR WHERE 
+					ORDER_DATATYPE = #orderDatatype# AND ORDER_STATUS = #orderStatus# 
+			ORDER BY CREATED_TIME
+		) WHERE ROWNUM &lt;= #rownum#
+	</select>
+	
+	<!-- 根据接口订单ID查询异常信息 -->
+	<select id="getOrderinterfaceErrorByOrderId" parameterClass="java.lang.Long" resultMap="BaseResultMap">
+			SELECT <include refid="BaseColumnList" /> FROM HS_ORD_ORDERINTERFACE_ERROR WHERE ORDER_ID = #orderId#
+	</select>
+	<sql id="dynamicWhere">
+	     <dynamic prepend="WHERE">
+	       <isNotEmpty prepend="and" property="startTime">
+			<![CDATA[
+				CREATED_TIME >= to_date(#startTime#,'yyyy-MM-dd HH24:mi:ss')
+			]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="endTime">
+			<![CDATA[
+				CREATED_TIME<=to_date(#endTime#,'yyyy-MM-dd HH24:mi:ss')
+			]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="orderDataType">
+			    ORDER_DATATYPE =#orderDataType#
+			</isNotEmpty>
+	     </dynamic>
+	</sql>
+	<!-- 分页查询错误信息 -->
+	<select id="queryPagedList" parameterClass="java.util.Map" resultMap="optErrOrder">
+		SELECT
+		<include refid="ErrOrderList" />
+		from
+		HS_ORD_ORDERINTERFACE_ERROR 
+	    <include refid="dynamicWhere"/>
+	</select>
+    <!-- 分页查询总记录 -->
+    <select id="recordCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT count(1)
+		FROM
+	    HS_ORD_ORDERINTERFACE_ERROR
+	     <include refid="dynamicWhere"/>
+	</select>
+</sqlMap>

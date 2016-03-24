@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicCountyVO">
+	<typeAlias alias="BasicCounty" type="com.chengfeng.ne.basedata.domain.BasicCountyVO" />
+	<!-- 返回结果集 -->
+	<resultMap id="CountyResult" class="BasicCounty">
+		<result property="countyId" column="COUNTY_ID" />
+		<result property="countyCode" column="COUNTY_CODE" />
+		<result property="countyName" column="COUNTY_NAME" />
+		<result property="countyPinyin" column="COUNTY_PINYIN" />
+		<result property="countyOrder" column="COUNTY_ORDER" />
+		<result property="cityId" column="CITY_ID" />
+		<result property="postcode" column="POSTCODE" />
+		<result property="overallFlag" column="OVERALL_FLAG" />
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="BasicCountySql">
+	    COUNTY_ID, 
+	    COUNTY_CODE, 
+	    COUNTY_NAME, 
+	    COUNTY_PINYIN, 
+	    COUNTY_ORDER, 
+		CITY_ID, 
+		POSTCODE, 
+		OVERALL_FLAG, 
+		REMARK, 
+		CREATED_BY, 
+		CREATED_TIME, 
+		MODIFIED_BY, 
+		MODIFIED_TIME, 
+		RD_STATUS 
+	</sql>
+	
+	<!-- 新增区县oracle -->
+	<insert id="doCreateCounty" parameterClass="BasicCounty">
+		<selectKey resultClass="long" keyProperty="countyId">
+			SELECT SEQ_BASIC_REGION.nextval AS countyId FROM dual
+		</selectKey>
+		INSERT INTO HS_BASIC_COUNTY 
+			(COUNTY_ID, COUNTY_CODE, COUNTY_NAME, COUNTY_PINYIN, COUNTY_ORDER, 
+			CITY_ID, POSTCODE, OVERALL_FLAG, REMARK, CREATED_BY, CREATED_TIME, 
+			MODIFIED_BY, MODIFIED_TIME, RD_STATUS)
+		VALUES
+			(#countyId#, #countyCode#, #countyName#, #countyPinyin#, #countyOrder#, 
+			#cityId#, #postcode#, #overallFlag#,#remark#, #createdBy#, SYSDATE, 
+			#modifiedBy#, #modifiedTime#, 1)
+	</insert>
+	
+	<!-- 修改区县 -->
+	<update id="doSaveCounty" parameterClass="BasicCounty">
+		UPDATE HS_BASIC_COUNTY 
+		SET 
+			COUNTY_CODE = #countyCode#, 
+			COUNTY_NAME = #countyName#, 
+			COUNTY_PINYIN = #countyPinyin#, 
+			COUNTY_ORDER = #countyOrder#, 
+			CITY_ID = #cityId#, 
+			POSTCODE = #postcode#, 
+			REMARK = #remark#, 
+			OVERALL_FLAG = #overallFlag#,
+			MODIFIED_BY = #modifiedBy#, 
+			MODIFIED_TIME = SYSDATE 
+		WHERE 
+			COUNTY_ID = #countyId#
+	</update>
+	
+	<!-- 删除区县 -->
+	<delete id="doDeleteCounty" parameterClass="BasicCounty">
+		UPDATE HS_BASIC_COUNTY 
+		SET 
+			COUNTY_CODE = #countyCode#, 
+			COUNTY_NAME = #countyName#, 
+			MODIFIED_BY = #modifiedBy#, 
+			MODIFIED_TIME = SYSDATE, 
+			RD_STATUS = 0 
+		WHERE 
+			COUNTY_ID = #countyId# 
+	</delete>
+	
+	<!-- 获取自定义顺序最大值 -->
+	<select id="getMaxCountyOrder" resultClass="int">
+		SELECT 
+			MAX(COUNTY_ORDER) 
+		FROM 
+			HS_BASIC_COUNTY 
+		WHERE 
+			RD_STATUS = 1
+	</select>
+	
+	<!-- 查询区县列表 -->
+	<select id="queryCountyList" resultMap="CountyResult">
+		SELECT 
+			<include refid="BasicCountySql"/>
+		FROM 
+			HS_BASIC_COUNTY 
+		WHERE 
+			RD_STATUS = 1 
+		ORDER BY COUNTY_ORDER
+	</select>
+	
+	<!-- 按ID查询区县 -->
+	<select id="queryCountyById" resultMap="CountyResult" parameterClass="long">
+		SELECT 
+			<include refid="BasicCountySql"/>
+		FROM 
+			HS_BASIC_COUNTY 
+		WHERE 
+			COUNTY_ID = #countyId#
+	</select>
+	
+	<!-- 按编号查询国家 -->
+	<select id="queryCountyByCode" resultMap="CountyResult" parameterClass="java.lang.String">
+		SELECT 
+			<include refid="BasicCountySql"/>
+		FROM 
+			HS_BASIC_COUNTY 
+		WHERE 
+			COUNTY_CODE = #countyCode#
+	</select>
+	
+	<!-- 按所属城市ID查询区县 -->
+	<select id="queryCountyByCityId" resultMap="CountyResult" parameterClass="long">
+		SELECT 
+			<include refid="BasicCountySql"/>
+		FROM 
+			HS_BASIC_COUNTY 
+		WHERE 
+			CITY_ID = #cityId# AND RD_STATUS = 1
+	</select>
+	
+	<!-- 按名称查询区县 -->
+	<select id="queryCountyByName" parameterClass="java.lang.String" resultMap="CountyResult">
+		SELECT 
+			<include refid="BasicCountySql"/>
+		FROM 
+			HS_BASIC_COUNTY 
+		WHERE 
+			COUNTY_NAME = #countyName# 
+		ORDER BY COUNTY_ORDER
+	</select>
+	
+	<!-- 按名称、所属城市查询区县 -->
+	<select id="queryCountyByNameAndId" parameterClass="java.util.HashMap" resultMap="CountyResult">
+		SELECT 
+			<include refid="BasicCountySql"/>
+		FROM 
+			HS_BASIC_COUNTY 
+		WHERE 
+			COUNTY_NAME = #countyName# AND CITY_ID = #cityId# 
+			AND RD_STATUS = 1 
+	</select>
+	
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty property = "date" prepend = " and ">
+				(CREATED_TIME >= #date# OR MODIFIED_TIME >= #date#)
+			</isNotEmpty>
+			<isNotEmpty property = "rdStatus" prepend = " and ">
+				RD_STATUS = 1
+			</isNotEmpty>
+			<isNotEmpty property = "condition" prepend = " and ">
+				(COUNTY_NAME LIKE '%'||#condition#||'%' OR 
+				COUNTY_CODE LIKE '%'||#condition#||'%' OR 
+				COUNTY_PINYIN LIKE '%'||#pCondition#||'%')
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<!-- 根据分页条件查询机型 -->
+	<select id="queryPagedList" parameterClass="java.util.Map" resultMap="CountyResult">
+		SELECT 
+			<include refid="BasicCountySql"/>
+		FROM 
+			HS_BASIC_COUNTY  
+		<include refid="dynamicWhere" />
+	</select>
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(1) 
+		FROM 
+			HS_BASIC_COUNTY 
+		<include refid="dynamicWhere" />
+	</select>
+</sqlMap>

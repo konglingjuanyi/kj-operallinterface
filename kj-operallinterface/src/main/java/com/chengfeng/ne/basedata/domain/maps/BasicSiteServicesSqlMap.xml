@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BasicSiteServicesVO">
+	<typeAlias alias="BasicSiteServices" type="com.chengfeng.ne.basedata.domain.BasicSiteServicesVO"/>
+    <resultMap id="BasicSiteServicesResult" class="com.chengfeng.ne.basedata.domain.BasicSiteServicesVO">
+        <result property="siteId" column="SITE_ID"/>
+        <result property="servicesTypeId" column="SERVICES_TYPE_ID"/>
+        <result property="siteServicesType" column="SITE_SERVICES_TYPE"/>
+        <result property="pickGoodsMode" column="PICK_GOODS_MODE"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="BasicSiteServicesSql">
+	    <![CDATA[
+        	SITE_ID ,
+        	SERVICES_TYPE_ID ,
+        	SITE_SERVICES_TYPE ,
+        	PICK_GOODS_MODE 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" >
+    <![CDATA[
+        INSERT INTO HS_BASIC_SITE_SERVICES (
+        	SITE_ID ,
+        	SERVICES_TYPE_ID ,
+        	SITE_SERVICES_TYPE ,
+        	PICK_GOODS_MODE 
+        ) VALUES (
+        	#siteId# ,
+        	#servicesTypeId# ,
+        	#siteServicesType# ,
+        	#pickGoodsMode# 
+        )
+    ]]>
+    </insert>
+
+    <update id="update" >
+    <![CDATA[
+        UPDATE HS_BASIC_SITE_SERVICES SET
+	        SITE_SERVICES_TYPE = #siteServicesType# ,
+	        PICK_GOODS_MODE = #pickGoodsMode# 
+        WHERE 
+	        SITE_ID = #siteId# and 
+	        SERVICES_TYPE_ID = #servicesTypeId# 
+    ]]>
+    </update>
+	
+	<!-- 根据条件动态修改 -->
+	<update id="updateByPrimaryKey" parameterClass="BasicSiteServices" >
+    UPDATE HS_BASIC_SITE_SERVICES 
+    <dynamic prepend="set" >
+	      <isNotNull prepend="," property="siteServicesType" >
+	        SITE_SERVICES_TYPE = #siteServicesType#
+	      </isNotNull>   
+	      <isNotNull prepend="," property="pickGoodsMode" >
+	        PICK_GOODS_MODE = #pickGoodsMode#
+	      </isNotNull>   
+    </dynamic>
+    WHERE 
+	SITE_ID = #siteId# and 
+	SERVICES_TYPE_ID = #servicesTypeId# 
+  </update>
+
+    <delete id="delete">
+    <![CDATA[
+        DELETE FROM HS_BASIC_SITE_SERVICES WHERE
+        SITE_ID = #siteId# 
+    ]]>
+    </delete>
+    
+    <select id="getBasicSiteServicesById" resultMap="BasicSiteServicesResult">
+	    SELECT <include refid="BasicSiteServicesSql"/>
+	    <![CDATA[
+	        FROM HS_BASIC_SITE_SERVICES 
+	        WHERE 
+		        SITE_ID = #siteId# and 
+		        SERVICES_TYPE_ID = #servicesTypeId# 
+	    ]]>
+    </select>
+
+	<sql id="dynamicWhere">
+	    <dynamic prepend="WHERE">
+		       <isNotEmpty prepend="AND" property="siteId">
+		             SITE_ID = #siteId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="servicesTypeId">
+		             SERVICES_TYPE_ID = #servicesTypeId#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="siteServicesType">
+		             SITE_SERVICES_TYPE = #siteServicesType#
+		       </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="pickGoodsMode">
+		             PICK_GOODS_MODE = #pickGoodsMode#
+		       </isNotEmpty>
+	    </dynamic>	
+	</sql>
+	 
+   <!-- 根据分页条件查询机型 -->
+	<select id="queryPagedList" parameterClass="java.util.Map" resultMap="BasicSiteServicesResult">
+		SELECT 
+		<include refid="BasicSiteServicesSql" />
+		FROM HS_BASIC_SITE_SERVICES
+		<include refid="dynamicWhere" />
+	</select>
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		SELECT COUNT(1) FROM HS_BASIC_SITE_SERVICES
+		<include refid="dynamicWhere" />
+	</select>
+
+	<!-- 获取网点所有属性 -->
+	<select id="querySiteServicesBySiteId" resultMap="BasicSiteServicesResult">
+	    SELECT 
+	    	<include refid="BasicSiteServicesSql"/>
+	    FROM 
+	    	HS_BASIC_SITE_SERVICES 
+	    WHERE 
+		    SITE_ID = #siteId#  
+    </select>
+</sqlMap>
+

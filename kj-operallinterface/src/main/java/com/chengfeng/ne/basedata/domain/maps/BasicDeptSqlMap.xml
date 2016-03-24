@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicDeptVO">
+	<typeAlias alias="BasicDept" type="com.chengfeng.ne.basedata.domain.BasicDeptVO" />
+	
+	<!-- 返回结果集 -->
+	<resultMap id="deptResult" class="com.chengfeng.ne.basedata.domain.BasicDeptVO">
+		<result property="deptId" column="DEPT_ID" />
+		<result property="deptCode" column="DEPT_CODE" />
+		<result property="deptName" column="DEPT_NAME" />
+		<result property="deptFullName" column="DEPT_FULL_NAME" />
+		<result property="deptPinyin" column="DEPT_PINYIN" />	
+		<result property="deptOrder" column="DEPT_ORDER" />
+		<result property="siteTypeId" column="SITE_TYPE_ID" />
+		<result property="parentDeptId" column="PARENT_DEPT_ID" />
+		<result property="areaLevel" column="AREA_LEVEL" />
+		<result property="managerEmployeeId" column="MANAGER_EMPLOYEE_ID" />
+		<result property="linkPhone" column="LINK_PHONE" />
+		<result property="fax" column="FAX" />
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />
+
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+	
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />		
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="BasicDeptsql">
+	    <![CDATA[
+        	DEPT_ID ,
+        	DEPT_CODE ,
+        	DEPT_NAME ,
+        	DEPT_FULL_NAME ,
+        	DEPT_PINYIN ,
+        	DEPT_ORDER ,
+        	SITE_TYPE_ID ,
+        	PARENT_DEPT_ID ,
+        	AREA_LEVEL ,
+        	MANAGER_EMPLOYEE_ID ,
+        	LINK_PHONE ,
+        	FAX ,
+        	REMARK ,
+        	CREATED_BY ,
+        	CREATED_TIME ,
+        	MODIFIED_BY ,
+        	MODIFIED_TIME ,
+        	RD_STATUS 
+	    ]]>
+	</sql>
+	
+	<!-- 新增部门-->
+	<insert id="doCreateDept" parameterClass="BasicDept">
+		<selectKey resultClass="long" keyProperty="deptId">
+			SELECT SEQ_BASIC_DEPT.NEXTVAL AS deptId FROM DUAL
+		</selectKey>
+		INSERT INTO
+		HS_BASIC_DEPT(DEPT_ID,DEPT_CODE,DEPT_NAME,DEPT_FULL_NAME,DEPT_PINYIN,DEPT_ORDER,SITE_TYPE_ID,PARENT_DEPT_ID,AREA_LEVEL,MANAGER_EMPLOYEE_ID,
+		LINK_PHONE,FAX,REMARK,CREATED_BY,CREATED_TIME,MODIFIED_BY,MODIFIED_TIME,RD_STATUS)
+		VALUES
+		(#deptId#,#deptCode#,#deptName#,#deptFullName#,#deptPinyin#,#deptOrder#,#siteTypeId#,#parentDeptId#,#areaLevel#,#managerEmployeeId#,
+		#linkPhone#,#fax#,#remark#,#createdBy#, #createdTime# ,#modifiedBy#,#modifiedTime#,1)
+	</insert>
+	
+	 <!-- 修改部门 -->
+	<update id="doSaveDept"  parameterClass="BasicDept" >
+		UPDATE HS_BASIC_DEPT SET		
+		DEPT_CODE = #deptCode#,
+		DEPT_NAME = #deptName#,
+		DEPT_FULL_NAME = #deptFullName#,
+		DEPT_PINYIN = #deptPinyin#,
+		DEPT_ORDER = #deptOrder#,
+		SITE_TYPE_ID = #siteTypeId#,
+		PARENT_DEPT_ID = #parentDeptId#,
+		AREA_LEVEL = #areaLevel#,
+		MANAGER_EMPLOYEE_ID = #managerEmployeeId#,
+		LINK_PHONE = #linkPhone#,
+		FAX = #fax#,		
+		REMARK = #remark#,		
+		MODIFIED_BY = #modifiedBy#,	
+		MODIFIED_TIME = #modifiedTime# ,
+		RD_STATUS=1
+		WHERE DEPT_ID = #deptId# 	
+	</update>
+	
+	<!-- 删除部门 -->
+	<update id="doDeleteDept" parameterClass="BasicDept">
+		UPDATE HS_BASIC_DEPT SET	
+		DEPT_CODE = #deptCode#,
+		DEPT_NAME = #deptName#,
+		MODIFIED_BY = #modifiedBy#,	
+		MODIFIED_TIME = #modifiedTime# ,
+		RD_STATUS = 0 
+		WHERE
+		DEPT_ID = #deptId#
+	</update>
+	
+	<!-- 删除部门下的所有岗位 -->
+	<update id="doDeleteJobByDept" parameterClass="BasicDept">
+		UPDATE HS_BASIC_JOB SET
+		MODIFIED_BY = #modifiedBy#,
+		MODIFIED_TIME = #modifiedTime# ,
+		RD_STATUS = 0 
+		WHERE
+		JOB_ID IN (SELECT JOB_ID FROM HS_BASIC_DEPT_JOB WHERE DEPT_ID = #deptId# ) 
+	</update>
+	
+	<!-- 获取最大自定义顺序 -->
+	<select id="getMaxDeptOrder" resultClass="java.lang.Long">
+		SELECT MAX(DEPT_ORDER) FROM
+		HS_BASIC_DEPT 
+	</select>
+	
+	<!-- 根据岗位ID查部门 -->
+	<select id="queryDeptByJobId" parameterClass="java.lang.Long"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT where DEPT_ID IN (SELECT DEPT_ID FROM HS_BASIC_DEPT_JOB 
+		WHERE JOB_ID = #jobId# )
+	</select>
+	
+	<!-- 根据名称查部门 -->
+	<select id="queryDeptByName" parameterClass="java.lang.String"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT WHERE DEPT_NAME = #deptName# ORDER BY DEPT_ORDER
+	</select>
+	
+	<!-- 根据名称、网点类型查部门 -->
+	<select id="queryDeptByNames" parameterClass="BasicDept"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT WHERE DEPT_NAME = #deptName# AND SITE_TYPE_ID=#siteTypeId# 
+		
+	</select>
+	
+	<!-- 根据部门ID查部门 -->
+	<select id="queryDeptById" parameterClass="java.lang.Long"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT WHERE DEPT_ID = #deptId#
+	</select>
+	
+	<!-- 根据部门编号查部门 -->
+	<select id="queryDeptByCode" parameterClass="java.lang.String"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT where DEPT_CODE = #deptCode# 
+	</select>	
+	
+	<!-- 查询所有部门 -->
+	<select id="queryDeptList" resultMap="deptResult">
+		SELECT 
+		<include refid="BasicDeptsql"/>  
+		FROM
+		HS_BASIC_DEPT where RD_STATUS=1
+	</select>	
+	
+	<!-- 按上级部门ID -->
+	<select id="queryDeptByParentId" parameterClass="java.util.Map"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT WHERE RD_STATUS = 1 AND SITE_TYPE_ID = #siteTypeId# AND
+		PARENT_DEPT_ID = #parentDeptId# ORDER BY DEPT_ORDER 
+	</select>
+	
+	<!-- 按上级部门ID -->
+	<select id="queryDeptByPId" parameterClass="java.lang.Long"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT WHERE 
+		PARENT_DEPT_ID = #parentDeptId# AND RD_STATUS = 1 ORDER BY DEPT_ORDER 
+	</select>
+	
+	<!-- 按层级查 -->
+	<select id="queryDeptByLevel" parameterClass="java.lang.Integer"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT WHERE 
+		<![CDATA[ AREA_LEVEL <= #areaLevel# AND RD_STATUS = 1 ORDER BY DEPT_ORDER ]]>
+	</select>
+	
+	<!-- 按层级查 -->
+	<select id="queryDeptByMap" parameterClass="java.util.Map"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT WHERE RD_STATUS = 1 
+		<dynamic >
+			<isNotEmpty prepend=" and " property="site">
+				SITE_TYPE_ID = ( SELECT SITE_TYPE_ID FROM HS_BASIC_SITE WHERE 
+				SITE_ID = #site# )
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="level">
+				<![CDATA[ AREA_LEVEL <= #level# ]]> 
+			</isNotEmpty>
+		</dynamic>	 
+		 ORDER BY DEPT_ORDER 
+	</select>
+	
+	
+	<!-- 按站点类型ID查询 -->
+	<select id="queryDeptBySiteTypeId" parameterClass="java.lang.Long"
+		resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT WHERE SITE_TYPE_ID = #siteTypeId# AND RD_STATUS = 1 ORDER BY DEPT_ORDER 
+	</select>
+	
+	<!-- 按站点ID查询 -->
+	<select id="queryDeptBySiteId" parameterClass="java.lang.Long" resultMap="deptResult">
+		SELECT <include refid="BasicDeptsql"/> 
+		FROM
+		HS_BASIC_DEPT WHERE SITE_TYPE_ID = (SELECT SITE_TYPE_ID FROM HS_BASIC_SITE WHERE SITE_ID=#siteId#) 
+		AND RD_STATUS = 1 ORDER BY DEPT_ORDER 
+	</select>
+	
+	<!-- 根据名称和网点类型查询部门 -->
+	<select id="getDeptByNameAndSiteTypeId" parameterClass="java.util.Map" resultClass="BasicDept">
+		SELECT 
+			DEPT_ID AS deptId, AREA_LEVEL AS areaLevel 
+		FROM
+			HS_BASIC_DEPT 
+		WHERE 
+			SITE_TYPE_ID = #siteTypeId# AND RD_STATUS = 1 AND DEPT_NAME = #deptName#
+	</select>
+</sqlMap>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicProvinceVO">
+	<typeAlias alias="BasicProvince" type="com.chengfeng.ne.basedata.domain.BasicProvinceVO" />
+
+	<!-- 返回结果集 -->
+	<resultMap id="ProvinceResult" class="com.chengfeng.ne.basedata.domain.BasicProvinceVO">
+		<result property="provinceId" column="PROVINCE_ID" />
+		<result property="provinceCode" column="PROVINCE_CODE" />
+		<result property="provinceName" column="PROVINCE_NAME" />
+		<result property="provincePinyin" column="PROVINCE_PINYIN" />
+		<result property="provinceOrder" column="PROVINCE_ORDER" />
+		<result property="countryId" column="COUNTRY_ID" />
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />
+	</resultMap>
+
+	<!-- 新增省份oracle -->
+	<insert id="doCreateProvince" parameterClass="BasicProvince">
+		<selectKey resultClass="long" keyProperty="provinceId">
+			SELECT SEQ_BASIC_REGION.nextval AS provinceId FROM dual
+		</selectKey>
+		insert into
+		HS_BASIC_PROVINCE(PROVINCE_ID,PROVINCE_CODE,PROVINCE_NAME,PROVINCE_PINYIN,PROVINCE_ORDER,COUNTRY_ID,REMARK,CREATED_BY,CREATED_TIME,MODIFIED_BY,MODIFIED_TIME,RD_STATUS)
+		values
+		(#provinceId#,#provinceCode#,#provinceName#,#provincePinyin#,#provinceOrder#,#countryId#,#remark#,#createdBy#,#createdTime#,#modifiedBy#,#modifiedTime#,1)
+	</insert>
+
+	<!-- 修改省份 -->
+	<update id="doSaveProvince" parameterClass="BasicProvince">
+		update
+		HS_BASIC_PROVINCE set
+		PROVINCE_CODE=#provinceCode#,PROVINCE_NAME=#provinceName#,
+		PROVINCE_PINYIN=#provincePinyin#,PROVINCE_ORDER=#provinceOrder#,
+		COUNTRY_ID=#countryId#,REMARK=#remark#,MODIFIED_BY=#modifiedBy#,
+		MODIFIED_TIME=#modifiedTime#
+		where PROVINCE_ID=#provinceId#
+	</update>
+
+	<!-- 删除省份 -->
+	<delete id="doDeleteProvince" parameterClass="BasicProvince">
+		update HS_BASIC_PROVINCE 
+		set 
+			PROVINCE_CODE=#provinceCode#,PROVINCE_NAME=#provinceName#,MODIFIED_BY=#modifiedBy#,
+			MODIFIED_TIME=#modifiedTime#,RD_STATUS=0 
+		where PROVINCE_ID=#provinceId#
+	</delete>
+
+	<!-- 获取自定义顺序最大值 -->
+	<select id="getMaxProvinceOrder" resultClass="int">
+		select
+		max(PROVINCE_ORDER) from HS_BASIC_PROVINCE where RD_STATUS=1
+	</select>
+
+	<!-- 查询省份列表 -->
+	<select id="queryProvinceList" resultMap="ProvinceResult">
+		select 
+			province_id, province_code, province_name, province_pinyin, 
+			province_order, country_id, remark,created_by, created_time, 
+			modified_by, modified_time, rd_status
+		from HS_BASIC_PROVINCE where 
+			RD_STATUS=1 order by PROVINCE_ORDER
+	</select>
+
+	<!-- 根据时间查询省份列表 -->
+	<select id="queryProvinceListByTime" resultMap="ProvinceResult" parameterClass="java.util.Date">
+		<![CDATA[
+			select 
+				province_id, province_code, province_name, province_pinyin, 
+				province_order, country_id, remark,created_by, created_time, 
+				modified_by, modified_time, rd_status
+			from HS_BASIC_PROVINCE where 
+				CREATED_TIME > #date# or MODIFIED_TIME > #date#
+		 ]]>
+	</select>
+
+	<!-- 按ID查询省份 -->
+	<select id="queryProvinceById" resultMap="ProvinceResult"
+		parameterClass="long">
+		select 
+			province_id, province_code, province_name, province_pinyin, 
+			province_order, country_id, remark,created_by, created_time, 
+			modified_by, modified_time, rd_status
+		from HS_BASIC_PROVINCE where
+			PROVINCE_ID=#provinceId#
+	</select>
+
+	<!-- 按编号查询国家 -->
+	<select id="queryProvinceByCode" resultMap="ProvinceResult"
+		parameterClass="java.lang.String">
+		select 
+			province_id, province_code, province_name, province_pinyin, 
+			province_order, country_id, remark,created_by, created_time, 
+			modified_by, modified_time, rd_status
+		from HS_BASIC_PROVINCE where
+			PROVINCE_CODE=#provinceCode#
+	</select>
+
+	<!-- 按所属国家ID查询省份 -->
+	<select id="queryProByCouId" resultMap="ProvinceResult"
+		parameterClass="long">
+		select 
+			province_id, province_code, province_name, province_pinyin, 
+			province_order, country_id, remark,created_by, created_time, 
+			modified_by, modified_time, rd_status
+		from HS_BASIC_PROVINCE where
+			COUNTRY_ID=#countryId# and RD_STATUS=1
+	</select>
+
+	<!-- 按所属国家ID和名称查询省份 -->
+	<select id="queryProvinceByName" parameterClass="java.util.Map"
+		resultMap="ProvinceResult">
+		select 
+			province_id, province_code, province_name, province_pinyin, 
+			province_order, country_id, remark,created_by, created_time, 
+			modified_by, modified_time, rd_status
+		from HS_BASIC_PROVINCE where
+			PROVINCE_NAME=#provinceName# AND COUNTRY_ID = #countryId#
+	</select>
+	
+	<!-- 按名称、所属国家查询省份 -->
+	<select id="queryProvinceByNames" parameterClass="java.util.HashMap"
+		resultMap="ProvinceResult">
+		select 
+			province_id, province_code, province_name, province_pinyin, 
+			province_order, country_id, remark,created_by, created_time, 
+			modified_by, modified_time, rd_status
+		from HS_BASIC_PROVINCE where
+			PROVINCE_NAME=#provinceName# and COUNTRY_ID=#countryId#
+	</select>
+	
+	<!-- 按所属国家ID、名称模糊查询省份 -->
+	<select id="queryProvinceByLike" parameterClass="java.util.Map"
+		resultMap="ProvinceResult">
+		select 
+			province_id, province_code, province_name, province_pinyin, 
+			province_order, country_id, remark,created_by, created_time, 
+			modified_by, modified_time, rd_status
+		from 
+			HS_BASIC_PROVINCE 
+		where
+			PROVINCE_NAME like '%'||#provinceName#||'%' AND COUNTRY_ID = #countryId# 
+			AND RD_STATUS=1 order by LENGTH(PROVINCE_NAME)
+	</select>
+	
+	<!-- 根据条件模糊查询 -->
+	<select id="queryProvinceByLikePCN" parameterClass="java.util.Map" resultMap="ProvinceResult">
+		<![CDATA[
+		select 
+			province_id, province_code, province_name, province_pinyin, 
+			province_order, country_id, remark,created_by, created_time, 
+			modified_by, modified_time, rd_status
+		from HS_BASIC_PROVINCE where 
+			(PROVINCE_CODE like '%'||#condition#||'%' or PROVINCE_NAME like '%'||#condition#||'%' or 
+			PROVINCE_PINYIN like '%'||#pCondition#||'%') AND rownum<#rownum# and RD_STATUS=1 order by PROVINCE_ORDER
+		]]>	
+	</select>
+	
+	<!-- 根据省份名称集合查询省份  -->
+	<select id="queryProvinceListByName" resultClass="BasicProvince"  parameterClass="map">
+		SELECT distinct province_id AS provinceId ,province_code AS provinceCode ,province_name AS provinceName ,province_pinyin AS provincePinyin   
+		FROM
+		HS_BASIC_PROVINCE s  where s.RD_STATUS = 1  
+		<isNotEmpty prepend="and" property="provinceNameList">
+			s.PROVINCE_NAME in
+			<iterate open="(" close=")" conjunction="," property="provinceNameList">
+				#provinceNameList[]#
+			</iterate>
+		</isNotEmpty> 
+	</select>
+	
+</sqlMap>

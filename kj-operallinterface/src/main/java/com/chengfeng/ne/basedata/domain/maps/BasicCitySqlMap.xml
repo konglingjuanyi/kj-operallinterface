@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicCityVO">
+	<typeAlias alias="BasicCity" type="com.chengfeng.ne.basedata.domain.BasicCityVO" />
+
+	<!-- 返回结果集 -->
+	<resultMap id="CityResult" class="com.chengfeng.ne.basedata.domain.BasicCityVO">
+		<result property="cityId" column="CITY_ID" />
+		<result property="cityCode" column="CITY_CODE" />
+		<result property="cityName" column="CITY_NAME" />
+		<result property="cityPinyin" column="CITY_PINYIN" />
+		<result property="cityOrder" column="CITY_ORDER" />
+		<result property="provinceId" column="PROVINCE_ID" />
+		<result property="postcode" column="POSTCODE" />
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />
+	</resultMap>
+	<!-- 分页结果集 -->
+	<resultMap id="CityPageResult" class="com.chengfeng.ne.basedata.domain.BasicCityVO">
+		<result property="cityId" column="CITY_ID" />
+		<result property="cityCode" column="CITY_CODE" />
+		<result property="cityName" column="CITY_NAME" />
+		<result property="cityPinyin" column="CITY_PINYIN" />
+		<result property="provinceId" column="PROVINCE_ID" />
+		<result property="postcode" column="POSTCODE" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />
+	</resultMap>
+
+	<!-- 新增城市oracle -->
+	<insert id="doCreateCity" parameterClass="BasicCity">
+		<selectKey resultClass="long" keyProperty="cityId">
+			SELECT SEQ_BASIC_REGION.nextval AS cityId FROM dual
+		</selectKey>
+			insert into HS_BASIC_CITY
+				(CITY_ID, CITY_CODE, CITY_NAME, CITY_PINYIN, CITY_ORDER,
+				 PROVINCE_ID, POSTCODE, REMARK, CREATED_BY, CREATED_TIME,
+				 MODIFIED_BY, MODIFIED_TIME, RD_STATUS)
+			values
+				(#cityId#, #cityCode#, #cityName#, #cityPinyin#, #cityOrder#, 
+				#provinceId#, #postcode#, #remark#, #createdBy#, #createdTime#, 
+				#modifiedBy#, #modifiedTime#, 1)
+	</insert>
+
+	<!-- 修改城市 -->
+	<update id="doSaveCitye" parameterClass="BasicCity">
+		update HS_BASIC_CITY
+		set
+			CITY_CODE=#cityCode#, CITY_NAME=#cityName#,
+			CITY_PINYIN=#cityPinyin#, CITY_ORDER=#cityOrder#,
+			PROVINCE_ID=#provinceId#, POSTCODE=#postcode#,
+			REMARK=#remark#, MODIFIED_BY=#modifiedBy#,
+			MODIFIED_TIME=#modifiedTime#, RD_STATUS=1
+		where 
+			CITY_ID=#cityId#
+	</update>
+
+	<!-- 删除城市 -->
+	<delete id="doDeleteCity" parameterClass="BasicCity">
+		update HS_BASIC_CITY
+		set
+		CITY_CODE=#cityCode#, CITY_NAME=#cityName#, MODIFIED_BY=#modifiedBy#,
+		MODIFIED_TIME=#modifiedTime#, RD_STATUS=0
+		where
+		CITY_ID=#cityId#
+	</delete>
+
+	<!-- 获取自定义顺序最大值 -->
+	<select id="getMaxCityOrder" resultClass="int">
+		select max(CITY_ORDER)
+		from HS_BASIC_CITY where RD_STATUS=1
+	</select>
+
+	<!-- 查询城市列表 -->
+	<select id="queryCityList" resultMap="CityResult">
+		select
+		city_id, city_code, city_name, city_pinyin, city_order, province_id, postcode,
+		remark,
+		created_by, created_time, modified_by, modified_time, rd_status
+		from hs_basic_city
+		where
+		RD_STATUS=1 order by CITY_ORDER
+	</select>
+
+	<!-- 根据时间查询城市列表 -->
+	<select id="queryCityListByTime" resultMap="CityResult"
+		parameterClass="java.util.Date">
+	 <![CDATA[
+		select 
+			city_id, city_code, city_name, city_pinyin, city_order, province_id, postcode, remark,
+			created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_CITY where 
+			RD_STATUS=1 and (CREATED_TIME > #date# or MODIFIED_TIME > #date#) order by CITY_ORDER
+	 ]]>
+	</select>
+
+	<!-- 按ID查询城市 -->
+	<select id="queryCityById" resultMap="CityResult"
+		parameterClass="long">
+		select
+		city_id, city_code, city_name, city_pinyin, city_order, province_id, postcode,
+		remark,
+		created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_CITY
+		where
+		CITY_ID=#cityId#
+	</select>
+
+	<!-- 按编号查询国家 -->
+	<select id="queryCityByCode" resultMap="CityResult"
+		parameterClass="java.lang.String">
+		select
+		city_id, city_code, city_name, city_pinyin, city_order, province_id, postcode,
+		remark,
+		created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_CITY
+		where
+		CITY_CODE=#cityCode#
+	</select>
+
+	<!-- 按所属省份ID查询城市 -->
+	<select id="queryCityByProId" resultMap="CityResult"
+		parameterClass="long">
+		select
+		city_id, city_code, city_name, city_pinyin, city_order, province_id, postcode,
+		remark,
+		created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_CITY
+		where
+		PROVINCE_ID=#provinceId# and RD_STATUS=1
+	</select>
+
+	<!-- 按名称查询城市 -->
+	<select id="queryCityByNameAndProId" parameterClass="java.util.HashMap"
+		resultMap="CityResult">
+		select
+		city_id, city_code, city_name, city_pinyin, city_order, province_id, postcode,
+		remark,
+		created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_CITY
+		where
+		CITY_NAME=#cityName# and PROVINCE_ID=#provinceId#
+	</select>
+
+	<!-- 按名称查询城市 -->
+	<select id="queryCityByName" parameterClass="java.lang.String"
+		resultMap="CityResult">
+		select
+		city_id, city_code, city_name, city_pinyin, city_order, province_id, postcode,
+		remark,
+		created_by, created_time, modified_by, modified_time, rd_status
+		from HS_BASIC_CITY
+		where
+		CITY_NAME=#cityName# order by CITY_ORDER
+	</select>
+
+	<!-- 模糊查询城市 -->
+	<select id="queryCityByLikePCN" parameterClass="java.util.Map"
+		resultMap="CityResult">
+		
+		select
+			city_id, city_code, city_name, city_pinyin, city_order, province_id, postcode,
+			remark, created_by, created_time, modified_by, modified_time, rd_status
+		from
+			HS_BASIC_CITY
+		where
+			(CITY_NAME like '%'||#title#||'%' or CITY_PINYIN like '%'||#pinyin#||'%' or
+			CITY_CODE like '%'||#title#||'%')
+			<isNotEmpty property="provinceId" prepend="AND">
+				PROVINCE_ID = #provinceId# 
+			</isNotEmpty>
+			AND 
+			<![CDATA[
+			ROWNUM <= #rownum# 
+			]]>	
+			AND RD_STATUS=1 
+		ORDER BY LENGTH(CITY_NAME)
+		
+	</select>
+
+	<sql id="dynamicWhere">
+		<dynamic prepend="WHERE">
+			<isNotEmpty property="date" prepend=" AND ">
+				CREATED_TIME > #date# or MODIFIED_TIME > #date#
+			</isNotEmpty>
+			
+			<isNotEmpty property="provinceId" prepend=" AND ">
+				PROVINCE_ID = #provinceId# 
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+
+	<!-- 根据分页条件查询机型 -->
+	<select id="queryPagedList" parameterClass="java.util.Map"
+		resultMap="CityPageResult">
+		SELECT
+			CITY_ID, CITY_CODE, CITY_NAME, CITY_PINYIN, PROVINCE_ID, 
+			POSTCODE, MODIFIED_TIME, RD_STATUS
+		FROM 
+			HS_BASIC_CITY 
+		<include refid="dynamicWhere" />
+	</select>
+	<!-- 查询总记录数 -->
+	<select id="recordCount" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
+		select count(CITY_ID) from HS_BASIC_CITY 
+		<include refid="dynamicWhere" />
+	</select>
+	
+	<!-- 根据城市名称集合查询城市  -->
+	<select id="queryCityListByName" resultClass="BasicCity"  parameterClass="map">
+		SELECT distinct CITY_ID AS cityId ,CITY_CODE AS cityCode ,CITY_NAME AS cityName ,
+		CITY_PINYIN AS cityPinyin   
+		FROM
+		HS_BASIC_CITY s  where s.RD_STATUS = 1  
+		<isNotEmpty prepend="and" property="cityNameList">
+			s.CITY_NAME in
+			<iterate open="(" close=")" conjunction="," property="cityNameList">
+				#cityNameList[]#
+			</iterate>
+		</isNotEmpty> 
+	</select>
+	
+</sqlMap>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BasicSiteRangeVO">
+	<typeAlias alias="BasicSiteRange" type="com.chengfeng.ne.basedata.domain.BasicSiteRangeVO" />
+	<!-- 网点属性表 -->
+	<typeAlias alias="BasicSiteProp" type="com.chengfeng.ne.basedata.domain.BasicSitePropVO"/>
+	
+	<!-- 返回结果集 -->
+	<resultMap id="SiteRangeResult" class="com.chengfeng.ne.basedata.domain.BasicSiteRangeVO">
+		<result property="siteRangeId" column="SITE_RANGE_ID" />
+		<result property="siteId" column="SITE_ID" />
+		<result property="rangeType" column="RANGE_TYPE" />
+		<result property="rangeName" column="RANGE_NAME" />
+		<result property="startNo" column="START_NO" />
+		<result property="endNo" column="END_NO" />					
+		<result property="remark" column="REMARK" />
+		<result property="createdBy" column="CREATED_BY" />	
+		<result property="createdTime" column="CREATED_TIME" />
+		<result property="modifiedBy" column="MODIFIED_BY" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="rdStatus" column="RD_STATUS" />	
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="BasicSiteRangesql">
+	    <![CDATA[
+        	SITE_RANGE_ID ,
+        	SITE_ID ,
+        	RANGE_TYPE ,
+        	RANGE_NAME ,
+        	START_NO ,
+        	END_NO ,
+        	REMARK ,
+        	CREATED_BY ,
+        	CREATED_TIME ,
+        	MODIFIED_BY ,
+        	MODIFIED_TIME ,
+        	RD_STATUS 
+	    ]]>
+	</sql>
+			
+	<!-- 新增网点详细信息 -->
+	<insert id="doCreateSiteRange" parameterClass="BasicSiteRange">		
+		<selectKey resultClass="long" keyProperty="siteRangeId">
+			SELECT SEQ_SITE_RANGE.NEXTVAL AS siteRangeId FROM DUAL
+		</selectKey>
+		INSERT INTO
+		HS_BASIC_SITE_RANGE(SITE_RANGE_ID,SITE_ID,RANGE_TYPE,RANGE_NAME,START_NO,END_NO,REMARK,CREATED_BY,CREATED_TIME,
+		MODIFIED_BY,MODIFIED_TIME,RD_STATUS)
+		VALUES
+		(#siteRangeId#,#siteId#,#rangeType#,#rangeName#,#startNo#,#endNo#,
+		#remark#,#createdBy#, #createdTime# ,#modifiedBy#,#modifiedTime#,1)
+	</insert>
+	
+	 <!-- 修改网点派送范围 -->
+	<update id="doModifySiteRange"  parameterClass="BasicSiteRange" >
+		UPDATE HS_BASIC_SITE_RANGE SET							
+		RANGE_TYPE=#rangeType#,
+		RANGE_NAME=#rangeName#,
+		START_NO=#startNo#,
+		END_NO=#endNo#,		
+		REMARK = #remark#,	
+		MODIFIED_BY = #modifiedBy#,	
+		MODIFIED_TIME = #modifiedTime#  	
+		WHERE SITE_RANGE_ID = #siteRangeId# 	
+	</update>
+	
+	<!-- 删除网点派送范围 -->
+	<update id="doDeleteSiteRange" parameterClass="BasicSiteRange">
+		UPDATE  HS_BASIC_SITE_RANGE SET
+		RD_STATUS = 0 ,
+		MODIFIED_BY = #modifiedBy#,	
+		MODIFIED_TIME = #modifiedTime#  
+		WHERE
+		SITE_RANGE_ID = #siteRangeId#
+	</update>
+	
+	<!-- 根据网点删除网点派送范围 -->
+	<update id="doDeleteBySiteId" parameterClass="BasicSiteRange">
+		UPDATE  HS_BASIC_SITE_RANGE SET
+		RD_STATUS = 0 ,
+		MODIFIED_BY = #modifiedBy#,	
+		MODIFIED_TIME = #modifiedTime#  
+		WHERE
+		SITE_ID = #siteId#
+	</update>
+	
+	<!-- 根据网点删除网点派送范围 -->
+	<delete id="doDelBySiteId" parameterClass="BasicSiteRange">
+		DELETE FROM  HS_BASIC_SITE_RANGE 
+		WHERE
+		SITE_ID = #siteId#
+	</delete>
+	
+	<!-- 根据ID查询网点范围 -->
+	<select id="queryDispatchAreaById" parameterClass="java.lang.Long" resultMap="SiteRangeResult">
+		SELECT <include refid="BasicSiteRangesql"/> 
+		FROM HS_BASIC_SITE_RANGE WHERE SITE_RANGE_ID = #siteRangeId#			
+	</select>
+	<!-- 根据ID查询网点范围 -->
+	<select id="selectByPrimaryKey" parameterClass="BasicSiteRange" resultMap="SiteRangeResult">
+		SELECT <include refid="BasicSiteRangesql"/> 
+		FROM HS_BASIC_SITE_RANGE WHERE SITE_RANGE_ID = #siteRangeId#			
+	</select>
+	
+	<!-- 根据网点ID查询网点范围 -->
+	<select id="queryRangeBySiteId" parameterClass="java.lang.Long" resultMap="SiteRangeResult">
+		SELECT <include refid="BasicSiteRangesql"/>  
+		FROM HS_BASIC_SITE_RANGE WHERE SITE_ID = #siteId#	AND RD_STATUS = 1  		
+	</select>
+	
+	<!-- 查询所有 -->
+	<select id="queryDispatchAreaList"  resultMap="SiteRangeResult">
+		SELECT <include refid="BasicSiteRangesql"/>  
+		FROM HS_BASIC_SITE_RANGE WHERE RD_STATUS = 1			
+	</select>
+	
+	<!-- 查询条件动态语句 -->
+	<sql id="areaByTotal">
+		<dynamic>
+			<isNotNull prepend="AND" property="siteId"> SITE_ID = #siteId# </isNotNull>
+			<isNotNull prepend="AND" property="rangeType"> RANGE_TYPE = #rangeType# </isNotNull>
+			<isNotNull prepend="AND" property="rangeName"> RANGE_NAME LIKE '%'||#rangeName#||'%' </isNotNull>
+			<isNotNull prepend="AND" property="startNo"> <![CDATA[ START_NO >= #startNo# ]]></isNotNull>
+			<isNotNull prepend="AND" property="endNo"> END_NO &lt; #endNo# </isNotNull>
+		</dynamic>
+	</sql>
+	
+	<!-- 按条件查询 -->
+	<select id="queryDispatchAreaByTotal" parameterClass="java.util.Map"
+			resultMap="SiteRangeResult">
+			SELECT <include refid="BasicSiteRangesql"/>  
+			from HS_BASIC_SITE_RANGE
+			 WHERE RD_STATUS = 1 
+			<include refid="areaByTotal" />
+			ORDER BY CREATED_TIME DESC
+	</select>
+	
+	<!-- 网点属性表 -->
+	<insert id="insertSiteProp" parameterClass="BasicSiteProp">
+		INSERT INTO
+		HS_BASIC_SITE_PROP(SITE_ID,TYPE_CODE,DATA_ID)
+		VALUES (#siteId#,#typeCode#,#dataId#) 
+	</insert>
+	
+	<delete id="deleteSiteProp" parameterClass="long" >
+		delete from HS_BASIC_SITE_PROP p where p.SITE_ID=#siteId# 
+	</delete>
+	
+	<select id="querySiteProp" parameterClass="long" resultClass="BasicSiteProp">
+		select SITE_ID as siteId,TYPE_CODE as typeCode,DATA_ID as dataId 
+		from HS_BASIC_SITE_PROP p 
+		where p.SITE_ID=#siteId# 
+	</select>
+	
+	
+</sqlMap>
